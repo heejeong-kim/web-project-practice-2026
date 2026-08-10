@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="2026년 2학기 웹프로젝트 실습 주차별 강의교안">
+  <title>웹프로젝트 실습 | 강의교안</title>
+  <link rel="stylesheet" href="./css/lecture.css">
+</head>
+<body>
+  <a class="skip-link" href="#lecture-content">본문 바로가기</a>
+
+  <header class="lecture-header">
+    <div class="lecture-shell header-inner">
+      <a class="lecture-brand" href="./index.html" aria-label="웹프로젝트 실습 메인으로 이동">
+        <span class="brand-mark">WP</span>
+        <span><strong>웹프로젝트 실습</strong><small>2026 · 2학기</small></span>
+      </a>
+      <nav class="lecture-nav" aria-label="강의교안 메뉴">
+        <a href="./index.html#weeks">전체 주차</a>
+        <button class="week-menu-button" id="week-menu-button" type="button" aria-expanded="false">주차 이동</button>
+        <a href="https://app.notion.com/p/3b8a50f0761580429d64ff509f92a9be" target="_blank" rel="noopener noreferrer">팀별 URL</a>
+      </nav>
+    </div>
+    <div class="week-menu" id="week-menu" hidden></div>
+  </header>
+
+  <main>
+    <section class="lecture-hero">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="lecture-shell lecture-hero-inner">
+        <div>
+          <p class="lecture-kicker" id="lecture-week">WEEK</p>
+          <h1 id="lecture-title">강의교안</h1>
+          <p id="lecture-summary" class="lecture-summary"></p>
+          <div id="lecture-keywords" class="keyword-list"></div>
+        </div>
+        <div class="hero-index-card">
+          <span>COURSE LAB</span>
+          <strong id="hero-week-number">01</strong>
+          <small>WEB PROJECT PRACTICE</small>
+        </div>
+      </div>
+    </section>
+
+    <div class="lecture-shell lecture-layout">
+      <aside class="lecture-toc" aria-label="페이지 목차">
+        <div class="toc-card">
+          <strong>CONTENTS</strong>
+          <nav id="toc-list"></nav>
+        </div>
+      </aside>
+
+      <article id="lecture-content" class="lecture-content" tabindex="-1"></article>
+    </div>
+
+    <nav class="lecture-pager lecture-shell" aria-label="이전 다음 주차">
+      <a id="prev-week" class="pager-link" href="#"><small>PREV</small><strong></strong></a>
+      <a id="next-week" class="pager-link next" href="#"><small>NEXT</small><strong></strong></a>
+    </nav>
+  </main>
+
+  <footer class="lecture-footer">
+    <div class="lecture-shell">
+      <strong>웹프로젝트 실습</strong>
+      <p>2026년 2학기 · 데이터 기반 웹서비스 제작</p>
+    </div>
+  </footer>
+
+  <button class="top-button" id="top-button" type="button" aria-label="페이지 맨 위로 이동"><span>↑</span><small>TOP</small></button>
+
+  <script src="./data/weeks.js"></script>
+  <script src="./data/lectures.js"></script>
+  <script src="./js/lecture.js"></script>
+</body>
+</html>
