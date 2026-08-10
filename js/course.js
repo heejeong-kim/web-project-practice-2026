@@ -1,4 +1,44 @@
-const weekGrid=document.querySelector('#week-grid');const searchInput=document.querySelector('#week-search');const chips=[...document.querySelectorAll('.filter-chip')];const empty=document.querySelector('#empty-weeks');let activeFilter='all';function practicePath(week){if(week===8||week===15)return null;return `./practice/week${String(week).padStart(2,'0')}/`;}
-function cardTemplate(item){const practice=practicePath(item.week);return `<article class="week-card ${item.type==='exam'?'is-exam':''}"><div class="week-meta"><span class="week-number">WEEK ${String(item.week).padStart(2,'0')}</span><span class="type-badge">${item.type==='exam'?'EVALUATION':'CLASS'}</span></div><h3>${item.title}</h3><p>${item.summary}</p><div class="week-keywords">${item.keywords.map(k=>`<span>${k}</span>`).join('')}</div><div class="week-actions"><a class="notion-link" href="${item.notion}" target="_blank" rel="noopener noreferrer">강의교안</a>${practice?`<a class="practice-link" href="${practice}">실습 보기</a>`:`<a class="practice-link" aria-disabled="true">평가 주차</a>`}</div></article>`;}
-function render(){const q=searchInput.value.trim().toLowerCase();const filtered=window.WEEK_DATA.filter(item=>{const typeMatch=activeFilter==='all'||item.type===activeFilter;const text=[item.week,item.title,item.summary,...item.keywords].join(' ').toLowerCase();return typeMatch&&(!q||text.includes(q));});weekGrid.innerHTML=filtered.map(cardTemplate).join('');empty.hidden=filtered.length>0;}
-searchInput.addEventListener('input',render);chips.forEach(chip=>chip.addEventListener('click',()=>{chips.forEach(c=>c.classList.remove('is-active'));chip.classList.add('is-active');activeFilter=chip.dataset.filter;render();}));render();
+const weekGrid=document.querySelector('#week-grid');
+const searchInput=document.querySelector('#week-search');
+const chips=[...document.querySelectorAll('.filter-chip')];
+const empty=document.querySelector('#empty-weeks');
+let activeFilter='all';
+
+function cardTemplate(item){
+  const actionText=item.type==='exam'?'평가 주차':'실습 준비 중';
+  return `
+    <article class="week-card ${item.type==='exam'?'is-exam':''}">
+      <div class="week-meta">
+        <span class="week-number">WEEK ${String(item.week).padStart(2,'0')}</span>
+        <span class="type-badge">${item.type==='exam'?'EVALUATION':'CLASS'}</span>
+      </div>
+      <h3>${item.title}</h3>
+      <p>${item.summary}</p>
+      <div class="week-keywords">${item.keywords.map(k=>`<span>${k}</span>`).join('')}</div>
+      <div class="week-actions">
+        <a class="notion-link" href="${item.notion}" target="_blank" rel="noopener noreferrer">강의교안</a>
+        <a class="practice-link" aria-disabled="true">${actionText}</a>
+      </div>
+    </article>`;
+}
+
+function render(){
+  const q=searchInput.value.trim().toLowerCase();
+  const filtered=window.WEEK_DATA.filter(item=>{
+    const typeMatch=activeFilter==='all'||item.type===activeFilter;
+    const text=[item.week,item.title,item.summary,...item.keywords].join(' ').toLowerCase();
+    return typeMatch&&(!q||text.includes(q));
+  });
+  weekGrid.innerHTML=filtered.map(cardTemplate).join('');
+  empty.hidden=filtered.length>0;
+}
+
+searchInput.addEventListener('input',render);
+chips.forEach(chip=>chip.addEventListener('click',()=>{
+  chips.forEach(c=>c.classList.remove('is-active'));
+  chip.classList.add('is-active');
+  activeFilter=chip.dataset.filter;
+  render();
+}));
+
+render();
