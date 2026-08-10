@@ -9,20 +9,174 @@
 </head>
 <body>
   <a class="skip-link" href="#main-content">본문 바로가기</a>
-  <header class="site-header">
+
+  <header class="site-header" id="top">
     <div class="shell header-inner">
-      <a class="brand" href="./" aria-label="웹프로젝트 실습 홈"><span class="brand-mark">WP</span><span><strong>웹프로젝트 실습</strong><small>2026 · 2학기</small></span></a>
-      <nav class="top-nav" aria-label="주요 메뉴"><a href="#weeks">주차별 수업</a><a href="#tracks">프로젝트 트랙</a><a href="#workflow">수업 진행</a></nav>
+      <a class="brand" href="./" aria-label="웹프로젝트 실습 홈">
+        <span class="brand-mark" aria-hidden="true">WP</span>
+        <span class="brand-text">
+          <strong>웹프로젝트 실습</strong>
+          <small>2026 · 2학기</small>
+        </span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="top-nav" aria-label="메뉴 열기">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="top-nav" id="top-nav" aria-label="주요 메뉴">
+        <a href="#weeks">주차별 수업</a>
+        <a href="#tracks">프로젝트 트랙</a>
+        <a href="#workflow">수업 진행</a>
+        <a class="team-url-link" href="https://app.notion.com/p/3b8a50f0761580429d64ff509f92a9be" target="_blank" rel="noopener noreferrer">팀별 URL</a>
+      </nav>
     </div>
   </header>
+
   <main id="main-content">
-    <section class="hero"><div class="shell hero-grid"><div><p class="eyebrow">WEB PROJECT PRACTICE · COURSE LAB</p><h1>강의교안에서<br><span>실행되는 웹서비스</span>까지</h1><p class="hero-copy">주차별 Notion 강의교안과 실제 실습 결과를 한곳에서 연결한다<br>수업에서는 개념을 확인하고 코드를 구현한 뒤 같은 화면에서 완성 결과를 비교한다</p><div class="hero-actions"><a class="button primary" href="#weeks">주차별 수업 시작</a><a class="button secondary" href="https://app.notion.com/p/3b7a50f0761581759f4af862a67e052e" target="_blank" rel="noopener noreferrer">샘플 프로젝트 전체 과정</a></div></div><aside class="hero-panel"><p class="panel-label">SEMESTER FLOW</p><ol class="flow-list"><li><span>01</span><div><strong>분석·기획</strong><small>서비스 분석 → 사용자 문제 → UX 설계</small></div></li><li><span>02</span><div><strong>데이터·구현</strong><small>JavaScript → JSON → 렌더링</small></div></li><li><span>03</span><div><strong>탐색·개인화</strong><small>검색·필터 → 상세 → LocalStorage</small></div></li><li><span>04</span><div><strong>검증·완성</strong><small>테스트 → 개선 → 배포 → 발표</small></div></li></ol></aside></div></section>
-    <section class="quick-bar"><div class="shell quick-grid"><div><strong>15주</strong><span>하나의 프로젝트 흐름</span></div><div><strong>필수</strong><span>JavaScript + JSON + LocalStorage</span></div><div><strong>심화</strong><span>API · Cloud DB 선택 확장</span></div><div><strong>최종</strong><span>실제 URL 배포 및 발표</span></div></div></section>
-    <section id="weeks" class="section shell"><div class="section-heading"><div><p class="eyebrow">WEEKLY CLASS</p><h2>주차별 수업</h2><p>강의교안은 Notion에서 확인하고 실습과 결과물은 이 웹뷰에서 이어간다</p></div><div class="legend"><span><i class="dot required"></i>수업</span><span><i class="dot exam"></i>평가</span></div></div><div class="week-tools"><label class="search-box" for="week-search"><span>⌕</span><input id="week-search" type="search" placeholder="주차 또는 키워드 검색" autocomplete="off"></label><div class="filter-group"><button class="filter-chip is-active" type="button" data-filter="all">전체</button><button class="filter-chip" type="button" data-filter="class">수업</button><button class="filter-chip" type="button" data-filter="exam">평가</button></div></div><div id="week-grid" class="week-grid" aria-live="polite"></div><p id="empty-weeks" class="empty-message" hidden>조건에 맞는 주차가 없습니다</p></section>
-    <section id="tracks" class="section muted-section"><div class="shell"><div class="section-heading compact"><div><p class="eyebrow">PROJECT TRACK</p><h2>필수 트랙과 심화 트랙</h2><p>심화 기술의 개수가 아니라 사용자 문제 해결과 안정적인 완성도를 우선한다</p></div></div><div class="track-grid"><article class="track-card required-track"><span class="track-badge">REQUIRED</span><h3>필수 트랙</h3><p>모든 팀이 공통으로 완성하는 기본 서비스 범위</p><ul><li>HTML·CSS 반응형 UI</li><li>JavaScript 상호작용</li><li>JSON 데이터 30건 이상</li><li>검색 + 복수 필터 + 정렬</li><li>ID 기반 상세보기</li><li>LocalStorage 개인화 3개 이상</li><li>사용자 테스트와 실제 배포</li></ul></article><article class="track-card advanced-track"><span class="track-badge">ADVANCED</span><h3>심화 트랙</h3><p>필수 트랙 완성 후 프로젝트 목적에 필요할 때 선택</p><ul><li>외부 API 데이터 연결</li><li>Supabase·Firebase 등 Cloud DB</li><li>공유 데이터와 간단한 인증</li><li>로딩·실패·권한 오류 처리</li><li>운영 환경에서 외부 서비스 검증</li><li>심화 기능 실패 시 필수 흐름 유지</li></ul></article></div></div></section>
-    <section id="workflow" class="section shell"><div class="section-heading compact"><div><p class="eyebrow">CLASS WORKFLOW</p><h2>수업에서 이렇게 사용한다</h2><p>매주 같은 순서로 진행해 학생이 현재 위치와 완료 기준을 쉽게 확인할 수 있게 한다</p></div></div><div class="workflow-grid"><article><span>1</span><h3>교안 확인</h3><p>해당 주차 카드에서 Notion 강의교안을 열어 핵심 개념과 실습 절차를 확인한다</p></article><article><span>2</span><h3>실습 시작</h3><p>주차 시작 상태의 코드를 열고 교수자와 함께 기능을 단계적으로 구현한다</p></article><article><span>3</span><h3>결과 비교</h3><p>완성 결과를 실행해 기능·화면·예외 상태가 기준에 맞는지 비교한다</p></article><article><span>4</span><h3>팀프로젝트 적용</h3><p>같은 구현 패턴을 각 팀의 주제와 데이터 구조에 맞게 변환해 적용한다</p></article></div></section>
+    <section class="hero">
+      <div class="hero-orb hero-orb-a" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb-b" aria-hidden="true"></div>
+      <div class="hero-grid-lines" aria-hidden="true"></div>
+
+      <div class="shell hero-grid">
+        <div class="hero-copy-area">
+          <p class="eyebrow hero-reveal hero-reveal-1">WEB PROJECT PRACTICE · COURSE LAB</p>
+          <h1 class="hero-reveal hero-reveal-2">강의교안에서<br><span>실행되는 웹서비스</span>까지</h1>
+          <p class="hero-copy hero-reveal hero-reveal-3">
+            주차별 Notion 강의교안과 실제 실습 결과를 한곳에서 연결한다<br>
+            수업에서는 개념을 확인하고 코드를 구현한 뒤 같은 화면에서 완성 결과를 비교한다
+          </p>
+          <div class="hero-actions hero-reveal hero-reveal-4">
+            <a class="button primary" href="#weeks"><span>주차별 수업 시작</span><b aria-hidden="true">↓</b></a>
+            <a class="button secondary" href="https://app.notion.com/p/3b7a50f0761581759f4af862a67e052e" target="_blank" rel="noopener noreferrer"><span>샘플 프로젝트 전체 과정</span><b aria-hidden="true">↗</b></a>
+          </div>
+        </div>
+
+        <aside class="hero-panel hero-reveal hero-reveal-5" aria-label="학기 프로젝트 흐름">
+          <p class="panel-label">SEMESTER FLOW</p>
+          <ol class="flow-list">
+            <li><span>01</span><div><strong>분석·기획</strong><small>서비스 분석 → 사용자 문제 → UX 설계</small></div></li>
+            <li><span>02</span><div><strong>데이터·구현</strong><small>JavaScript → JSON → 렌더링</small></div></li>
+            <li><span>03</span><div><strong>탐색·개인화</strong><small>검색·필터 → 상세 → LocalStorage</small></div></li>
+            <li><span>04</span><div><strong>검증·완성</strong><small>테스트 → 개선 → 배포 → 발표</small></div></li>
+          </ol>
+        </aside>
+      </div>
+    </section>
+
+    <section class="quick-bar" aria-label="강의 핵심 정보">
+      <div class="shell quick-grid">
+        <div><strong>15주</strong><span>하나의 프로젝트 흐름</span></div>
+        <div><strong>필수</strong><span>JavaScript + JSON + LocalStorage</span></div>
+        <div><strong>심화</strong><span>API · Cloud DB 선택 확장</span></div>
+        <div><strong>최종</strong><span>실제 URL 배포 및 발표</span></div>
+      </div>
+    </section>
+
+    <section id="weeks" class="section shell">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">WEEKLY CLASS</p>
+          <h2>주차별 수업</h2>
+          <p>강의교안은 Notion에서 확인하고 실습과 결과물은 이 웹뷰에서 이어간다</p>
+        </div>
+        <div class="legend" aria-label="주차 유형 범례">
+          <span><i class="dot required"></i>수업</span>
+          <span><i class="dot exam"></i>평가</span>
+        </div>
+      </div>
+
+      <div class="week-tools">
+        <label class="search-box" for="week-search">
+          <span aria-hidden="true">⌕</span>
+          <input id="week-search" type="search" placeholder="주차 또는 키워드 검색" autocomplete="off">
+        </label>
+        <div class="filter-group" role="group" aria-label="주차 필터">
+          <button class="filter-chip is-active" type="button" data-filter="all">전체</button>
+          <button class="filter-chip" type="button" data-filter="class">수업</button>
+          <button class="filter-chip" type="button" data-filter="exam">평가</button>
+        </div>
+      </div>
+
+      <div id="week-grid" class="week-grid" aria-live="polite"></div>
+      <p id="empty-weeks" class="empty-message" hidden>조건에 맞는 주차가 없습니다</p>
+    </section>
+
+    <section id="tracks" class="section muted-section">
+      <div class="shell">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">PROJECT TRACK</p>
+            <h2>필수 트랙과 심화 트랙</h2>
+            <p>심화 기술의 개수가 아니라 사용자 문제 해결과 안정적인 완성도를 우선한다</p>
+          </div>
+        </div>
+
+        <div class="track-grid">
+          <article class="track-card required-track motion-card">
+            <span class="track-badge">REQUIRED</span>
+            <h3>필수 트랙</h3>
+            <p>모든 팀이 공통으로 완성하는 기본 서비스 범위</p>
+            <ul>
+              <li>HTML·CSS 반응형 UI</li>
+              <li>JavaScript 상호작용</li>
+              <li>JSON 데이터 30건 이상</li>
+              <li>검색 + 복수 필터 + 정렬</li>
+              <li>ID 기반 상세보기</li>
+              <li>LocalStorage 개인화 3개 이상</li>
+              <li>사용자 테스트와 실제 배포</li>
+            </ul>
+          </article>
+
+          <article class="track-card advanced-track motion-card">
+            <span class="track-badge">ADVANCED</span>
+            <h3>심화 트랙</h3>
+            <p>필수 트랙 완성 후 프로젝트 목적에 필요할 때 선택</p>
+            <ul>
+              <li>외부 API 데이터 연결</li>
+              <li>Supabase·Firebase 등 Cloud DB</li>
+              <li>공유 데이터와 간단한 인증</li>
+              <li>로딩·실패·권한 오류 처리</li>
+              <li>운영 환경에서 외부 서비스 검증</li>
+              <li>심화 기능 실패 시 필수 흐름 유지</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="workflow" class="section shell">
+      <div class="section-heading compact">
+        <div>
+          <p class="eyebrow">CLASS WORKFLOW</p>
+          <h2>수업에서 이렇게 사용한다</h2>
+          <p>매주 같은 순서로 진행해 학생이 현재 위치와 완료 기준을 쉽게 확인할 수 있게 한다</p>
+        </div>
+      </div>
+
+      <div class="workflow-grid">
+        <article class="motion-card"><span>1</span><h3>교안 확인</h3><p>해당 주차 카드에서 Notion 강의교안을 열어 핵심 개념과 실습 절차를 확인한다</p></article>
+        <article class="motion-card"><span>2</span><h3>실습 시작</h3><p>주차 시작 상태의 코드를 열고 교수자와 함께 기능을 단계적으로 구현한다</p></article>
+        <article class="motion-card"><span>3</span><h3>결과 비교</h3><p>완성 결과를 실행해 기능·화면·예외 상태가 기준에 맞는지 비교한다</p></article>
+        <article class="motion-card"><span>4</span><h3>팀프로젝트 적용</h3><p>같은 구현 패턴을 각 팀의 주제와 데이터 구조에 맞게 변환해 적용한다</p></article>
+      </div>
+    </section>
   </main>
-  <footer class="site-footer"><div class="shell footer-inner"><div><strong>웹프로젝트 실습</strong><p>2026년 2학기 · 데이터 기반 웹서비스 제작</p></div></div></footer>
-  <script src="./data/weeks.js"></script><script src="./js/course.js"></script>
+
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <div><strong>웹프로젝트 실습</strong><p>2026년 2학기 · 데이터 기반 웹서비스 제작</p></div>
+      <a class="footer-team-link" href="https://app.notion.com/p/3b8a50f0761580429d64ff509f92a9be" target="_blank" rel="noopener noreferrer">팀별 URL 확인 ↗</a>
+    </div>
+  </footer>
+
+  <button class="top-button" id="top-button" type="button" aria-label="페이지 맨 위로 이동">
+    <span aria-hidden="true">↑</span>
+    <small>TOP</small>
+  </button>
+
+  <script src="./data/weeks.js"></script>
+  <script src="./js/course.js"></script>
 </body>
 </html>
