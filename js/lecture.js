@@ -21,6 +21,21 @@ function escapeHtml(value = '') {
   return value.replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
 }
 
+function normalizeCodeText(value = '') {
+  return value
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'");
+}
+
+function prepareLectureHtml(html = '') {
+  return html.replace(/<pre data-lang="([^"]+)">([\s\S]*?)<\/pre>/g, (_, lang, code) => {
+    return `<pre data-lang="${escapeHtml(lang)}">${escapeHtml(normalizeCodeText(code))}</pre>`;
+  });
+}
+
 function renderPage() {
   if (!weekData || !lecture) {
     titleEl.textContent = '강의교안을 찾을 수 없습니다';
@@ -34,7 +49,7 @@ function renderPage() {
   summaryEl.textContent = weekData.summary;
   heroNumberEl.textContent = String(week).padStart(2, '0');
   keywordEl.innerHTML = weekData.keywords.map(keyword => `<span>${escapeHtml(keyword)}</span>`).join('');
-  contentEl.innerHTML = lecture.content;
+  contentEl.innerHTML = prepareLectureHtml(lecture.content);
 
   enhanceCodeBlocks();
   buildToc();
@@ -78,7 +93,11 @@ function enhanceCodeBlocks() {
         document.execCommand('copy');
         area.remove();
         button.textContent = '복사됨';
-        setTimeout(() => button.textContent = '복사', 1500);
+        button.classList.add('is-copied');
+        setTimeout(() => {
+          button.textContent = '복사';
+          button.classList.remove('is-copied');
+        }, 1500);
       }
     });
   });
