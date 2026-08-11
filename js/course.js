@@ -7,15 +7,21 @@ const menuToggle = document.querySelector('.menu-toggle');
 const topNav = document.querySelector('#top-nav');
 const hero = document.querySelector('.hero');
 
+const READY_WEEKS = new Set([1, 2, 3]);
+
 let activeFilter = 'all';
 let cardObserver;
 let motionObserver;
 
 function cardTemplate(item) {
   const actionText = item.type === 'exam' ? '평가 안내' : '실습 준비 중';
+  const isReady = READY_WEEKS.has(item.week);
+  const lectureLink = isReady
+    ? `<a class="notion-link" href="${item.page}">강의교안</a>`
+    : `<a class="notion-link is-pending" href="#" data-pending-lecture="true" aria-label="${item.week}주차 강의교안 준비중">강의교안</a>`;
 
   return `
-    <article class="week-card ${item.type === 'exam' ? 'is-exam' : ''}">
+    <article class="week-card ${item.type === 'exam' ? 'is-exam' : ''} ${isReady ? '' : 'is-pending'}">
       <div class="week-meta">
         <span class="week-number">WEEK ${String(item.week).padStart(2, '0')}</span>
         <span class="type-badge">${item.type === 'exam' ? 'EVALUATION' : 'CLASS'}</span>
@@ -26,10 +32,19 @@ function cardTemplate(item) {
         ${item.keywords.map(keyword => `<span>${keyword}</span>`).join('')}
       </div>
       <div class="week-actions">
-        <a class="notion-link" href="${item.page}">강의교안</a>
+        ${lectureLink}
         <a class="practice-link" aria-disabled="true">${actionText}</a>
       </div>
     </article>`;
+}
+
+function setupPendingLectureLinks() {
+  weekGrid.querySelectorAll('[data-pending-lecture="true"]').forEach(link => {
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      window.alert('교안 준비중입니다.');
+    });
+  });
 }
 
 function setupWeekCardMotion() {
@@ -60,6 +75,7 @@ function render() {
 
   weekGrid.innerHTML = filtered.map(cardTemplate).join('');
   empty.hidden = filtered.length > 0;
+  setupPendingLectureLinks();
   setupWeekCardMotion();
 }
 
