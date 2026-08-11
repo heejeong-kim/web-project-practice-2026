@@ -2,6 +2,7 @@ const params = new URLSearchParams(window.location.search);
 const requestedWeek = Number(params.get('week')) || 1;
 const week = Math.min(15, Math.max(1, requestedWeek));
 const weekData = window.WEEK_DATA.find(item => item.week === week);
+const READY_WEEKS = new Set([1, 2, 3]);
 
 const titleEl = document.querySelector('#lecture-title');
 const weekEl = document.querySelector('#lecture-week');
@@ -189,6 +190,21 @@ async function loadLectureSource() {
   return response.text();
 }
 
+function renderPendingLecture() {
+  document.title = `${week}주차 · 교안 준비중 | 웹프로젝트 실습`;
+  summaryEl.textContent = '현재 강의교안을 준비하고 있습니다.';
+  keywordEl.innerHTML = '<span>COMING SOON</span>';
+  contentEl.innerHTML = `
+    <section class="lecture-pending" role="status" aria-live="polite">
+      <span class="lecture-pending-mark" aria-hidden="true">${String(week).padStart(2, '0')}</span>
+      <h2>교안 준비중입니다.</h2>
+      <p>해당 주차 강의교안은 준비가 완료된 후 공개됩니다.</p>
+      <a href="./#weeks">주차별 수업으로 돌아가기</a>
+    </section>`;
+  if (tocList) tocList.innerHTML = '';
+  if (document.querySelector('.lecture-toc')) document.querySelector('.lecture-toc').style.display = 'none';
+}
+
 async function renderPage() {
   if (!weekData) return;
 
@@ -201,6 +217,11 @@ async function renderPage() {
 
   buildWeekMenu();
   buildPager();
+
+  if (!READY_WEEKS.has(week)) {
+    renderPendingLecture();
+    return;
+  }
 
   try {
     const source = await loadLectureSource();
@@ -256,7 +277,13 @@ function buildToc() {
 }
 
 function buildWeekMenu() {
-  weekMenu.innerHTML = window.WEEK_DATA.map(item => `<a class="${item.week === week ? 'is-current' : ''}" href="./lecture.html?week=${String(item.week).padStart(2, '0')}">${String(item.week).padStart(2, '0')}주차</a>`).join('');
+  weekMenu.innerHTML = window.WEEK_DATA.map(item => {
+    const isReady = READY_WEEKS.has(item.week);
+    const currentClass = item.week === week ? ' is-current' : '';
+    const pendingClass = isReady ? '' : ' is-pending';
+    return `<a class="${(currentClass + pendingClass).trim()}" href="./lecture.html?week=${String(item.week).padStart(2, '0')}" data-ready="${isReady}">${String(item.week).padStart(2, '0')}주차</a>`;
+  }).join('');
+
   weekMenuButton.addEventListener('click', () => {
     const isOpen = !weekMenu.hidden;
     weekMenu.hidden = isOpen;
