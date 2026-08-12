@@ -9,10 +9,11 @@ const weekEl = document.querySelector('#lecture-week');
 const summaryEl = document.querySelector('#lecture-summary');
 const keywordEl = document.querySelector('#lecture-keywords');
 const heroNumberEl = document.querySelector('#hero-week-number');
+const stickyWeekLabel = document.querySelector('#sticky-week-label');
+const stickyWeekTitle = document.querySelector('#sticky-week-title');
 const contentEl = document.querySelector('#lecture-content');
 const tocList = document.querySelector('#toc-list');
 const weekMenu = document.querySelector('#week-menu');
-const weekMenuButton = document.querySelector('#week-menu-button');
 const prevWeek = document.querySelector('#prev-week');
 const nextWeek = document.querySelector('#next-week');
 const topButton = document.querySelector('#top-button');
@@ -22,10 +23,10 @@ function injectLectureImageStyles() {
   const style = document.createElement('style');
   style.id = 'lecture-image-styles';
   style.textContent = `
-    .lecture-shell{width:min(1360px,calc(100% - 40px))!important}
+    .lecture-shell{width:min(1520px,calc(100% - 64px))!important}
     .toc-week-thumbnail{display:block;margin:12px 0 16px;border-radius:12px;overflow:hidden;border:1px solid #e1e6ee;background:#e8edf4}
     .toc-week-thumbnail img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
-    @media(max-width:680px){.lecture-shell{width:min(100% - 28px,1360px)!important}}
+    @media(max-width:680px){.lecture-shell{width:min(100% - 28px,1520px)!important}}
   `;
   document.head.appendChild(style);
 }
@@ -235,10 +236,12 @@ async function renderPage() {
   if (!weekData) return;
 
   document.title = `${week}주차 · ${weekData.title} | 웹프로젝트 실습`;
-  weekEl.textContent = `WEEK ${String(week).padStart(2, '0')} · ${weekData.type === 'exam' ? 'EVALUATION' : 'LECTURE'}`;
+  weekEl.textContent = `WEEK ${String(week).padStart(2, '0')} · ${weekData.type === 'exam' ? '평가' : '수업'}`;
   titleEl.textContent = weekData.title;
   summaryEl.textContent = weekData.summary;
   heroNumberEl.textContent = String(week).padStart(2, '0');
+  stickyWeekLabel.textContent = `${String(week).padStart(2, '0')}주차`;
+  stickyWeekTitle.textContent = weekData.title;
   keywordEl.innerHTML = weekData.keywords.map(keyword => `<span>${escapeHtml(keyword)}</span>`).join('');
 
   buildWeekMenu();
@@ -309,14 +312,10 @@ function buildWeekMenu() {
     const isReady = READY_WEEKS.has(item.week);
     const currentClass = item.week === week ? ' is-current' : '';
     const pendingClass = isReady ? '' : ' is-pending';
-    return `<a class="${(currentClass + pendingClass).trim()}" href="./lecture.html?week=${String(item.week).padStart(2, '0')}" data-ready="${isReady}">${String(item.week).padStart(2, '0')}주차</a>`;
+    return `<a class="${(currentClass + pendingClass).trim()}" href="./lecture.html?week=${String(item.week).padStart(2, '0')}" data-ready="${isReady}" aria-label="${item.week}주차 ${escapeHtml(item.title)}">${String(item.week).padStart(2, '0')}</a>`;
   }).join('');
 
-  weekMenuButton.addEventListener('click', () => {
-    const isOpen = !weekMenu.hidden;
-    weekMenu.hidden = isOpen;
-    weekMenuButton.setAttribute('aria-expanded', String(!isOpen));
-  });
+  weekMenu.querySelector('.is-current')?.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
 }
 
 function buildPager() {
