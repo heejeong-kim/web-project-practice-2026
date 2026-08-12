@@ -26,13 +26,15 @@ function injectThumbnailStyles() {
     .week-thumbnail img{display:block;width:100%;height:100%;object-fit:cover;filter:none;opacity:1;transition:transform .45s var(--ease,cubic-bezier(.22,1,.36,1))}
     .week-card:hover .week-thumbnail img{transform:scale(1.035)}
     .week-title-link{color:#7d8797;text-decoration:none;transition:color .3s ease}
-    .week-card.is-ready:hover .week-title-link{color:var(--ink)}
+    .week-card.is-ready .week-title-link{color:var(--ink)!important}
     .week-card .week-number,.week-card .type-badge,.week-card>p{color:#8b95a5!important}
+    .week-card.is-ready .week-number{color:var(--ink)!important}
+    .week-card.is-ready>p{color:var(--ink)!important}
     .week-card .type-badge{background:#eef1f5!important}
-    .week-card.is-ready:hover .week-number{color:#d7641d!important}
+    .week-card.is-ready:hover .week-number{color:var(--ink)!important}
     .week-card.is-ready:hover .type-badge{background:#fff3eb!important;color:#9c4e18!important}
     .week-card.is-ready.is-exam:hover .type-badge{background:#f0edff!important;color:#5644b8!important}
-    .week-card.is-ready:hover>p{color:var(--sub)!important}
+    .week-card.is-ready:hover>p{color:var(--ink)!important}
     .week-keywords span{background:#eef1f5!important;color:#7f8998!important}
     .week-card.is-ready .week-keywords span{background:#fff0e6!important;color:#b55a20!important}
     .week-card.is-ready.is-exam .week-keywords span{background:#f0edff!important;color:#6552c4!important}
