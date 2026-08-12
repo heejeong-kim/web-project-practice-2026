@@ -12,6 +12,7 @@ const heroNumberEl = document.querySelector('#hero-week-number');
 const contentEl = document.querySelector('#lecture-content');
 const tocList = document.querySelector('#toc-list');
 const weekSelect = document.querySelector('#week-select');
+const mobileWeekSelect = document.querySelector('#mobile-week-select');
 const prevWeek = document.querySelector('#prev-week');
 const nextWeek = document.querySelector('#next-week');
 const topButton = document.querySelector('#top-button');
@@ -302,17 +303,22 @@ function buildToc() {
   }).join('');
 }
 
-function buildWeekSelect() {
-  if (!weekSelect) return;
-  weekSelect.innerHTML = window.WEEK_DATA.map(item => {
+function fillWeekSelect(selectEl) {
+  if (!selectEl) return;
+  selectEl.innerHTML = window.WEEK_DATA.map(item => {
     const number = String(item.week).padStart(2, '0');
     const selected = item.week === week ? ' selected' : '';
     return `<option value="${number}"${selected}>${number}주차 · ${escapeHtml(item.title)}</option>`;
   }).join('');
 
-  weekSelect.addEventListener('change', () => {
-    window.location.href = `./lecture.html?week=${weekSelect.value}`;
+  selectEl.addEventListener('change', () => {
+    window.location.href = `./lecture.html?week=${selectEl.value}`;
   });
+}
+
+function buildWeekSelect() {
+  fillWeekSelect(weekSelect);
+  fillWeekSelect(mobileWeekSelect);
 }
 
 function buildPager() {
