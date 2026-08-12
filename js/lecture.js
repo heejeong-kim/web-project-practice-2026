@@ -17,6 +17,20 @@ const prevWeek = document.querySelector('#prev-week');
 const nextWeek = document.querySelector('#next-week');
 const topButton = document.querySelector('#top-button');
 
+function injectLectureImageStyles() {
+  if (document.querySelector('#lecture-image-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'lecture-image-styles';
+  style.textContent = `
+    .lecture-shell{width:min(1360px,calc(100% - 40px))!important}
+    .lecture-content-cover{margin:0 0 42px}
+    .lecture-content-label{margin:0 0 12px!important;color:#98a2b3!important;font-size:11px!important;font-weight:900!important;letter-spacing:.16em!important}
+    .lecture-content-cover img{display:block;width:100%;height:auto;max-height:560px;object-fit:cover;border-radius:20px;border:1px solid #e1e6ee;background:#e8edf4;box-shadow:0 18px 44px rgba(17,24,39,.08)}
+    @media(max-width:680px){.lecture-shell{width:min(100% - 28px,1360px)!important}.lecture-content-cover{margin-bottom:30px}.lecture-content-cover img{border-radius:14px}}
+  `;
+  document.head.appendChild(style);
+}
+
 function escapeHtml(value = '') {
   return String(value).replace(/[&<>"']/g, char => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
@@ -225,7 +239,12 @@ async function renderPage() {
 
   try {
     const source = await loadLectureSource();
-    contentEl.innerHTML = renderNotionMarkdown(source);
+    const cover = `
+      <div class="lecture-content-cover">
+        <p class="lecture-content-label">CONTENT</p>
+        <img src="./asset/${week}.png" alt="${week}주차 ${escapeHtml(weekData.title)} 강의 이미지">
+      </div>`;
+    contentEl.innerHTML = cover + renderNotionMarkdown(source);
     enhanceCodeBlocks();
     buildToc();
   } catch (error) {
@@ -308,5 +327,6 @@ const updateTopButton = () => topButton.classList.toggle('is-visible', window.sc
 window.addEventListener('scroll', updateTopButton, { passive: true });
 topButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
+injectLectureImageStyles();
 renderPage();
 updateTopButton();
