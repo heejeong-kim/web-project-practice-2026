@@ -6,12 +6,12 @@ window.WEEK_DATA = [
   {week:5,title:'JavaScript 프로젝트 기초',type:'class',keywords:['DOM','Event','Function'],summary:'정적 HTML·CSS에 JavaScript 상호작용을 연결하고 입력→처리→출력 구조를 익힌다',page:'./lecture.html?week=05'},
   {week:6,title:'JSON 데이터셋 설계',type:'class',keywords:['Dataset','Field','ID'],summary:'검색·필터·정렬·상세보기에 필요한 JSON 데이터 구조와 명세를 설계한다',page:'./lecture.html?week=06'},
   {week:7,title:'JSON 기반 화면 구현',type:'class',keywords:['fetch','Rendering','Empty State'],summary:'JSON을 불러와 반복 렌더링하고 결과 건수·빈 상태·오류 상태를 처리한다',page:'./lecture.html?week=07'},
-  {week:8,title:'중간평가: 팀 프로젝트',type:'exam',keywords:['필기시험','중간발표','Feedback'],summary:'1~7주차 필기평가와 팀프로젝트 중간발표를 통해 후반기 개발 우선순위를 조정한다',page:'./lecture.html?week=08'},
+  {week:8,title:'중간평가',type:'exam',keywords:['필기시험','중간 자료 점검','Feedback'],summary:'1~7주차 필기평가와 중간 자료 점검을 통해 후반기 개발 우선순위를 조정한다',page:'./lecture.html?week=08'},
   {week:9,title:'검색·필터·정렬 기능',type:'class',keywords:['Search','Filter','Sort'],summary:'검색과 복수 필터, 정렬을 하나의 상태와 결과 배열로 연결한다',page:'./lecture.html?week=09'},
   {week:10,title:'상세보기 및 인터랙션 설계',type:'class',keywords:['Detail View','Modal','Interaction'],summary:'ID 기반 상세보기와 목록 복귀, 다음 행동까지 이어지는 인터랙션을 구현한다',page:'./lecture.html?week=10'},
   {week:11,title:'LocalStorage 기초',type:'class',keywords:['Client Storage','Serialization','Favorite'],summary:'브라우저 개인 상태를 저장하고 JSON 기본 데이터와 사용자 상태를 구분한다',page:'./lecture.html?week=11'},
   {week:12,title:'LocalStorage 활용 기능 구현',type:'class',keywords:['Personalization','API','Cloud DB'],summary:'개인화 기능을 통합하고 필요 팀은 외부 API 또는 클라우드 DB 심화를 시작한다',page:'./lecture.html?week=12'},
   {week:13,title:'프로젝트 통합 및 사용자 테스트',type:'class',keywords:['Integration','Test Case','QA'],summary:'기능을 하나의 사용자 흐름으로 통합하고 교차 사용자 테스트와 오류 수정을 진행한다',page:'./lecture.html?week=13'},
   {week:14,title:'프로젝트 개선 및 최종 완성',type:'class',keywords:['Deployment','Production','Demo'],summary:'최종 QA, 반응형 검수, 실제 배포와 발표 시연을 준비한다',page:'./lecture.html?week=14'},
-  {week:15,title:'기말평가: 팀 프로젝트 발표',type:'exam',keywords:['필기시험','Final Demo','Retrospective'],summary:'9~14주차 필기평가와 최종 웹서비스 발표·시연·회고를 진행한다',page:'./lecture.html?week=15'}
+  {week:15,title:'기말평가',type:'exam',keywords:['필기시험','Final Demo','최종 자료 제출'],summary:'9~14주차 필기평가와 Final Demo, 최종 자료 제출을 진행한다',page:'./lecture.html?week=15'}
 ];
