@@ -69,7 +69,7 @@ function cardTemplate(item) {
       </a>
       <div class="week-meta">
         <span class="week-number">WEEK ${String(item.week).padStart(2, '0')}</span>
-        <span class="type-badge">${item.type === 'exam' ? 'EVALUATION' : 'CLASS'}</span>
+        <span class="type-badge">${item.type === 'exam' ? 'EVALUATION' : '수업'}</span>
       </div>
       <h3><a class="week-title-link" ${linkAttrs}>${item.title}</a></h3>
       <p>${item.summary}</p>
