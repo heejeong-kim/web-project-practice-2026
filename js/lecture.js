@@ -9,11 +9,9 @@ const weekEl = document.querySelector('#lecture-week');
 const summaryEl = document.querySelector('#lecture-summary');
 const keywordEl = document.querySelector('#lecture-keywords');
 const heroNumberEl = document.querySelector('#hero-week-number');
-const stickyWeekLabel = document.querySelector('#sticky-week-label');
-const stickyWeekTitle = document.querySelector('#sticky-week-title');
 const contentEl = document.querySelector('#lecture-content');
 const tocList = document.querySelector('#toc-list');
-const weekMenu = document.querySelector('#week-menu');
+const weekSelect = document.querySelector('#week-select');
 const prevWeek = document.querySelector('#prev-week');
 const nextWeek = document.querySelector('#next-week');
 const topButton = document.querySelector('#top-button');
@@ -229,7 +227,6 @@ function renderPendingLecture() {
       <a href="./#weeks">주차별 수업으로 돌아가기</a>
     </section>`;
   if (tocList) tocList.innerHTML = '';
-  if (document.querySelector('.lecture-toc')) document.querySelector('.lecture-toc').style.display = 'none';
 }
 
 async function renderPage() {
@@ -240,11 +237,9 @@ async function renderPage() {
   titleEl.textContent = weekData.title;
   summaryEl.textContent = weekData.summary;
   heroNumberEl.textContent = String(week).padStart(2, '0');
-  stickyWeekLabel.textContent = `${String(week).padStart(2, '0')}주차`;
-  stickyWeekTitle.textContent = weekData.title;
   keywordEl.innerHTML = weekData.keywords.map(keyword => `<span>${escapeHtml(keyword)}</span>`).join('');
 
-  buildWeekMenu();
+  buildWeekSelect();
   buildPager();
 
   if (!READY_WEEKS.has(week)) {
@@ -307,15 +302,17 @@ function buildToc() {
   }).join('');
 }
 
-function buildWeekMenu() {
-  weekMenu.innerHTML = window.WEEK_DATA.map(item => {
-    const isReady = READY_WEEKS.has(item.week);
-    const currentClass = item.week === week ? ' is-current' : '';
-    const pendingClass = isReady ? '' : ' is-pending';
-    return `<a class="${(currentClass + pendingClass).trim()}" href="./lecture.html?week=${String(item.week).padStart(2, '0')}" data-ready="${isReady}" aria-label="${item.week}주차 ${escapeHtml(item.title)}">${String(item.week).padStart(2, '0')}</a>`;
+function buildWeekSelect() {
+  if (!weekSelect) return;
+  weekSelect.innerHTML = window.WEEK_DATA.map(item => {
+    const number = String(item.week).padStart(2, '0');
+    const selected = item.week === week ? ' selected' : '';
+    return `<option value="${number}"${selected}>${number}주차 · ${escapeHtml(item.title)}</option>`;
   }).join('');
 
-  weekMenu.querySelector('.is-current')?.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+  weekSelect.addEventListener('change', () => {
+    window.location.href = `./lecture.html?week=${weekSelect.value}`;
+  });
 }
 
 function buildPager() {
