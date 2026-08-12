@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="./css/lecture.css">
   <style>
     html,body,button,input,a{font-family:"IBM Plex Sans KR",sans-serif}
+    html body .lecture-shell{width:min(1180px,calc(100% - 40px))!important}
     .lecture-layout{grid-template-columns:264px minmax(0,1fr)!important}
     .week-menu a.is-pending:not(.is-current){color:#7f899d;border-color:#222b40;background:#0d1425}
     .lecture-pending{min-height:430px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#fff;border:1px solid #e1e6ee;border-radius:24px;padding:48px 24px;margin-bottom:40px}
@@ -19,6 +20,7 @@
     .lecture-pending p{margin:0;color:#667085}
     .lecture-pending a{margin-top:26px;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:10px;background:#ff8a3d;color:#1e1209;text-decoration:none;font-weight:700}
     @media(max-width:920px){.lecture-layout{grid-template-columns:1fr!important}}
+    @media(max-width:680px){html body .lecture-shell{width:min(100% - 28px,1180px)!important}}
   </style>
 </head>
 <body>
@@ -87,5 +89,9 @@
 
   <script src="./data/weeks.js"></script>
   <script src="./js/lecture.js"></script>
+  <script>
+    const lectureWeekLabel = document.querySelector('#lecture-week');
+    if (lectureWeekLabel) lectureWeekLabel.textContent = lectureWeekLabel.textContent.replace('EVALUATION','평가');
+  </script>
 </body>
 </html>
