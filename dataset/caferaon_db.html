@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>스터디 카페 찾기</title>
+</head>
+<body>
+  <header>
+    <h1>스터디 카페 찾기</h1>
+    <p>지역과 이용 조건을 선택해 나에게 맞는 카페를 찾아본다</p>
+  </header>
+
+  <main>
+    <section aria-labelledby="search-title">
+      <h2 id="search-title">카페 검색</h2>
+
+      <label for="keyword">검색어</label>
+      <input
+        id="keyword"
+        type="search"
+        placeholder="카페명 또는 태그 검색"
+      />
+
+      <label for="area">지역</label>
+      <select id="area">
+        <option value="all">전체</option>
+        <option value="성수동">성수동</option>
+        <option value="건대입구">건대입구</option>
+        <option value="왕십리">왕십리</option>
+      </select>
+
+      <label>
+        <input id="outlet" type="checkbox" />
+        콘센트 있음
+      </label>
+
+      <label>
+        <input id="wifi" type="checkbox" />
+        와이파이 있음
+      </label>
+
+      <label for="sort">정렬</label>
+      <select id="sort">
+        <option value="default">기본순</option>
+        <option value="price-asc">가격 낮은 순</option>
+        <option value="name-asc">이름순</option>
+      </select>
+    </section>
+
+    <section aria-labelledby="result-title">
+      <h2 id="result-title">검색 결과</h2>
+      <p id="result-count">총 0개의 카페</p>
+
+      <!-- JavaScript가 JSON 데이터를 바탕으로 카페 카드를 생성하는 영역 -->
+      <div id="cafe-list"></div>
+    </section>
+
+    <section aria-labelledby="favorite-title">
+      <h2 id="favorite-title">즐겨찾기</h2>
+      <!-- LocalStorage에 저장된 카페 id를 이용해 표시하는 영역 -->
+      <div id="favorite-list"></div>
+    </section>
+  </main>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>
