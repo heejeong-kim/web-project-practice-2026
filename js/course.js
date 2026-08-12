@@ -23,8 +23,8 @@ function injectThumbnailStyles() {
     .week-card.is-ready.is-exam{border-top-color:var(--purple)!important}
     .week-thumbnail{position:relative;margin:-1px -1px 18px;overflow:hidden;border-radius:16px 16px 12px 12px;aspect-ratio:16/9;background:#e8edf4}
     .week-thumbnail-link{display:block;text-decoration:none}
-    .week-thumbnail img{display:block;width:100%;height:100%;object-fit:cover;filter:grayscale(1) saturate(.45);opacity:.78;transition:transform .45s var(--ease,cubic-bezier(.22,1,.36,1)),filter .35s ease,opacity .35s ease}
-    .week-card.is-ready:hover .week-thumbnail img{transform:scale(1.035);filter:grayscale(0) saturate(1);opacity:1}
+    .week-thumbnail img{display:block;width:100%;height:100%;object-fit:cover;filter:none;opacity:1;transition:transform .45s var(--ease,cubic-bezier(.22,1,.36,1))}
+    .week-card:hover .week-thumbnail img{transform:scale(1.035)}
     .week-title-link{color:#7d8797;text-decoration:none;transition:color .3s ease}
     .week-card.is-ready:hover .week-title-link{color:var(--ink)}
     .week-card .week-number,.week-card .type-badge,.week-card>p{color:#8b95a5!important}
@@ -36,11 +36,11 @@ function injectThumbnailStyles() {
     .week-keywords span{background:#eef1f5!important;color:#7f8998!important}
     .week-card.is-ready .week-keywords span{background:#fff0e6!important;color:#b55a20!important}
     .week-card.is-ready.is-exam .week-keywords span{background:#f0edff!important;color:#6552c4!important}
-    .week-card.is-ready .notion-link{background:#e6e9ee!important;color:#737d8d!important;box-shadow:none!important}
-    .week-card.is-ready:hover .notion-link{background:var(--ink)!important;color:#fff!important;box-shadow:0 10px 22px rgba(21,32,51,.18)!important}
+    .week-card.is-ready .notion-link{background:var(--ink)!important;color:#fff!important;box-shadow:0 10px 22px rgba(21,32,51,.14)!important}
+    .week-card.is-ready .notion-link:hover{background:#24324b!important;color:#fff!important;box-shadow:0 12px 26px rgba(21,32,51,.22)!important}
     .week-card.is-pending:hover{border-color:#d7dce5!important;box-shadow:0 14px 28px rgba(24,34,52,.07)!important}
     .week-card.is-pending:hover::before{opacity:0!important}
-    .week-card.is-pending:hover .week-thumbnail img{transform:none;filter:grayscale(1) saturate(.45);opacity:.78}
+    .week-card.is-pending:hover .week-thumbnail img{transform:scale(1.02)}
     .week-card.is-pending:hover .week-number{color:#8b95a5!important;transform:none}
     .week-card.is-pending:hover .week-keywords span{background:#eef1f5!important;transform:none}
     .week-actions{display:block}
