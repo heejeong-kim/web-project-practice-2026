@@ -13,15 +13,33 @@ let activeFilter = 'all';
 let cardObserver;
 let motionObserver;
 
+function injectThumbnailStyles() {
+  if (document.querySelector('#week-thumbnail-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'week-thumbnail-styles';
+  style.textContent = `
+    .week-thumbnail{position:relative;margin:-1px -1px 18px;overflow:hidden;border-radius:16px 16px 12px 12px;aspect-ratio:16/9;background:#e8edf4}
+    .week-thumbnail img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .45s var(--ease,cubic-bezier(.22,1,.36,1))}
+    .week-card:hover .week-thumbnail img{transform:scale(1.035)}
+    .week-card.is-pending .week-thumbnail img{filter:saturate(.82);opacity:.9}
+    @media(max-width:620px){.week-thumbnail{margin-bottom:16px}}
+  `;
+  document.head.appendChild(style);
+}
+
 function cardTemplate(item) {
   const actionText = item.type === 'exam' ? '평가 안내' : '실습 준비 중';
   const isReady = READY_WEEKS.has(item.week);
   const lectureLink = isReady
     ? `<a class="notion-link" href="${item.page}">강의교안</a>`
     : `<a class="notion-link is-pending" href="#" data-pending-lecture="true" aria-label="${item.week}주차 강의교안 준비중">강의교안</a>`;
+  const thumbnail = `./asset/${item.week}.png`;
 
   return `
     <article class="week-card ${item.type === 'exam' ? 'is-exam' : ''} ${isReady ? '' : 'is-pending'}">
+      <div class="week-thumbnail">
+        <img src="${thumbnail}" alt="${item.week}주차 ${item.title} 썸네일" loading="lazy">
+      </div>
       <div class="week-meta">
         <span class="week-number">WEEK ${String(item.week).padStart(2, '0')}</span>
         <span class="type-badge">${item.type === 'exam' ? 'EVALUATION' : 'CLASS'}</span>
@@ -142,6 +160,7 @@ if (topButton) {
   topButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 }
 
+injectThumbnailStyles();
 window.addEventListener('pageshow', restartHeroMotion);
 render();
 setupGeneralMotion();
