@@ -23,12 +23,24 @@ function injectLectureImageStyles() {
   style.id = 'lecture-image-styles';
   style.textContent = `
     .lecture-shell{width:min(1360px,calc(100% - 40px))!important}
-    .lecture-content-cover{margin:0 0 42px}
-    .lecture-content-label{margin:0 0 12px!important;color:#98a2b3!important;font-size:11px!important;font-weight:900!important;letter-spacing:.16em!important}
-    .lecture-content-cover img{display:block;width:100%;height:auto;max-height:560px;object-fit:cover;border-radius:20px;border:1px solid #e1e6ee;background:#e8edf4;box-shadow:0 18px 44px rgba(17,24,39,.08)}
-    @media(max-width:680px){.lecture-shell{width:min(100% - 28px,1360px)!important}.lecture-content-cover{margin-bottom:30px}.lecture-content-cover img{border-radius:14px}}
+    .toc-week-thumbnail{display:block;margin:12px 0 16px;border-radius:12px;overflow:hidden;border:1px solid #e1e6ee;background:#e8edf4}
+    .toc-week-thumbnail img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+    @media(max-width:680px){.lecture-shell{width:min(100% - 28px,1360px)!important}}
   `;
   document.head.appendChild(style);
+}
+
+function setupTocThumbnail() {
+  const tocCard = document.querySelector('.toc-card');
+  if (!tocCard || !READY_WEEKS.has(week)) return;
+  const oldThumbnail = tocCard.querySelector('.toc-week-thumbnail');
+  if (oldThumbnail) oldThumbnail.remove();
+  const title = tocCard.querySelector(':scope > strong');
+  if (!title) return;
+  const figure = document.createElement('div');
+  figure.className = 'toc-week-thumbnail';
+  figure.innerHTML = `<img src="./asset/${week}.png" alt="${week}주차 ${escapeHtml(weekData.title)} 썸네일">`;
+  title.insertAdjacentElement('afterend', figure);
 }
 
 function escapeHtml(value = '') {
@@ -237,14 +249,11 @@ async function renderPage() {
     return;
   }
 
+  setupTocThumbnail();
+
   try {
     const source = await loadLectureSource();
-    const cover = `
-      <div class="lecture-content-cover">
-        <p class="lecture-content-label">CONTENT</p>
-        <img src="./asset/${week}.png" alt="${week}주차 ${escapeHtml(weekData.title)} 강의 이미지">
-      </div>`;
-    contentEl.innerHTML = cover + renderNotionMarkdown(source);
+    contentEl.innerHTML = renderNotionMarkdown(source);
     enhanceCodeBlocks();
     buildToc();
   } catch (error) {
