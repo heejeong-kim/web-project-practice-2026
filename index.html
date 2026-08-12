@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="./css/course.css">
   <style>
     html,body,button,input,a{font-family:"IBM Plex Sans KR",sans-serif}
+    .shell{width:min(1320px,calc(100% - 56px));margin-left:auto;margin-right:auto}
     .week-card.is-pending .notion-link{background:#eef1f5;color:#7a8496;box-shadow:none}
     .week-card.is-pending .notion-link:hover{transform:none;box-shadow:none;background:#e7ebf1;color:#5f6979}
     .week-card.is-exam .type-badge{font-size:0}
     .week-card.is-exam .type-badge::after{content:"평가";font-size:11px}
+    @media(max-width:680px){.shell{width:min(100% - 28px,1320px)}}
   </style>
 </head>
 <body>
