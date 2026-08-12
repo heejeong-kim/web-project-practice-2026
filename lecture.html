@@ -13,7 +13,7 @@
     html,body,button,input,a{font-family:"IBM Plex Sans KR",sans-serif}
     html body .lecture-shell{width:min(1520px,calc(100% - 64px))!important}
     .lecture-layout{grid-template-columns:264px minmax(0,1fr)!important}
-    .week-menu a.is-pending:not(.is-current){color:#7f899d;border-color:#222b40;background:#0d1425}
+    .week-menu a.is-pending:not(.is-current){color:#7f899d;border-color:#d8dee8;background:#f4f6f9}
     .lecture-pending{min-height:430px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#fff;border:1px solid #e1e6ee;border-radius:24px;padding:48px 24px;margin-bottom:40px}
     .lecture-pending-mark{display:grid;place-items:center;width:78px;height:78px;border-radius:22px;background:#111827;color:#ff8a3d;font-size:28px;font-weight:700;margin-bottom:22px}
     .lecture-pending h2{font-size:32px;margin:0 0 10px;letter-spacing:-.03em}
@@ -34,11 +34,9 @@
       </a>
       <nav class="lecture-nav" aria-label="강의교안 메뉴">
         <a href="./index.html#weeks">전체 주차</a>
-        <button class="week-menu-button" id="week-menu-button" type="button" aria-expanded="false">주차 이동</button>
         <a href="https://app.notion.com/p/3b8a50f0761580429d64ff509f92a9be" target="_blank" rel="noopener noreferrer">팀별 URL</a>
       </nav>
     </div>
-    <div class="week-menu" id="week-menu" hidden></div>
   </header>
 
   <main>
@@ -56,6 +54,16 @@
           <strong id="hero-week-number">01</strong>
           <small>WEB PROJECT PRACTICE</small>
         </div>
+      </div>
+    </section>
+
+    <section class="lecture-week-bar" aria-label="주차별 강의교안 이동">
+      <div class="lecture-shell lecture-week-bar-inner">
+        <div class="lecture-week-title">
+          <span id="sticky-week-label">01주차</span>
+          <strong id="sticky-week-title">강의교안</strong>
+        </div>
+        <nav class="week-menu" id="week-menu" aria-label="1주차부터 15주차 강의교안"></nav>
       </div>
     </section>
 
