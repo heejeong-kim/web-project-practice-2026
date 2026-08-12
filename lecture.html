@@ -13,6 +13,7 @@
     html,body,button,input,a,select{font-family:"IBM Plex Sans KR",sans-serif}
     html body .lecture-shell{width:min(1520px,calc(100% - 64px))!important}
     .lecture-layout{grid-template-columns:264px minmax(0,1fr)!important}
+    .lecture-main-column{min-width:0}
     .lecture-header{position:relative!important;top:auto!important;z-index:20!important}
     .toc-card{top:24px!important;max-height:calc(100vh - 48px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
     .week-select-wrap{margin:0 0 18px;padding:0 0 18px;border-bottom:1px solid #e3e7ee}
@@ -20,13 +21,20 @@
     .week-select{width:100%;height:44px;padding:0 36px 0 12px;border:1px solid #d8dee8;border-radius:10px;background:#fff;color:#111827;font-size:13px;font-weight:700;outline:none;cursor:pointer;transition:border-color .2s ease,box-shadow .2s ease}
     .week-select:hover{border-color:#ffb27f}
     .week-select:focus{border-color:#ff8a3d;box-shadow:0 0 0 3px rgba(255,138,61,.14)}
+    .mobile-week-select-wrap{display:none;margin:0 0 22px;padding:14px;background:#fff;border:1px solid #e1e6ee;border-radius:14px}
+    .mobile-week-select-wrap label{display:block;margin:0 0 7px;color:#667085;font-size:11px;font-weight:800;letter-spacing:.08em}
+    .mobile-week-select{width:100%;height:46px;padding:0 38px 0 13px;border:1px solid #d8dee8;border-radius:10px;background:#fff;color:#111827;font-size:14px;font-weight:700;outline:none}
+    .mobile-week-select:focus{border-color:#ff8a3d;box-shadow:0 0 0 3px rgba(255,138,61,.14)}
     .lecture-content h1,.lecture-content h2,.lecture-content h3{scroll-margin-top:24px!important}
     .lecture-pending{min-height:430px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#fff;border:1px solid #e1e6ee;border-radius:24px;padding:48px 24px;margin-bottom:40px}
     .lecture-pending-mark{display:grid;place-items:center;width:78px;height:78px;border-radius:22px;background:#111827;color:#ff8a3d;font-size:28px;font-weight:700;margin-bottom:22px}
     .lecture-pending h2{font-size:32px;margin:0 0 10px;letter-spacing:-.03em}
     .lecture-pending p{margin:0;color:#667085}
     .lecture-pending a{margin-top:26px;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:10px;background:#ff8a3d;color:#1e1209;text-decoration:none;font-weight:700}
-    @media(max-width:920px){.lecture-layout{grid-template-columns:1fr!important}}
+    @media(max-width:920px){
+      .lecture-layout{grid-template-columns:1fr!important}
+      .mobile-week-select-wrap{display:block}
+    }
     @media(max-width:680px){html body .lecture-shell{width:min(100% - 28px,1520px)!important}}
   </style>
 </head>
@@ -76,9 +84,16 @@
         </div>
       </aside>
 
-      <article id="lecture-content" class="lecture-content" tabindex="-1">
-        <p class="lecture-loading">강의교안을 불러오는 중입니다.</p>
-      </article>
+      <div class="lecture-main-column">
+        <div class="mobile-week-select-wrap">
+          <label for="mobile-week-select">주차 선택</label>
+          <select class="mobile-week-select" id="mobile-week-select" aria-label="모바일 1주차부터 15주차 강의교안 선택"></select>
+        </div>
+
+        <article id="lecture-content" class="lecture-content" tabindex="-1">
+          <p class="lecture-loading">강의교안을 불러오는 중입니다.</p>
+        </article>
+      </div>
     </div>
 
     <nav class="lecture-pager lecture-shell" aria-label="이전 다음 주차">
