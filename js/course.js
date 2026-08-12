@@ -18,40 +18,64 @@ function injectThumbnailStyles() {
   const style = document.createElement('style');
   style.id = 'week-thumbnail-styles';
   style.textContent = `
+    .week-card{border-top-color:#cfd5df!important}
+    .week-card.is-ready:not(.is-exam){border-top-color:var(--accent)!important}
+    .week-card.is-ready.is-exam{border-top-color:var(--purple)!important}
     .week-thumbnail{position:relative;margin:-1px -1px 18px;overflow:hidden;border-radius:16px 16px 12px 12px;aspect-ratio:16/9;background:#e8edf4}
-    .week-thumbnail img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .45s var(--ease,cubic-bezier(.22,1,.36,1))}
-    .week-card:hover .week-thumbnail img{transform:scale(1.035)}
-    .week-card.is-pending .week-thumbnail img{filter:saturate(.82);opacity:.9}
+    .week-thumbnail-link{display:block;text-decoration:none}
+    .week-thumbnail img{display:block;width:100%;height:100%;object-fit:cover;filter:grayscale(1) saturate(.45);opacity:.78;transition:transform .45s var(--ease,cubic-bezier(.22,1,.36,1)),filter .35s ease,opacity .35s ease}
+    .week-card.is-ready:hover .week-thumbnail img{transform:scale(1.035);filter:grayscale(0) saturate(1);opacity:1}
+    .week-title-link{color:#7d8797;text-decoration:none;transition:color .3s ease}
+    .week-card.is-ready:hover .week-title-link{color:var(--ink)}
+    .week-card .week-number,.week-card .type-badge,.week-card>p{color:#8b95a5!important}
+    .week-card .type-badge{background:#eef1f5!important}
+    .week-card.is-ready:hover .week-number{color:#d7641d!important}
+    .week-card.is-ready:hover .type-badge{background:#fff3eb!important;color:#9c4e18!important}
+    .week-card.is-ready.is-exam:hover .type-badge{background:#f0edff!important;color:#5644b8!important}
+    .week-card.is-ready:hover>p{color:var(--sub)!important}
+    .week-keywords span{background:#eef1f5!important;color:#7f8998!important}
+    .week-card.is-ready .week-keywords span{background:#fff0e6!important;color:#b55a20!important}
+    .week-card.is-ready.is-exam .week-keywords span{background:#f0edff!important;color:#6552c4!important}
+    .week-card.is-ready .notion-link{background:#e6e9ee!important;color:#737d8d!important;box-shadow:none!important}
+    .week-card.is-ready:hover .notion-link{background:var(--ink)!important;color:#fff!important;box-shadow:0 10px 22px rgba(21,32,51,.18)!important}
+    .week-card.is-pending:hover{border-color:#d7dce5!important;box-shadow:0 14px 28px rgba(24,34,52,.07)!important}
+    .week-card.is-pending:hover::before{opacity:0!important}
+    .week-card.is-pending:hover .week-thumbnail img{transform:none;filter:grayscale(1) saturate(.45);opacity:.78}
+    .week-card.is-pending:hover .week-number{color:#8b95a5!important;transform:none}
+    .week-card.is-pending:hover .week-keywords span{background:#eef1f5!important;transform:none}
+    .week-actions{display:block}
+    .week-actions .notion-link{display:block;width:100%}
     @media(max-width:620px){.week-thumbnail{margin-bottom:16px}}
   `;
   document.head.appendChild(style);
 }
 
 function cardTemplate(item) {
-  const actionText = item.type === 'exam' ? '평가 안내' : '실습 준비 중';
   const isReady = READY_WEEKS.has(item.week);
+  const thumbnail = `./asset/${item.week}.png`;
+  const linkAttrs = isReady
+    ? `href="${item.page}"`
+    : `href="#" data-pending-lecture="true" aria-label="${item.week}주차 강의교안 준비중"`;
   const lectureLink = isReady
     ? `<a class="notion-link" href="${item.page}">강의교안</a>`
     : `<a class="notion-link is-pending" href="#" data-pending-lecture="true" aria-label="${item.week}주차 강의교안 준비중">강의교안</a>`;
-  const thumbnail = `./asset/${item.week}.png`;
 
   return `
-    <article class="week-card ${item.type === 'exam' ? 'is-exam' : ''} ${isReady ? '' : 'is-pending'}">
-      <div class="week-thumbnail">
+    <article class="week-card ${item.type === 'exam' ? 'is-exam' : ''} ${isReady ? 'is-ready' : 'is-pending'}">
+      <a class="week-thumbnail week-thumbnail-link" ${linkAttrs}>
         <img src="${thumbnail}" alt="${item.week}주차 ${item.title} 썸네일" loading="lazy">
-      </div>
+      </a>
       <div class="week-meta">
         <span class="week-number">WEEK ${String(item.week).padStart(2, '0')}</span>
         <span class="type-badge">${item.type === 'exam' ? 'EVALUATION' : 'CLASS'}</span>
       </div>
-      <h3>${item.title}</h3>
+      <h3><a class="week-title-link" ${linkAttrs}>${item.title}</a></h3>
       <p>${item.summary}</p>
       <div class="week-keywords">
         ${item.keywords.map(keyword => `<span>${keyword}</span>`).join('')}
       </div>
       <div class="week-actions">
         ${lectureLink}
-        <a class="practice-link" aria-disabled="true">${actionText}</a>
       </div>
     </article>`;
 }
