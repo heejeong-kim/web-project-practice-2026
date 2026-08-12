@@ -99,6 +99,15 @@
   <script src="./data/weeks.js"></script>
   <script src="./js/lecture.js"></script>
   <script>
+    const originalInlineMarkdown = inlineMarkdown;
+    inlineMarkdown = function (value = '') {
+      const localImage = String(value).match(/^!\[([^\]]*)\]\((\.\.?\/[^)]+)\)$/);
+      if (localImage) {
+        return `<img class="lecture-image" src="${localImage[2]}" alt="${escapeHtml(localImage[1])}" loading="lazy">`;
+      }
+      return originalInlineMarkdown(value);
+    };
+
     buildToc = function () {
       const headings = [...contentEl.querySelectorAll('h1, h2')]
         .filter(heading => !heading.closest('details'));
