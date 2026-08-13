@@ -27,6 +27,8 @@
     .lecture-content table{font-size:18px!important}
     .lecture-content h1,.lecture-content h2,.lecture-content h3{scroll-margin-top:94px!important}
     .lecture-content .lecture-image{display:block;max-width:100%;height:auto;margin:22px auto;border-radius:14px}
+    .lecture-content .chapter-image{margin:18px 0 34px;border-radius:18px;overflow:hidden;background:#eef1f5}
+    .lecture-content .chapter-image img{display:block;width:100%;height:auto}
     .lecture-content .ot-reference,.lecture-content .ot-reference p,.lecture-content .ot-reference li,.lecture-content .ot-reference strong{color:#111827!important;font-size:18px!important;line-height:1.75}
     .lecture-pending{min-height:430px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#fff;border:1px solid #e1e6ee;border-radius:24px;padding:48px 24px;margin-bottom:40px}
     .lecture-pending-mark{display:grid;place-items:center;width:78px;height:78px;border-radius:22px;background:#111827;color:#ff8a3d;font-size:28px;font-weight:700;margin-bottom:22px}
@@ -40,6 +42,7 @@
     @media(max-width:680px){
       html body .lecture-shell{width:min(100% - 28px,1520px)!important}
       .lecture-content,.lecture-content table{font-size:18px!important}
+      .lecture-content .chapter-image{margin:14px 0 28px;border-radius:14px}
     }
   </style>
 </head>
@@ -128,7 +131,27 @@
       return originalInlineMarkdown(value);
     };
 
+    function insertChapterImages() {
+      if (week !== 1) return;
+      const chapterImages = [
+        { prefix: '1.', src: '../asset/1_1.png', alt: '1장 웹프로젝트 실습의 이해' },
+        { prefix: '2.', src: '../asset/1_2.png', alt: '2장 데이터 기반 웹서비스의 구조' },
+        { prefix: '3.', src: '../asset/1_3.png', alt: '3장 웹서비스 사례 분석과 프로젝트 탐색' }
+      ];
+
+      const h1List = [...contentEl.querySelectorAll('h1')];
+      chapterImages.forEach(item => {
+        const heading = h1List.find(h1 => h1.textContent.trim().startsWith(item.prefix));
+        if (!heading || heading.nextElementSibling?.classList.contains('chapter-image')) return;
+        const figure = document.createElement('figure');
+        figure.className = 'chapter-image';
+        figure.innerHTML = `<img src="${item.src}" alt="${item.alt}" loading="lazy">`;
+        heading.insertAdjacentElement('afterend', figure);
+      });
+    }
+
     buildToc = function () {
+      insertChapterImages();
       const headings = [...contentEl.querySelectorAll('h1, h2')]
         .filter(heading => !heading.closest('details'));
       headings.forEach((heading, index) => { heading.id = `section-${index + 1}`; });
