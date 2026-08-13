@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/lecture.css?v=20260813-1142">
+  <link rel="stylesheet" href="../css/lecture.css?v=20260813-1202">
   <style>
     html,body,button,input,a,select{font-family:"IBM Plex Sans KR",sans-serif}
     html body .lecture-shell{width:min(1520px,calc(100% - 64px))!important}
@@ -30,6 +30,8 @@
     .lecture-content table{font-size:18px!important}
     .lecture-content h1,.lecture-content h2,.lecture-content h3{scroll-margin-top:94px!important}
     .lecture-content .lecture-image{display:block;max-width:100%;height:auto;margin:22px auto;border-radius:14px}
+    .lecture-content .chapter-image{display:block;margin:18px 0 34px;border-radius:18px;overflow:hidden;background:#eef1f5}
+    .lecture-content .chapter-image img{display:block;width:100%;height:auto}
     .lecture-content .ot-reference,.lecture-content .ot-reference p,.lecture-content .ot-reference li,.lecture-content .ot-reference strong{color:#111827!important;font-size:18px!important;line-height:1.75}
     .lecture-pending{min-height:430px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#fff;border:1px solid #e1e6ee;border-radius:24px;padding:48px 24px;margin-bottom:40px}
     .lecture-pending-mark{display:grid;place-items:center;width:78px;height:78px;border-radius:22px;background:#111827;color:#ff8a3d;font-size:28px;font-weight:700;margin-bottom:22px}
@@ -43,6 +45,7 @@
     @media(max-width:680px){
       html body .lecture-shell{width:min(100% - 28px,1520px)!important}
       .lecture-content,.lecture-content table{font-size:18px!important}
+      .lecture-content .chapter-image{margin:14px 0 28px;border-radius:14px}
     }
   </style>
 </head>
@@ -119,7 +122,27 @@
 
   <button class="top-button" id="top-button" type="button" aria-label="페이지 맨 위로 이동"><span>↑</span><small>TOP</small></button>
 
-  <script src="../data/weeks.js?v=20260813-1142"></script>
-  <script src="../js/lecture.js?v=20260813-1142"></script>
+  <script src="../data/weeks.js?v=20260813-1202"></script>
+  <script src="../js/lecture.js?v=20260813-1202"></script>
+  <script>
+    (() => {
+      const content = document.querySelector('#lecture-content');
+      const chapterSources = {
+        '1장 웹프로젝트 실습의 이해': '/web-project-practice-2026/asset/1_1.png?v=20260813-1202',
+        '2장 데이터 기반 웹서비스의 구조': '/web-project-practice-2026/asset/1_2.png?v=20260813-1202',
+        '3장 웹서비스 사례 분석과 프로젝트 탐색': '/web-project-practice-2026/asset/1_3.png?v=20260813-1202'
+      };
+      const fixChapterImages = () => {
+        content.querySelectorAll('.chapter-image img').forEach(img => {
+          const key = img.alt.trim();
+          if (chapterSources[key] && img.getAttribute('src') !== chapterSources[key]) {
+            img.src = chapterSources[key];
+          }
+        });
+      };
+      new MutationObserver(fixChapterImages).observe(content, { childList: true, subtree: true });
+      fixChapterImages();
+    })();
+  </script>
 </body>
 </html>
