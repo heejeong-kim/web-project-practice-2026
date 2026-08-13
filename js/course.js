@@ -7,7 +7,7 @@ const menuToggle = document.querySelector('.menu-toggle');
 const topNav = document.querySelector('#top-nav');
 const hero = document.querySelector('.hero');
 
-const READY_WEEKS = new Set([1, 2, 3]);
+const READY_WEEKS = new Set([0, 1, 2, 3]);
 
 let activeFilter = 'all';
 let cardObserver;
@@ -54,22 +54,24 @@ function injectThumbnailStyles() {
 
 function cardTemplate(item) {
   const isReady = READY_WEEKS.has(item.week);
-  const thumbnail = `./asset/${item.week}.png`;
+  const isOt = item.week === 0;
+  const itemLabel = isOt ? 'OT' : `${item.week}주차`;
+  const thumbnail = isOt ? './asset/ot.png' : `./asset/${item.week}.png`;
   const linkAttrs = isReady
     ? `href="${item.page}"`
-    : `href="#" data-pending-lecture="true" aria-label="${item.week}주차 강의교안 준비중"`;
+    : `href="#" data-pending-lecture="true" aria-label="${itemLabel} 강의교안 준비중"`;
   const lectureLink = isReady
     ? `<a class="notion-link" href="${item.page}">강의교안</a>`
-    : `<a class="notion-link is-pending" href="#" data-pending-lecture="true" aria-label="${item.week}주차 강의교안 준비중">강의교안</a>`;
+    : `<a class="notion-link is-pending" href="#" data-pending-lecture="true" aria-label="${itemLabel} 강의교안 준비중">강의교안</a>`;
 
   return `
     <article class="week-card ${item.type === 'exam' ? 'is-exam' : ''} ${isReady ? 'is-ready' : 'is-pending'}">
       <a class="week-thumbnail week-thumbnail-link" ${linkAttrs}>
-        <img src="${thumbnail}" alt="${item.week}주차 ${item.title} 썸네일" loading="lazy">
+        <img src="${thumbnail}" alt="${itemLabel} ${item.title} 썸네일" loading="lazy">
       </a>
       <div class="week-meta">
-        <span class="week-number">WEEK ${String(item.week).padStart(2, '0')}</span>
-        <span class="type-badge">${item.type === 'exam' ? 'EVALUATION' : '수업'}</span>
+        <span class="week-number">${isOt ? 'OT' : `WEEK ${String(item.week).padStart(2, '0')}`}</span>
+        <span class="type-badge">${isOt ? '안내' : (item.type === 'exam' ? 'EVALUATION' : '수업')}</span>
       </div>
       <h3><a class="week-title-link" ${linkAttrs}>${item.title}</a></h3>
       <p>${item.summary}</p>
