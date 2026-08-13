@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/lecture.css?v=20260813-1202">
+  <link rel="stylesheet" href="../css/lecture.css?v=20260813-1204">
   <style>
     html,body,button,input,a,select{font-family:"IBM Plex Sans KR",sans-serif}
     html body .lecture-shell{width:min(1520px,calc(100% - 64px))!important}
@@ -122,26 +122,48 @@
 
   <button class="top-button" id="top-button" type="button" aria-label="페이지 맨 위로 이동"><span>↑</span><small>TOP</small></button>
 
-  <script src="../data/weeks.js?v=20260813-1202"></script>
-  <script src="../js/lecture.js?v=20260813-1202"></script>
+  <script src="../data/weeks.js?v=20260813-1204"></script>
+  <script src="../js/lecture.js?v=20260813-1204"></script>
   <script>
     (() => {
       const content = document.querySelector('#lecture-content');
       const chapterSources = {
-        '1장 웹프로젝트 실습의 이해': '/web-project-practice-2026/asset/1_1.png?v=20260813-1202',
-        '2장 데이터 기반 웹서비스의 구조': '/web-project-practice-2026/asset/1_2.png?v=20260813-1202',
-        '3장 웹서비스 사례 분석과 프로젝트 탐색': '/web-project-practice-2026/asset/1_3.png?v=20260813-1202'
+        '1장 웹프로젝트 실습의 이해': '/web-project-practice-2026/asset/1_1.png?v=20260813-1204',
+        '2장 데이터 기반 웹서비스의 구조': '/web-project-practice-2026/asset/1_2.png?v=20260813-1204',
+        '3장 웹서비스 사례 분석과 프로젝트 탐색': '/web-project-practice-2026/asset/1_3.png?v=20260813-1204'
       };
-      const fixChapterImages = () => {
+      const sampleSources = {
+        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260813-1204',
+        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260813-1204'
+      };
+
+      const fixLectureAssets = () => {
         content.querySelectorAll('.chapter-image img').forEach(img => {
           const key = img.alt.trim();
           if (chapterSources[key] && img.getAttribute('src') !== chapterSources[key]) {
             img.src = chapterSources[key];
           }
         });
+
+        content.querySelectorAll('iframe').forEach(frame => {
+          const src = frame.getAttribute('src') || '';
+          const fileName = src.includes('caferaon_db.html') ? 'caferaon_db.html' : src.includes('caferaon.html') ? 'caferaon.html' : '';
+          if (fileName && frame.getAttribute('src') !== sampleSources[fileName]) {
+            frame.src = sampleSources[fileName];
+          }
+        });
+
+        content.querySelectorAll('a').forEach(link => {
+          const text = link.textContent.trim();
+          const fileName = text.startsWith('caferaon_db.html') ? 'caferaon_db.html' : text.startsWith('caferaon.html') ? 'caferaon.html' : '';
+          if (fileName && link.getAttribute('href') !== sampleSources[fileName]) {
+            link.href = sampleSources[fileName];
+          }
+        });
       };
-      new MutationObserver(fixChapterImages).observe(content, { childList: true, subtree: true });
-      fixChapterImages();
+
+      new MutationObserver(fixLectureAssets).observe(content, { childList: true, subtree: true });
+      fixLectureAssets();
     })();
   </script>
 </body>
