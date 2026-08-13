@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/lecture.css?v=20260813-1210">
+  <link rel="stylesheet" href="../css/lecture.css?v=20260813-1255">
   <style>
     html,body,button,input,a,select{font-family:"IBM Plex Sans KR",sans-serif}
     html body .lecture-shell{width:min(1520px,calc(100% - 64px))!important}
@@ -33,6 +33,9 @@
     .lecture-content .chapter-image{display:block;margin:18px 0 34px;border-radius:18px;overflow:hidden;background:#eef1f5}
     .lecture-content .chapter-image img{display:block;width:100%;height:auto}
     .lecture-content .ot-reference,.lecture-content .ot-reference p,.lecture-content .ot-reference li,.lecture-content .ot-reference strong{color:#111827!important;font-size:18px!important;line-height:1.75}
+    .lecture-content .lecture-example{margin:20px 0!important;padding:18px 22px!important;background:#fff3e8!important;border:0!important;border-left:4px solid #ff8a3d!important;border-radius:0!important;color:#5f412e!important;font-size:18px!important;line-height:1.75!important;box-shadow:none!important}
+    .lecture-content .lecture-example strong{color:#c85d12!important;font-weight:700!important}
+    .lecture-content .lecture-example::first-letter{font-weight:600}
     .lecture-pager{padding-top:72px!important;padding-bottom:74px!important}
     .pager-link.is-disabled{background:#f3f5f8!important;border-color:#e2e6ec!important;color:#98a2b3!important;cursor:default!important;pointer-events:none;box-shadow:none!important;transform:none!important}
     .pager-link.is-disabled small,.pager-link.is-disabled strong{color:#98a2b3!important}
@@ -49,6 +52,7 @@
       html body .lecture-shell{width:min(100% - 28px,1520px)!important}
       .lecture-content,.lecture-content table{font-size:18px!important}
       .lecture-content .chapter-image{margin:14px 0 28px;border-radius:14px}
+      .lecture-content .lecture-example{margin:16px 0!important;padding:15px 16px!important;font-size:18px!important}
       .lecture-pager{padding-top:48px!important}
     }
   </style>
@@ -126,19 +130,32 @@
 
   <button class="top-button" id="top-button" type="button" aria-label="페이지 맨 위로 이동"><span>↑</span><small>TOP</small></button>
 
-  <script src="../data/weeks.js?v=20260813-1210"></script>
-  <script src="../js/lecture.js?v=20260813-1210"></script>
+  <script src="../data/weeks.js?v=20260813-1255"></script>
+  <script src="../js/lecture.js?v=20260813-1255"></script>
   <script>
     (() => {
       const content = document.querySelector('#lecture-content');
       const chapterSources = {
-        '1장 웹프로젝트 실습의 이해': '/web-project-practice-2026/asset/1_1.png?v=20260813-1210',
-        '2장 데이터 기반 웹서비스의 구조': '/web-project-practice-2026/asset/1_2.png?v=20260813-1210',
-        '3장 웹서비스 사례 분석과 프로젝트 탐색': '/web-project-practice-2026/asset/1_3.png?v=20260813-1210'
+        '1장 웹프로젝트 실습의 이해': '/web-project-practice-2026/asset/1_1.png?v=20260813-1255',
+        '2장 데이터 기반 웹서비스의 구조': '/web-project-practice-2026/asset/1_2.png?v=20260813-1255',
+        '3장 웹서비스 사례 분석과 프로젝트 탐색': '/web-project-practice-2026/asset/1_3.png?v=20260813-1255'
       };
       const sampleSources = {
-        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260813-1210',
-        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260813-1210'
+        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260813-1255',
+        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260813-1255'
+      };
+      const examplePattern = /^(?:>\s*)?(예시\)|예\)|예시\s*[:：])/;
+
+      const styleLectureExamples = () => {
+        content.querySelectorAll('p').forEach(paragraph => {
+          if (paragraph.closest('.callout,.lecture-example,details summary')) return;
+          const text = paragraph.textContent.trim();
+          if (!examplePattern.test(text)) return;
+          paragraph.classList.add('lecture-example');
+          if (text.startsWith('>')) {
+            paragraph.innerHTML = paragraph.innerHTML.replace(/^&gt;\s*|^>\s*/, '');
+          }
+        });
       };
 
       const fixLectureAssets = () => {
@@ -164,6 +181,8 @@
             link.href = sampleSources[fileName];
           }
         });
+
+        styleLectureExamples();
       };
 
       new MutationObserver(fixLectureAssets).observe(content, { childList: true, subtree: true });
