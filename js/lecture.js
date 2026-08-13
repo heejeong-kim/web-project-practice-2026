@@ -5,7 +5,7 @@ const requestedWeek = Number.isFinite(parsedWeek) ? parsedWeek : 1;
 const week = Math.min(15, Math.max(0, requestedWeek));
 const weekData = window.WEEK_DATA.find(item => item.week === week);
 const READY_WEEKS = new Set([0, 1]);
-const ASSET_VERSION = '20260813-1142';
+const ASSET_VERSION = '20260813-1210';
 
 const titleEl = document.querySelector('#lecture-title');
 const weekEl = document.querySelector('#lecture-week');
@@ -34,6 +34,8 @@ function injectLectureImageStyles() {
     .toc-week-thumbnail img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
     .chapter-image{display:block;margin:18px 0 34px;border-radius:18px;overflow:hidden;background:#eef1f5}
     .chapter-image img{display:block;width:100%;height:auto}
+    .callout.no-icon{grid-template-columns:minmax(0,1fr)}
+    .callout.no-icon .callout-icon{display:none}
     .callout.is-production-note{background:#f4f5f7!important;border-left-color:#98a2b3!important;color:#667085!important;font-size:13.5px!important}
     .callout.is-production-note .callout-body,.callout.is-production-note .callout-body p,.callout.is-production-note .callout-body li,.callout.is-production-note .callout-body span,.callout.is-production-note .callout-body strong{color:#667085!important;font-size:13.5px!important;line-height:1.65}
     @media(max-width:680px){
@@ -60,9 +62,9 @@ function setupTocThumbnail() {
 function insertChapterImages() {
   if (week !== 1) return;
   const chapterImages = [
-    { prefix: '1.', src: `../asset/1_1.png?v=${ASSET_VERSION}`, alt: '1장 웹프로젝트 실습의 이해' },
-    { prefix: '2.', src: `../asset/1_2.png?v=${ASSET_VERSION}`, alt: '2장 데이터 기반 웹서비스의 구조' },
-    { prefix: '3.', src: `../asset/1_3.png?v=${ASSET_VERSION}`, alt: '3장 웹서비스 사례 분석과 프로젝트 탐색' }
+    { prefix: '1.', src: `/web-project-practice-2026/asset/1_1.png?v=${ASSET_VERSION}`, alt: '1장 웹프로젝트 실습의 이해' },
+    { prefix: '2.', src: `/web-project-practice-2026/asset/1_2.png?v=${ASSET_VERSION}`, alt: '2장 데이터 기반 웹서비스의 구조' },
+    { prefix: '3.', src: `/web-project-practice-2026/asset/1_3.png?v=${ASSET_VERSION}`, alt: '3장 웹서비스 사례 분석과 프로젝트 탐색' }
   ];
 
   const h1List = [...contentEl.querySelectorAll('h1')];
@@ -145,12 +147,14 @@ function renderNotionMarkdown(source = '') {
       continue;
     }
 
-    const calloutOpen = line.match(/^<callout\s+icon="([^"]*)"\s+color="([^"]*)">$/);
+    const calloutOpen = line.match(/^<callout(?:\s+icon="([^"]*)")?\s+color="([^"]*)">$/);
     if (calloutOpen) {
       closeList();
       const preview = lines.slice(i + 1, Math.min(lines.length, i + 10)).join('\n');
       const productionNoteClass = preview.includes('교안 제작 참고') ? ' is-production-note' : '';
-      out.push(`<div class="callout ${calloutClass(calloutOpen[2])}${productionNoteClass}"><span class="callout-icon" aria-hidden="true">${escapeHtml(calloutOpen[1])}</span><div class="callout-body">`);
+      const noIconClass = calloutOpen[1] ? '' : ' no-icon';
+      const icon = calloutOpen[1] ? `<span class="callout-icon" aria-hidden="true">${escapeHtml(calloutOpen[1])}</span>` : '<span class="callout-icon" aria-hidden="true"></span>';
+      out.push(`<div class="callout ${calloutClass(calloutOpen[2])}${productionNoteClass}${noIconClass}">${icon}<div class="callout-body">`);
       continue;
     }
     if (line === '</callout>') {
@@ -371,27 +375,43 @@ function buildWeekSelect() {
   fillWeekSelect(mobileWeekSelect);
 }
 
+function setPagerCard(element, target, direction) {
+  const label = direction === 'prev' ? 'PREV' : 'NEXT';
+  element.querySelector('small').textContent = label;
+  element.classList.remove('is-disabled');
+  element.removeAttribute('aria-disabled');
+  element.removeAttribute('tabindex');
+
+  if (!target) {
+    element.removeAttribute('href');
+    element.classList.add('is-disabled');
+    element.setAttribute('aria-disabled', 'true');
+    element.setAttribute('tabindex', '-1');
+    element.querySelector('strong').textContent = direction === 'prev' ? '이전 주차 없음' : '다음 주차 없음';
+    return;
+  }
+
+  element.querySelector('strong').textContent = `${itemLabel(target)} · ${target.title}`;
+  if (!READY_WEEKS.has(target.week)) {
+    element.removeAttribute('href');
+    element.classList.add('is-disabled');
+    element.setAttribute('aria-disabled', 'true');
+    element.setAttribute('tabindex', '-1');
+    return;
+  }
+
+  element.href = `?week=${String(target.week).padStart(2, '0')}`;
+}
+
 function buildPager() {
-  const available = window.WEEK_DATA.filter(item => READY_WEEKS.has(item.week));
-  const currentIndex = available.findIndex(item => item.week === week);
-  const prev = currentIndex > 0 ? available[currentIndex - 1] : null;
-  const next = currentIndex >= 0 && currentIndex < available.length - 1 ? available[currentIndex + 1] : null;
+  const currentIndex = window.WEEK_DATA.findIndex(item => item.week === week);
+  const prev = currentIndex > 0 ? window.WEEK_DATA[currentIndex - 1] : null;
+  const next = currentIndex >= 0 && currentIndex < window.WEEK_DATA.length - 1 ? window.WEEK_DATA[currentIndex + 1] : null;
 
-  if (prev) {
-    prevWeek.style.visibility = 'visible';
-    prevWeek.href = `?week=${String(prev.week).padStart(2, '0')}`;
-    prevWeek.querySelector('strong').textContent = `${itemLabel(prev)} · ${prev.title}`;
-  } else {
-    prevWeek.style.visibility = 'hidden';
-  }
-
-  if (next) {
-    nextWeek.style.visibility = 'visible';
-    nextWeek.href = `?week=${String(next.week).padStart(2, '0')}`;
-    nextWeek.querySelector('strong').textContent = `${itemLabel(next)} · ${next.title}`;
-  } else {
-    nextWeek.style.visibility = 'hidden';
-  }
+  prevWeek.style.visibility = 'visible';
+  nextWeek.style.visibility = 'visible';
+  setPagerCard(prevWeek, prev, 'prev');
+  setPagerCard(nextWeek, next, 'next');
 }
 
 const updateTopButton = () => topButton.classList.toggle('is-visible', window.scrollY > 500);
