@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="2026년 2학기 웹프로젝트 실습 주차별 강의교안">
+  <title>웹프로젝트 실습 | 강의교안</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/lecture.css">
+  <style>
+    html,body,button,input,a,select{font-family:"IBM Plex Sans KR",sans-serif}
+    html body .lecture-shell{width:min(1520px,calc(100% - 64px))!important}
+    .lecture-layout{grid-template-columns:264px minmax(0,1fr)!important}
+    .lecture-header{position:sticky!important;top:0!important;z-index:100!important}
+    .toc-card{top:94px!important;max-height:calc(100vh - 118px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+    .week-select-wrap{margin:0 0 18px;padding:0 0 18px;border-bottom:1px solid #e3e7ee}
+    .week-select-wrap label,.mobile-week-select-wrap label{display:block;margin:0 0 7px;color:#98a2b3;font-size:11px;font-weight:800;letter-spacing:.1em}
+    .week-select,.mobile-week-select{width:100%;height:46px;padding:0 36px 0 12px;border:1px solid #d8dee8;border-radius:10px;background:#fff;color:#111827;font-size:14px;font-weight:700;outline:none;cursor:pointer;transition:border-color .2s ease,box-shadow .2s ease}
+    .week-select:hover,.mobile-week-select:hover{border-color:#ffb27f}
+    .week-select:focus,.mobile-week-select:focus{border-color:#ff8a3d;box-shadow:0 0 0 3px rgba(255,138,61,.14)}
+    .week-select option:disabled,.mobile-week-select option:disabled{color:#a6afbd}
+    .lecture-main-column{min-width:0}
+    .mobile-week-select-wrap{display:none;margin:0 0 22px;padding:14px;background:#fff;border:1px solid #e1e6ee;border-radius:14px}
+    .lecture-content{font-size:18px!important;line-height:1.75}
+    .lecture-content table{font-size:18px!important}
+    .lecture-content h1,.lecture-content h2,.lecture-content h3{scroll-margin-top:94px!important}
+    .lecture-content .lecture-image{display:block;max-width:100%;height:auto;margin:22px auto;border-radius:14px}
+    .lecture-pending{min-height:430px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#fff;border:1px solid #e1e6ee;border-radius:24px;padding:48px 24px;margin-bottom:40px}
+    .lecture-pending-mark{display:grid;place-items:center;width:78px;height:78px;border-radius:22px;background:#111827;color:#ff8a3d;font-size:28px;font-weight:700;margin-bottom:22px}
+    .lecture-pending h2{font-size:32px;margin:0 0 10px;letter-spacing:-.03em}
+    .lecture-pending p{margin:0;color:#667085}
+    .lecture-pending a{margin-top:26px;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:10px;background:#ff8a3d;color:#1e1209;text-decoration:none;font-weight:700}
+    @media(max-width:920px){
+      .lecture-layout{grid-template-columns:1fr!important}
+      .mobile-week-select-wrap{display:block}
+    }
+    @media(max-width:680px){
+      html body .lecture-shell{width:min(100% - 28px,1520px)!important}
+      .lecture-content{font-size:18px!important}
+      .lecture-content table{font-size:17px!important}
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#lecture-content">본문 바로가기</a>
+
+  <header class="lecture-header">
+    <div class="lecture-shell header-inner">
+      <a class="lecture-brand" href="../index.html" aria-label="웹프로젝트 실습 메인으로 이동">
+        <span class="brand-mark">WP</span>
+        <span><strong>웹프로젝트 실습</strong><small>2026 · 2학기</small></span>
+      </a>
+      <nav class="lecture-nav" aria-label="강의교안 메뉴">
+        <a href="../index.html#weeks">전체 주차</a>
+        <a href="https://app.notion.com/p/3b8a50f0761580429d64ff509f92a9be" target="_blank" rel="noopener noreferrer">팀별 URL</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="lecture-hero">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="lecture-shell lecture-hero-inner">
+        <div>
+          <p class="lecture-kicker" id="lecture-week">WEEK</p>
+          <h1 id="lecture-title">강의교안</h1>
+          <p id="lecture-summary" class="lecture-summary"></p>
+          <div id="lecture-keywords" class="keyword-list"></div>
+        </div>
+        <div class="hero-index-card">
+          <span>COURSE LAB</span>
+          <strong id="hero-week-number">01</strong>
+          <small>WEB PROJECT PRACTICE</small>
+        </div>
+      </div>
+    </section>
+
+    <div class="lecture-shell lecture-layout">
+      <aside class="lecture-toc" aria-label="페이지 목차">
+        <div class="toc-card">
+          <div class="week-select-wrap">
+            <label for="week-select">주차 선택</label>
+            <select class="week-select" id="week-select" aria-label="강의교안 선택"></select>
+          </div>
+          <strong>CONTENTS</strong>
+          <nav id="toc-list"></nav>
+        </div>
+      </aside>
+
+      <div class="lecture-main-column">
+        <div class="mobile-week-select-wrap">
+          <label for="mobile-week-select">주차 선택</label>
+          <select class="mobile-week-select" id="mobile-week-select" aria-label="모바일 강의교안 선택"></select>
+        </div>
+
+        <article id="lecture-content" class="lecture-content" tabindex="-1">
+          <p class="lecture-loading">강의교안을 불러오는 중입니다.</p>
+        </article>
+      </div>
+    </div>
+
+    <nav class="lecture-pager lecture-shell" aria-label="이전 다음 주차">
+      <a id="prev-week" class="pager-link" href="#"><small>PREV</small><strong></strong></a>
+      <a id="next-week" class="pager-link next" href="#"><small>NEXT</small><strong></strong></a>
+    </nav>
+  </main>
+
+  <footer class="lecture-footer">
+    <div class="lecture-shell">
+      <strong>웹프로젝트 실습</strong>
+      <p>2026년 2학기 · 데이터 기반 웹서비스 제작</p>
+    </div>
+  </footer>
+
+  <button class="top-button" id="top-button" type="button" aria-label="페이지 맨 위로 이동"><span>↑</span><small>TOP</small></button>
+
+  <script src="../data/weeks.js"></script>
+  <script src="../js/lecture.js"></script>
+  <script>
+    const originalInlineMarkdown = inlineMarkdown;
+    inlineMarkdown = function (value = '') {
+      const localImage = String(value).match(/^!\[([^\]]*)\]\((\.\.?\/[^)]+)\)$/);
+      if (localImage) {
+        return `<img class="lecture-image" src="${localImage[2]}" alt="${escapeHtml(localImage[1])}" loading="lazy">`;
+      }
+      return originalInlineMarkdown(value);
+    };
+
+    buildToc = function () {
+      const headings = [...contentEl.querySelectorAll('h1, h2')]
+        .filter(heading => !heading.closest('details'));
+      headings.forEach((heading, index) => { heading.id = `section-${index + 1}`; });
+      tocList.innerHTML = headings.map(heading => {
+        const depth = heading.tagName === 'H2' ? ' class="toc-depth-2"' : '';
+        return `<a href="#${heading.id}"${depth}>${escapeHtml(heading.textContent)}</a>`;
+      }).join('');
+    };
+  </script>
+</body>
+</html>
