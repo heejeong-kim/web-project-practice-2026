@@ -4,7 +4,7 @@ const parsedWeek = weekParam === null ? 1 : Number(weekParam);
 const requestedWeek = Number.isFinite(parsedWeek) ? parsedWeek : 1;
 const week = Math.min(15, Math.max(0, requestedWeek));
 const weekData = window.WEEK_DATA.find(item => item.week === week);
-const READY_WEEKS = new Set([0, 1, 2, 3]);
+const READY_WEEKS = new Set([0, 1]);
 
 const titleEl = document.querySelector('#lecture-title');
 const weekEl = document.querySelector('#lecture-week');
@@ -47,7 +47,7 @@ function setupTocThumbnail() {
   if (!title) return;
   const figure = document.createElement('div');
   figure.className = 'toc-week-thumbnail';
-  const thumbnail = week === 0 ? './asset/ot.png' : `./asset/${week}.png`;
+  const thumbnail = week === 0 ? '../asset/ot.png' : `../asset/${week}.png`;
   figure.innerHTML = `<img src="${thumbnail}" alt="${itemLabel(weekData)} ${escapeHtml(weekData.title)} 썸네일">`;
   title.insertAdjacentElement('afterend', figure);
 }
@@ -74,6 +74,12 @@ function calloutClass(color = '') {
   if (color.includes('yellow')) return 'yellow';
   if (color.includes('red')) return 'red';
   return 'gray';
+}
+
+function normalizeLecturePaths(source = '') {
+  return source
+    .replaceAll('./data/', '../data/')
+    .replaceAll('./asset/', '../asset/');
 }
 
 function renderNotionMarkdown(source = '') {
@@ -222,9 +228,9 @@ function renderNotionMarkdown(source = '') {
 
 async function loadLectureSource() {
   const number = String(week).padStart(2, '0');
-  const response = await fetch(`./data/lectures/week${number}.md`);
+  const response = await fetch(`../data/lectures/week${number}.md`);
   if (!response.ok) throw new Error(`${itemLabel(weekData)} 원문 파일을 불러오지 못했습니다.`);
-  return response.text();
+  return normalizeLecturePaths(await response.text());
 }
 
 function renderPendingLecture() {
@@ -237,7 +243,7 @@ function renderPendingLecture() {
       <span class="lecture-pending-mark" aria-hidden="true">${week === 0 ? 'OT' : String(week).padStart(2, '0')}</span>
       <h2>교안 준비중입니다.</h2>
       <p>해당 주차 강의교안은 준비가 완료된 후 공개됩니다.</p>
-      <a href="./#weeks">주차별 수업으로 돌아가기</a>
+      <a href="../index.html#weeks">주차별 수업으로 돌아가기</a>
     </section>`;
   if (tocList) tocList.innerHTML = '';
 }
@@ -321,12 +327,13 @@ function fillWeekSelect(selectEl) {
   selectEl.innerHTML = window.WEEK_DATA.map(item => {
     const number = String(item.week).padStart(2, '0');
     const selected = item.week === week ? ' selected' : '';
-    const label = item.week === 0 ? `OT · ${escapeHtml(item.title)}` : `${number}주차 · ${escapeHtml(item.title)}`;
-    return `<option value="${number}"${selected}>${label}</option>`;
+    const disabled = READY_WEEKS.has(item.week) ? '' : ' disabled';
+    const label = item.week === 0 ? 'OT' : `${number}주차 · ${escapeHtml(item.title)}`;
+    return `<option value="${number}"${selected}${disabled}>${label}</option>`;
   }).join('');
 
   selectEl.addEventListener('change', () => {
-    window.location.href = `./lecture.html?week=${selectEl.value}`;
+    window.location.href = `?week=${selectEl.value}`;
   });
 }
 
@@ -336,17 +343,26 @@ function buildWeekSelect() {
 }
 
 function buildPager() {
-  const currentIndex = window.WEEK_DATA.findIndex(item => item.week === week);
-  const prev = currentIndex > 0 ? window.WEEK_DATA[currentIndex - 1] : null;
-  const next = currentIndex >= 0 && currentIndex < window.WEEK_DATA.length - 1 ? window.WEEK_DATA[currentIndex + 1] : null;
+  const available = window.WEEK_DATA.filter(item => READY_WEEKS.has(item.week));
+  const currentIndex = available.findIndex(item => item.week === week);
+  const prev = currentIndex > 0 ? available[currentIndex - 1] : null;
+  const next = currentIndex >= 0 && currentIndex < available.length - 1 ? available[currentIndex + 1] : null;
+
   if (prev) {
-    prevWeek.href = `./lecture.html?week=${String(prev.week).padStart(2, '0')}`;
+    prevWeek.style.visibility = 'visible';
+    prevWeek.href = `?week=${String(prev.week).padStart(2, '0')}`;
     prevWeek.querySelector('strong').textContent = `${itemLabel(prev)} · ${prev.title}`;
-  } else prevWeek.style.visibility = 'hidden';
+  } else {
+    prevWeek.style.visibility = 'hidden';
+  }
+
   if (next) {
-    nextWeek.href = `./lecture.html?week=${String(next.week).padStart(2, '0')}`;
+    nextWeek.style.visibility = 'visible';
+    nextWeek.href = `?week=${String(next.week).padStart(2, '0')}`;
     nextWeek.querySelector('strong').textContent = `${itemLabel(next)} · ${next.title}`;
-  } else nextWeek.style.visibility = 'hidden';
+  } else {
+    nextWeek.style.visibility = 'hidden';
+  }
 }
 
 const updateTopButton = () => topButton.classList.toggle('is-visible', window.scrollY > 500);
