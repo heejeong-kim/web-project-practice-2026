@@ -4,11 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="2026년 2학기 웹프로젝트 실습 주차별 강의교안">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>웹프로젝트 실습 | 강의교안</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/lecture.css">
+  <link rel="stylesheet" href="../css/lecture.css?v=20260813-1136">
   <style>
     html,body,button,input,a,select{font-family:"IBM Plex Sans KR",sans-serif}
     html body .lecture-shell{width:min(1520px,calc(100% - 64px))!important}
@@ -119,8 +122,21 @@
 
   <button class="top-button" id="top-button" type="button" aria-label="페이지 맨 위로 이동"><span>↑</span><small>TOP</small></button>
 
-  <script src="../data/weeks.js"></script>
-  <script src="../js/lecture.js"></script>
+  <script>
+    (() => {
+      const nativeFetch = window.fetch.bind(window);
+      window.fetch = (input, init = {}) => {
+        const url = typeof input === 'string' ? input : input.url;
+        if (url && url.includes('../data/lectures/week')) {
+          const separator = url.includes('?') ? '&' : '?';
+          return nativeFetch(`${url}${separator}v=20260813-1136`, { ...init, cache: 'no-store' });
+        }
+        return nativeFetch(input, init);
+      };
+    })();
+  </script>
+  <script src="../data/weeks.js?v=20260813-1136"></script>
+  <script src="../js/lecture.js?v=20260813-1136"></script>
   <script>
     const originalInlineMarkdown = inlineMarkdown;
     inlineMarkdown = function (value = '') {
@@ -134,9 +150,9 @@
     function insertChapterImages() {
       if (week !== 1) return;
       const chapterImages = [
-        { prefix: '1.', src: '../asset/1_1.png', alt: '1장 웹프로젝트 실습의 이해' },
-        { prefix: '2.', src: '../asset/1_2.png', alt: '2장 데이터 기반 웹서비스의 구조' },
-        { prefix: '3.', src: '../asset/1_3.png', alt: '3장 웹서비스 사례 분석과 프로젝트 탐색' }
+        { prefix: '1.', src: '../asset/1_1.png?v=20260813-1136', alt: '1장 웹프로젝트 실습의 이해' },
+        { prefix: '2.', src: '../asset/1_2.png?v=20260813-1136', alt: '2장 데이터 기반 웹서비스의 구조' },
+        { prefix: '3.', src: '../asset/1_3.png?v=20260813-1136', alt: '3장 웹서비스 사례 분석과 프로젝트 탐색' }
       ];
 
       const h1List = [...contentEl.querySelectorAll('h1')];
@@ -150,6 +166,9 @@
       });
     }
 
+    const chapterObserver = new MutationObserver(() => insertChapterImages());
+    chapterObserver.observe(contentEl, { childList: true, subtree: false });
+
     buildToc = function () {
       insertChapterImages();
       const headings = [...contentEl.querySelectorAll('h1, h2')]
@@ -160,6 +179,8 @@
         return `<a href="#${heading.id}"${depth}>${escapeHtml(heading.textContent)}</a>`;
       }).join('');
     };
+
+    insertChapterImages();
   </script>
 </body>
 </html>
