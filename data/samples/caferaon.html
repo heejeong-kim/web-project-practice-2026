@@ -1,31 +1,50 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>카페 라온 | 정적 소개 페이지</title>
-  <style>
-    *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:#f5f1ea;color:#2e2924;line-height:1.65}main{width:min(960px,calc(100% - 32px));margin:0 auto;padding:42px 0 60px}.hero{background:#2d241f;color:#fff;border-radius:24px;padding:42px}.eyebrow{margin:0 0 8px;color:#f2b36e;font-size:12px;font-weight:800;letter-spacing:.12em}.hero h1{margin:0;font-size:clamp(34px,7vw,64px);line-height:1}.hero p{max-width:640px;margin:18px 0 0;color:#ded5ce}.info{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.info div,.menu article{background:#fff;border:1px solid #e4ddd4;border-radius:16px;padding:18px}.info strong{display:block;margin-bottom:4px}.section-title{margin:36px 0 14px;font-size:24px}.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.menu h3{margin:0 0 6px}.price{font-weight:800;color:#a65822}@media(max-width:700px){.info,.menu{grid-template-columns:1fr}.hero{padding:28px}}
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>카페 라온</title>
 </head>
 <body>
-<main>
-  <section class="hero">
-    <p class="eyebrow">STATIC CAFE PAGE</p>
+  <header>
     <h1>카페 라온</h1>
-    <p>학교 근처에서 편하게 머무를 수 있는 작은 카페. 이 예시는 메뉴와 운영정보를 HTML에 직접 작성한 정적 소개 페이지입니다.</p>
-  </section>
-  <section class="info" aria-label="카페 기본 정보">
-    <div><strong>위치</strong>서울 성동구 성수동</div>
-    <div><strong>운영시간</strong>평일 09:00–22:00</div>
-    <div><strong>연락처</strong>02-1234-5678</div>
-  </section>
-  <h2 class="section-title">대표 메뉴</h2>
-  <section class="menu">
-    <article><h3>아메리카노</h3><p>고소한 블렌드 원두</p><span class="price">4,500원</span></article>
-    <article><h3>카페라떼</h3><p>부드러운 우유와 에스프레소</p><span class="price">5,000원</span></article>
-    <article><h3>바스크 치즈케이크</h3><p>진한 치즈 풍미의 디저트</p><span class="price">6,500원</span></article>
-  </section>
-</main>
+    <p>조용하게 공부하기 좋은 성수동 카페</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>카페 정보</h2>
+      <p>위치: 서울 성동구 성수이로 00</p>
+      <p>운영시간: 09:00 ~ 22:00</p>
+      <p>와이파이: 있음</p>
+      <p>콘센트: 일부 좌석 이용 가능</p>
+    </section>
+
+    <section>
+      <h2>대표 메뉴</h2>
+      <article>
+        <h3>아메리카노</h3>
+        <p>4,500원</p>
+      </article>
+      <article>
+        <h3>카페라떼</h3>
+        <p>5,000원</p>
+      </article>
+      <article>
+        <h3>바스크 치즈케이크</h3>
+        <p>6,500원</p>
+      </article>
+    </section>
+
+    <section>
+      <h2>이용 안내</h2>
+      <p>노트북 이용이 가능하며 2시간 이상 이용 시 추가 주문을 권장한다</p>
+    </section>
+  </main>
+
+  <footer>
+    <a href="#">지도 보기</a>
+    <a href="#">SNS 보기</a>
+  </footer>
 </body>
 </html>
