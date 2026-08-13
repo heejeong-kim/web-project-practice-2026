@@ -1,5 +1,6 @@
 window.WEEK_DATA = [
-  {week:1,title:'OT 및 웹프로젝트 이해',type:'class',keywords:['웹서비스','JSON','LocalStorage'],summary:'웹페이지와 데이터 기반 웹서비스의 차이, 프로젝트 범위와 트랙을 이해한다',page:'./lecture.html?week=01'},
+  {week:0,title:'OT',type:'class',keywords:['성적 평가기준','수업 운영','교안 안내'],summary:'성적 평가기준과 수업 운영 방식, 강의교안 제작 안내를 확인한다',page:'./lecture.html?week=00'},
+  {week:1,title:'웹프로젝트 이해',type:'class',keywords:['웹서비스','JSON','LocalStorage'],summary:'웹페이지와 데이터 기반 웹서비스의 차이, 프로젝트 범위와 트랙을 이해한다',page:'./lecture.html?week=01'},
   {week:2,title:'서비스 역분석 및 시장·트렌드 조사',type:'class',keywords:['Target User','Pain Point','User Flow'],summary:'기존 서비스를 사용자·문제·기능·데이터 관점에서 역분석하고 기회 영역을 찾는다',page:'./lecture.html?week=02'},
   {week:3,title:'사용자 분석 및 프로젝트 문제 정의',type:'class',keywords:['Persona','Problem Statement','Value Proposition'],summary:'핵심 사용자와 문제를 정의하고 팀프로젝트 주제와 트랙을 확정한다',page:'./lecture.html?week=03'},
   {week:4,title:'서비스 구조 및 UX 설계',type:'class',keywords:['MVP','IA','User Flow'],summary:'핵심 기능, 정보구조, 사용자 흐름, 와이어프레임을 설계한다',page:'./lecture.html?week=04'},
