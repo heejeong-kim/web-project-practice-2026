@@ -5,6 +5,7 @@ const requestedWeek = Number.isFinite(parsedWeek) ? parsedWeek : 1;
 const week = Math.min(15, Math.max(0, requestedWeek));
 const weekData = window.WEEK_DATA.find(item => item.week === week);
 const READY_WEEKS = new Set([0, 1]);
+const ASSET_VERSION = '20260813-1142';
 
 const titleEl = document.querySelector('#lecture-title');
 const weekEl = document.querySelector('#lecture-week');
@@ -31,9 +32,14 @@ function injectLectureImageStyles() {
     .lecture-shell{width:min(1520px,calc(100% - 64px))!important}
     .toc-week-thumbnail{display:block;margin:12px 0 16px;border-radius:12px;overflow:hidden;border:1px solid #e1e6ee;background:#e8edf4}
     .toc-week-thumbnail img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+    .chapter-image{display:block;margin:18px 0 34px;border-radius:18px;overflow:hidden;background:#eef1f5}
+    .chapter-image img{display:block;width:100%;height:auto}
     .callout.is-production-note{background:#f4f5f7!important;border-left-color:#98a2b3!important;color:#667085!important;font-size:13.5px!important}
     .callout.is-production-note .callout-body,.callout.is-production-note .callout-body p,.callout.is-production-note .callout-body li,.callout.is-production-note .callout-body span,.callout.is-production-note .callout-body strong{color:#667085!important;font-size:13.5px!important;line-height:1.65}
-    @media(max-width:680px){.lecture-shell{width:min(100% - 28px,1520px)!important}}
+    @media(max-width:680px){
+      .lecture-shell{width:min(100% - 28px,1520px)!important}
+      .chapter-image{margin:14px 0 28px;border-radius:14px}
+    }
   `;
   document.head.appendChild(style);
 }
@@ -41,15 +47,35 @@ function injectLectureImageStyles() {
 function setupTocThumbnail() {
   const tocCard = document.querySelector('.toc-card');
   if (!tocCard || !READY_WEEKS.has(week)) return;
-  const oldThumbnail = tocCard.querySelector('.toc-week-thumbnail');
-  if (oldThumbnail) oldThumbnail.remove();
+  tocCard.querySelector('.toc-week-thumbnail')?.remove();
   const title = tocCard.querySelector(':scope > strong');
   if (!title) return;
   const figure = document.createElement('div');
   figure.className = 'toc-week-thumbnail';
-  const thumbnail = week === 0 ? '../asset/ot.png' : `../asset/${week}.png`;
+  const thumbnail = week === 0 ? `../asset/ot.png?v=${ASSET_VERSION}` : `../asset/${week}.png?v=${ASSET_VERSION}`;
   figure.innerHTML = `<img src="${thumbnail}" alt="${itemLabel(weekData)} ${escapeHtml(weekData.title)} 썸네일">`;
   title.insertAdjacentElement('afterend', figure);
+}
+
+function insertChapterImages() {
+  if (week !== 1) return;
+  const chapterImages = [
+    { prefix: '1.', src: `../asset/1_1.png?v=${ASSET_VERSION}`, alt: '1장 웹프로젝트 실습의 이해' },
+    { prefix: '2.', src: `../asset/1_2.png?v=${ASSET_VERSION}`, alt: '2장 데이터 기반 웹서비스의 구조' },
+    { prefix: '3.', src: `../asset/1_3.png?v=${ASSET_VERSION}`, alt: '3장 웹서비스 사례 분석과 프로젝트 탐색' }
+  ];
+
+  const h1List = [...contentEl.querySelectorAll('h1')];
+  chapterImages.forEach(item => {
+    const heading = h1List.find(h1 => h1.textContent.trim().startsWith(item.prefix));
+    if (!heading) return;
+    const existing = heading.nextElementSibling;
+    if (existing?.classList.contains('chapter-image')) return;
+    const figure = document.createElement('figure');
+    figure.className = 'chapter-image';
+    figure.innerHTML = `<img src="${item.src}" alt="${item.alt}" loading="eager">`;
+    heading.insertAdjacentElement('afterend', figure);
+  });
 }
 
 function escapeHtml(value = '') {
@@ -62,6 +88,7 @@ function inlineMarkdown(value = '') {
   return value
     .replace(/\\([\[\]~*`])/g, '$1')
     .replace(/!\[([^\]]*)\]\((https?:\/\/[^)]+)\)/g, '<img class="lecture-image" src="$2" alt="$1" loading="lazy">')
+    .replace(/!\[([^\]]*)\]\((\.\.?\/[^)]+)\)/g, '<img class="lecture-image" src="$2" alt="$1" loading="lazy">')
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
     .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
@@ -162,7 +189,7 @@ function renderNotionMarkdown(source = '') {
       continue;
     }
 
-    if (/^!\[[^\]]*\]\(https?:\/\//.test(line)) {
+    if (/^!\[[^\]]*\]\((https?:\/\/|\.\.?\/)/.test(line)) {
       closeList();
       out.push(inlineMarkdown(line));
       continue;
@@ -170,7 +197,7 @@ function renderNotionMarkdown(source = '') {
 
     if (line === '---') {
       closeList();
-      out.push('<hr>');
+      if (out[out.length - 1] !== '<hr>') out.push('<hr>');
       continue;
     }
 
@@ -228,7 +255,7 @@ function renderNotionMarkdown(source = '') {
 
 async function loadLectureSource() {
   const number = String(week).padStart(2, '0');
-  const response = await fetch(`../data/lectures/week${number}.md`);
+  const response = await fetch(`../data/lectures/week${number}.md?v=${ASSET_VERSION}`, { cache: 'no-store' });
   if (!response.ok) throw new Error(`${itemLabel(weekData)} 원문 파일을 불러오지 못했습니다.`);
   return normalizeLecturePaths(await response.text());
 }
@@ -272,6 +299,7 @@ async function renderPage() {
   try {
     const source = await loadLectureSource();
     contentEl.innerHTML = renderNotionMarkdown(source);
+    insertChapterImages();
     enhanceCodeBlocks();
     buildToc();
   } catch (error) {
@@ -314,7 +342,8 @@ function enhanceCodeBlocks() {
 }
 
 function buildToc() {
-  const headings = [...contentEl.querySelectorAll('h1, h2')];
+  const headings = [...contentEl.querySelectorAll('h1, h2')]
+    .filter(heading => !heading.closest('details'));
   headings.forEach((heading, index) => { heading.id = `section-${index + 1}`; });
   tocList.innerHTML = headings.map(heading => {
     const depth = heading.tagName === 'H2' ? ' class="toc-depth-2"' : '';
