@@ -1,6 +1,5 @@
 (() => {
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxt1SLxfp6RwICIUVK-F1zxl4ek80zbMA0rUTczH9A5nyUsnJSV19xkFlVTrMnigMWp/exec';
-  const OUTPUT_WEEKS = Array.from({ length: 13 }, (_, i) => i + 3);
 
   const form = document.querySelector('#team-form');
   const formMessage = document.querySelector('#form-message');
@@ -15,6 +14,7 @@
   const formSection = document.querySelector('#team-form-section');
   const teamNumberInput = document.querySelector('#team-number');
   const ideaInput = document.querySelector('#project-idea');
+  const notionUrlInput = document.querySelector('#notion-url');
 
   let currentFilter = 'A';
   let teams = [];
@@ -29,22 +29,6 @@
       .replaceAll('>', '&gt;')
       .replaceAll('"', '&quot;')
       .replaceAll("'", '&#039;');
-  }
-
-  function normalizeHeaderNavigation() {
-    const nav = document.querySelector('.top-nav');
-    if (!nav) return;
-
-    [...nav.querySelectorAll('a')].forEach(link => {
-      const text = link.textContent.trim();
-      if (text === '프로젝트 트랙' || text === '수업 진행') link.remove();
-    });
-
-    const weekLink = [...nav.querySelectorAll('a')].find(link => link.getAttribute('href')?.includes('#weeks'));
-    if (weekLink) weekLink.textContent = '주차별 수업';
-
-    const teamLink = [...nav.querySelectorAll('a')].find(link => link.getAttribute('href')?.includes('team-project.html'));
-    if (teamLink) teamLink.textContent = '팀별 현황';
   }
 
   function getMember(formData, index) {
@@ -133,17 +117,39 @@
     }
   }
 
+  function normalizeNotionUrl(value = '') {
+    const raw = String(value).trim();
+    if (!raw) return '';
+    try {
+      const url = new URL(raw);
+      if (!['http:', 'https:'].includes(url.protocol)) return '';
+      return url.href;
+    } catch (_) {
+      return '';
+    }
+  }
+
+  function isNotionUrl(value = '') {
+    const normalized = normalizeNotionUrl(value);
+    if (!normalized) return false;
+    const host = new URL(normalized).hostname.toLowerCase();
+    return host === 'notion.so' || host.endsWith('.notion.so') || host === 'notion.site' || host.endsWith('.notion.site') || host === 'notion.com' || host.endsWith('.notion.com');
+  }
+
   function validateTeamForm(formData) {
     const classGroup = String(formData.get('classGroup') || '').trim();
     const teamName = String(formData.get('teamName') || '').trim();
     const idea = String(formData.get('idea') || '').trim();
     const track = String(formData.get('track') || '').trim();
+    const notionUrl = String(formData.get('notionUrl') || '').trim();
     const members = [1, 2, 3].map(index => getMember(formData, index));
 
     if (!classGroup) return { error: '분반을 선택해 주세요.' };
     if (!teamName) return { error: '팀명을 입력해 주세요.' };
     if (!idea) return { error: '아이디어를 입력해 주세요.' };
     if (!['필수', '심화'].includes(track)) return { error: '트랙 구분을 선택해 주세요.' };
+    if (!notionUrl) return { error: '산출물 노션 URL을 입력해 주세요.' };
+    if (!isNotionUrl(notionUrl)) return { error: '유효한 Notion URL을 입력해 주세요.' };
 
     for (let i = 0; i < 2; i += 1) {
       if (!members[i].studentId || !members[i].name) {
@@ -166,11 +172,9 @@
       String(team.teamName || '').trim().toLowerCase() === teamName.toLowerCase()
     );
 
-    if (duplicateTeam) {
-      return { error: '같은 분반에 동일한 팀명이 이미 등록되어 있습니다.' };
-    }
+    if (duplicateTeam) return { error: '같은 분반에 동일한 팀명이 이미 등록되어 있습니다.' };
 
-    return { classGroup, teamName, idea, track, members };
+    return { classGroup, teamName, idea, track, notionUrl: normalizeNotionUrl(notionUrl), members };
   }
 
   async function saveTeam(event) {
@@ -179,18 +183,16 @@
     hideIdeaSuggestions();
     if (!form?.reportValidity()) return;
 
-    const formData = new FormData(form);
-    const validation = validateTeamForm(formData);
+    const validation = validateTeamForm(new FormData(form));
     if (validation.error) {
       setMessage(validation.error, 'error');
       return;
     }
 
-    const { classGroup, teamName, idea, track, members } = validation;
+    const { classGroup, teamName, idea, track, notionUrl, members } = validation;
 
     try {
       setSubmitting(true);
-
       const params = {
         action: editingNumber ? 'updateTeam' : 'register',
         number: editingNumber ? String(editingNumber) : '',
@@ -198,6 +200,7 @@
         teamName,
         idea,
         track,
+        notionUrl,
         studentId1: members[0].studentId,
         studentName1: members[0].name,
         studentId2: members[1].studentId,
@@ -233,6 +236,12 @@
     return `${escapeHtml(member.studentId)}<span>${escapeHtml(member.name)}</span>`;
   }
 
+  function renderNotionLink(url, teamName) {
+    if (!isNotionUrl(url)) return '<span class="notion-url-empty">-</span>';
+    const safeUrl = escapeHtml(normalizeNotionUrl(url));
+    return `<a class="notion-url-link" href="${safeUrl}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(teamName)} 산출물 노션 열기">노션 열기 <span aria-hidden="true">↗</span></a>`;
+  }
+
   function renderTeams() {
     const filtered = teams.filter(team => team.classGroup === currentFilter);
 
@@ -248,27 +257,16 @@
 
     tableBody.innerHTML = filtered.map(team => {
       const number = Number(team.number);
-      const weeks = team.weeks || {};
-      const outputCells = OUTPUT_WEEKS.map(week => `
-        <td><label class="week-check" title="${week}주차 산출물 완료">
-          <input type="checkbox" data-team-number="${number}" data-week="${week}" ${weeks[week] ? 'checked' : ''} aria-label="${escapeHtml(team.teamName)} ${week}주차 산출물 완료">
-        </label></td>
-      `).join('');
-
       return `<tr>
         <td>${number}</td>
         <td><span class="class-badge">${escapeHtml(team.classGroup)}</span></td>
-        <td class="team-name-cell">
-          <button type="button" class="team-edit-button" data-edit-team="${number}" title="${escapeHtml(team.teamName)} 팀 정보 수정">
-            ${escapeHtml(team.teamName)}
-          </button>
-        </td>
+        <td class="team-name-cell"><button type="button" class="team-edit-button" data-edit-team="${number}" title="${escapeHtml(team.teamName)} 팀 정보 수정">${escapeHtml(team.teamName)}</button></td>
         <td class="idea-cell">${escapeHtml(team.idea || '-')}</td>
         <td><span class="track-badge ${team.track === '심화' ? 'is-advanced' : ''}">${escapeHtml(team.track || '-')}</span></td>
+        <td class="notion-url-cell">${renderNotionLink(team.notionUrl || '', team.teamName || '')}</td>
         <td class="member-cell">${renderMember(team.members?.[0])}</td>
         <td class="member-cell">${renderMember(team.members?.[1])}</td>
         <td class="member-cell">${renderMember(team.members?.[2])}</td>
-        ${outputCells}
       </tr>`;
     }).join('');
   }
@@ -278,7 +276,6 @@
     const field = ideaInput.closest('.field-group');
     if (!field) return null;
 
-    field.classList.add('idea-autocomplete-field');
     ideaInput.setAttribute('autocomplete', 'off');
     ideaInput.setAttribute('aria-autocomplete', 'list');
     ideaInput.setAttribute('aria-expanded', 'false');
@@ -307,17 +304,12 @@
     const lowerQuery = query.toLocaleLowerCase('ko-KR');
     const index = lowerSource.indexOf(lowerQuery);
     if (index < 0) return escapeHtml(source);
-
-    const before = source.slice(0, index);
-    const match = source.slice(index, index + query.length);
-    const after = source.slice(index + query.length);
-    return `${escapeHtml(before)}<mark>${escapeHtml(match)}</mark>${escapeHtml(after)}`;
+    return `${escapeHtml(source.slice(0, index))}<mark>${escapeHtml(source.slice(index, index + query.length))}</mark>${escapeHtml(source.slice(index + query.length))}`;
   }
 
   function getIdeaMatches(query) {
     const normalized = query.trim().toLocaleLowerCase('ko-KR');
     if (!normalized) return [];
-
     return teams
       .filter(team => Number(team.number) !== Number(editingNumber))
       .filter(team => String(team.idea || '').toLocaleLowerCase('ko-KR').includes(normalized))
@@ -327,31 +319,13 @@
   function renderIdeaSuggestions() {
     const list = ensureIdeaSuggestions();
     if (!list || !ideaInput) return;
-
     const query = ideaInput.value.trim();
-    if (!query) {
-      hideIdeaSuggestions();
-      return;
-    }
+    if (!query) return hideIdeaSuggestions();
 
     const matches = getIdeaMatches(query);
-    if (!matches.length) {
-      hideIdeaSuggestions();
-      return;
-    }
+    if (!matches.length) return hideIdeaSuggestions();
 
-    list.innerHTML = `
-      <div class="idea-suggestions-head">
-        <strong>유사한 등록 아이디어 ${matches.length}건</strong>
-        <span>중복 주제를 확인하세요</span>
-      </div>
-      ${matches.map((team, index) => `
-        <div class="idea-suggestion" role="option" tabindex="-1" data-idea-index="${index}">
-          <span class="idea-suggestion-text">${highlightIdea(team.idea, query)}</span>
-          <span class="idea-suggestion-meta">${escapeHtml(team.classGroup)}반 · ${escapeHtml(team.teamName)}</span>
-        </div>
-      `).join('')}`;
-
+    list.innerHTML = `<div class="idea-suggestions-head"><strong>유사한 등록 아이디어 ${matches.length}건</strong><span>중복 주제를 확인하세요</span></div>${matches.map((team, index) => `<div class="idea-suggestion" role="option" tabindex="-1" data-idea-index="${index}"><span class="idea-suggestion-text">${highlightIdea(team.idea, query)}</span><span class="idea-suggestion-meta">${escapeHtml(team.classGroup)}반 · ${escapeHtml(team.teamName)}</span></div>`).join('')}`;
     list.hidden = false;
     ideaInput.setAttribute('aria-expanded', 'true');
 
@@ -369,11 +343,11 @@
 
   function fillFormForEdit(team) {
     if (!form || !team) return;
-
     setEditingMode(team);
     form.querySelector(`[name="classGroup"][value="${team.classGroup}"]`)?.click();
     form.querySelector('#team-name').value = team.teamName || '';
     form.querySelector('#project-idea').value = team.idea || '';
+    if (notionUrlInput) notionUrlInput.value = team.notionUrl || '';
 
     const track = team.track || '필수';
     form.querySelector(`[name="track"][value="${track}"]`)?.click();
@@ -392,34 +366,8 @@
   function handleTeamEdit(event) {
     const button = event.target.closest('[data-edit-team]');
     if (!button) return;
-    const number = Number(button.dataset.editTeam);
-    const team = teams.find(item => Number(item.number) === number);
+    const team = teams.find(item => Number(item.number) === Number(button.dataset.editTeam));
     if (team) fillFormForEdit(team);
-  }
-
-  async function handleWeekCheck(event) {
-    const checkbox = event.target.closest('input[data-team-number][data-week]');
-    if (!checkbox) return;
-
-    const number = Number(checkbox.dataset.teamNumber);
-    const week = Number(checkbox.dataset.week);
-    const checked = checkbox.checked;
-    checkbox.disabled = true;
-
-    try {
-      await jsonp({ action: 'updateWeek', number, week, checked: String(checked) });
-      const team = teams.find(item => Number(item.number) === number);
-      if (team) {
-        team.weeks = team.weeks || {};
-        team.weeks[week] = checked;
-      }
-    } catch (error) {
-      console.error('주차별 산출물 상태 저장에 실패했습니다.', error);
-      checkbox.checked = !checked;
-      setMessage(error.message || `${week}주차 완료 상태를 저장하지 못했습니다.`, 'error');
-    } finally {
-      checkbox.disabled = false;
-    }
   }
 
   function syncTabs() {
@@ -446,16 +394,13 @@
     }, 0);
   }
 
-  normalizeHeaderNavigation();
   ensureIdeaSuggestions();
-
   filterButtons.forEach(button => button.addEventListener('click', handleFilter));
   syncTabs();
 
   form?.addEventListener('submit', saveTeam);
   form?.addEventListener('reset', handleReset);
   tableBody?.addEventListener('click', handleTeamEdit);
-  tableBody?.addEventListener('change', handleWeekCheck);
 
   ideaInput?.addEventListener('input', renderIdeaSuggestions);
   ideaInput?.addEventListener('focus', renderIdeaSuggestions);
