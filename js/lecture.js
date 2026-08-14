@@ -5,7 +5,7 @@ const requestedWeek = Number.isFinite(parsedWeek) ? parsedWeek : 1;
 const week = Math.min(15, Math.max(0, requestedWeek));
 const weekData = window.WEEK_DATA.find(item => item.week === week);
 const READY_WEEKS = new Set([0, 1, 2, 3]);
-const ASSET_VERSION = '20260814-1625';
+const ASSET_VERSION = '20260814-1715';
 
 const titleEl = document.querySelector('#lecture-title');
 const weekEl = document.querySelector('#lecture-week');
@@ -281,7 +281,18 @@ async function loadLectureSource() {
   const number = String(week).padStart(2, '0');
   const response = await fetch(`../data/lectures/week${number}.md?v=${ASSET_VERSION}`, { cache: 'no-store' });
   if (!response.ok) throw new Error(`${itemLabel(weekData)} 원문 파일을 불러오지 못했습니다.`);
-  return normalizeLecturePaths(await response.text());
+
+  let source = await response.text();
+  if (week === 2) {
+    const syncResponse = await fetch(`../data/lectures/week02-2_5.md?v=${ASSET_VERSION}`, { cache: 'no-store' });
+    if (!syncResponse.ok) throw new Error('2주차 2.5 동기화 원문을 불러오지 못했습니다.');
+    const syncedSection = await syncResponse.text();
+    const sectionMarker = '<summary><span color="blue">**\\[참고\\] 시장 분석 및 트랜드 보고서 (개인별 산출물에 포함)**</span></summary>\n</details>';
+    if (!source.includes(sectionMarker)) throw new Error('2주차 2.5 삽입 위치를 찾지 못했습니다.');
+    source = source.replace(sectionMarker, `<summary><span color="blue">**\\[참고\\] 시장 분석 및 트랜드 보고서 (개인별 산출물에 포함)**</span></summary>\n${syncedSection}\n</details>`);
+  }
+
+  return normalizeLecturePaths(source);
 }
 
 function renderPendingLecture() {
