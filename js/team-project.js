@@ -16,6 +16,35 @@
   let teams = [];
   let jsonpSequence = 0;
 
+  function setupIdeaField() {
+    const basicGrid = form?.querySelector('.form-grid-basic');
+    const teamNameInput = form?.querySelector('#team-name');
+    const teamNameField = teamNameInput?.closest('.field-group');
+    if (!basicGrid || !teamNameField || form?.querySelector('#project-idea')) return;
+
+    const detailGrid = document.createElement('div');
+    detailGrid.className = 'team-basic-detail-grid';
+    detailGrid.appendChild(teamNameField);
+
+    const ideaField = document.createElement('label');
+    ideaField.className = 'field-group';
+    ideaField.innerHTML = `
+      <span class="field-label">아이디어</span>
+      <input id="project-idea" name="idea" type="text" maxlength="100" placeholder="예: 대학생을 위한 공모전 탐색 서비스">
+    `;
+    detailGrid.appendChild(ideaField);
+    basicGrid.appendChild(detailGrid);
+
+    const style = document.createElement('style');
+    style.textContent = `
+      .team-basic-detail-grid{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:20px;min-width:0}
+      @media(max-width:760px){.team-basic-detail-grid{grid-template-columns:1fr}}
+    `;
+    document.head.appendChild(style);
+  }
+
+  setupIdeaField();
+
   function escapeHtml(value = '') {
     return String(value)
       .replaceAll('&', '&amp;')
@@ -111,6 +140,7 @@
     const formData = new FormData(form);
     const classGroup = String(formData.get('classGroup') || '').trim();
     const teamName = String(formData.get('teamName') || '').trim();
+    const idea = String(formData.get('idea') || '').trim();
     const members = [1, 2, 3].map(index => getMember(formData, index));
 
     const optionalError = validateOptionalMember(members[1], 2) || validateOptionalMember(members[2], 3);
@@ -140,6 +170,7 @@
         action: 'register',
         classGroup,
         teamName,
+        idea,
         studentId1: members[0].studentId,
         studentName1: members[0].name,
         studentId2: members[1].studentId,
