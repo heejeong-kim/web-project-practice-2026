@@ -1,0 +1,68 @@
+html,body,button,input,a{font-family:"IBM Plex Sans KR",sans-serif}
+.shell{width:min(1520px,calc(100% - 64px));margin-left:auto;margin-right:auto}
+.team-url-link.is-current{font-weight:700;color:#111827}
+.team-hero{position:relative;overflow:hidden;padding:88px 0 72px;background:linear-gradient(135deg,#f7f9fc 0%,#eef4ff 48%,#f9fbff 100%);border-bottom:1px solid #e8edf5}
+.team-hero::before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:rgba(79,70,229,.08);right:-140px;top:-190px;filter:blur(2px)}
+.team-hero-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);align-items:center;gap:56px}
+.team-hero h1{margin:12px 0 20px;font-size:clamp(42px,5vw,70px);line-height:1.08;letter-spacing:-.045em;color:#111827}
+.team-hero h1 span{color:#4f46e5}
+.team-hero-copy{max-width:760px;margin:0;color:#667085;font-size:17px;line-height:1.8}
+.team-hero-image{min-height:280px;display:flex;align-items:center;justify-content:center;border-radius:28px;background:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.95);box-shadow:0 24px 70px rgba(44,62,100,.12);overflow:hidden}
+.team-hero-image img{width:100%;height:100%;max-height:360px;object-fit:contain;padding:26px}
+.team-hero-image.is-empty::after{content:"TEAM PROJECT";font-size:22px;font-weight:700;letter-spacing:.12em;color:#9aa5b5}
+.team-hero-image.is-empty img{display:none}
+.team-section{padding-top:72px;padding-bottom:84px}
+.team-form{margin-top:28px;padding:30px;border:1px solid #e4e9f0;border-radius:22px;background:#fff;box-shadow:0 18px 44px rgba(31,41,55,.06)}
+.form-grid{display:grid;gap:20px}
+.form-grid-basic{grid-template-columns:280px minmax(0,1fr)}
+.field-group{display:flex;flex-direction:column;gap:10px}
+.field-label{font-size:13px;font-weight:700;color:#344054}
+.field-group>input,.member-card input{width:100%;height:48px;border:1px solid #d9e0ea;border-radius:12px;background:#fff;padding:0 14px;color:#111827;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}
+.field-group>input:focus,.member-card input:focus{border-color:#6366f1;box-shadow:0 0 0 4px rgba(99,102,241,.1)}
+.class-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.class-choice label{cursor:pointer}
+.class-choice input{position:absolute;opacity:0;pointer-events:none}
+.class-choice span{height:48px;display:flex;align-items:center;justify-content:center;border:1px solid #d9e0ea;border-radius:12px;background:#fff;font-weight:700;color:#667085;transition:.2s}
+.class-choice input:checked+span{border-color:#4f46e5;background:#eef2ff;color:#3730a3;box-shadow:inset 0 0 0 1px #4f46e5}
+.member-panel{margin-top:24px;padding-top:24px;border-top:1px solid #edf0f4}
+.member-panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
+.member-panel-heading strong{font-size:18px;color:#111827}
+.member-panel-heading p{margin:5px 0 0;color:#7b8494;font-size:13px}
+.member-panel-heading>span{display:inline-flex;padding:6px 10px;border-radius:999px;background:#f2f4f7;color:#667085;font-size:12px;font-weight:700}
+.member-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.member-card{margin:0;padding:18px;border:1px solid #e4e9f0;border-radius:16px;background:#fbfcfe}
+.member-card legend{padding:0 6px;font-size:14px;font-weight:700;color:#344054}
+.member-card legend em{margin-left:4px;font-style:normal;font-size:11px;color:#7c3aed}
+.member-card label{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;gap:10px;margin-top:10px}
+.member-card label>span{font-size:12px;color:#667085}
+.member-card input{height:42px;background:#fff}
+.form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+.form-actions .button{border:0;cursor:pointer}
+.button.secondary{background:#eef1f5;color:#4b5563}
+.form-message{min-height:20px;margin-top:14px;font-size:13px;font-weight:600}
+.form-message.is-error{color:#b42318}
+.form-message.is-success{color:#087a55}
+.team-list-section{padding-top:72px;padding-bottom:84px}
+.team-list-heading{align-items:flex-end}
+.team-filters{display:flex;gap:8px;flex-wrap:wrap}
+.table-scroll{margin-top:28px;overflow:auto;border:1px solid #dfe5ed;border-radius:18px;background:#fff;box-shadow:0 18px 42px rgba(31,41,55,.05)}
+.team-table{width:100%;min-width:1720px;border-collapse:separate;border-spacing:0;font-size:13px}
+.team-table th,.team-table td{padding:13px 12px;border-right:1px solid #edf0f4;border-bottom:1px solid #edf0f4;text-align:center;vertical-align:middle;color:#344054;background:#fff}
+.team-table th{position:sticky;top:0;z-index:1;background:#f8fafc;color:#475467;font-weight:700}
+.team-table thead tr:first-child th:first-child{border-top-left-radius:17px}
+.team-table thead tr:first-child th:last-child{border-top-right-radius:17px}
+.team-table td.team-name-cell{text-align:left;font-weight:700;color:#111827;min-width:150px}
+.team-table td.member-cell{min-width:145px;line-height:1.55}
+.team-table td.member-cell span{display:block;color:#667085;font-size:12px}
+.team-table .class-badge{display:inline-flex;min-width:34px;justify-content:center;padding:5px 8px;border-radius:999px;background:#eef2ff;color:#4338ca;font-size:12px;font-weight:700}
+.team-table .week-output-head{background:#eef2ff;color:#4338ca}
+.week-head-row th{min-width:58px;background:#f7f8ff}
+.week-check{display:inline-flex;align-items:center;justify-content:center}
+.week-check input{width:18px;height:18px;accent-color:#4f46e5;cursor:pointer}
+.empty-team-state{margin-top:28px;padding:42px 20px;text-align:center;border:1px dashed #cfd7e3;border-radius:18px;background:rgba(255,255,255,.7)}
+.empty-team-state strong{font-size:18px;color:#344054}
+.empty-team-state p{margin:8px 0 0;color:#7b8494;font-size:14px}
+.sheet-note{margin:16px 0 0;color:#858d9b;font-size:12px;line-height:1.6}
+@media(max-width:1024px){.team-hero-grid{grid-template-columns:1fr}.team-hero-image{min-height:220px}.member-grid{grid-template-columns:1fr}.form-grid-basic{grid-template-columns:1fr}}
+@media(max-width:860px){.top-nav{display:none!important}.team-hero{padding:64px 0 48px}.team-hero h1{font-size:44px}.team-hero-image{display:none}.team-list-heading{align-items:flex-start}.team-filters{margin-top:18px}}
+@media(max-width:680px){.shell{width:min(100% - 28px,1520px)}.team-section,.team-list-section{padding-top:52px;padding-bottom:60px}.team-form{padding:18px;border-radius:16px}.member-panel-heading{flex-direction:column}.form-actions{display:grid;grid-template-columns:1fr 1fr}.form-actions .button{width:100%;justify-content:center}.team-hero h1{font-size:37px}.team-hero-copy{font-size:15px}}
