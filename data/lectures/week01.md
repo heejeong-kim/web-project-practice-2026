@@ -52,7 +52,6 @@
 </details>
 ---
 # 1. 웹프로젝트 실습의 이해
-<figure class="chapter-image"><img src="/web-project-practice-2026/asset/1_1.png" alt="1장 웹프로젝트 실습의 이해" loading="eager"></figure>
 ## 1.1 웹페이지에서 웹서비스로
 웹프로젝트를 시작할 때 가장 먼저 구분해야 할 것은 무엇을 보여주는가와 사용자가 무엇을 할 수 있는가의 차이임. 웹페이지는 브라우저에서 보는 하나의 문서나 화면이고, 웹사이트는 여러 웹페이지가 하나의 목적과 정보구조로 연결된 형태를 의미
 학과 소개 페이지나 행사 안내 페이지처럼 정해진 정보를 읽는 것이 중심이라면 정보 제공형 웹페이지에 가까움. 대학 홈페이지처럼 페이지가 많더라도 사용자의 주요 행동이 메뉴 이동과 정보 확인이라면 웹사이트의 성격이 강함
@@ -219,8 +218,7 @@
 </table>
 **예시 HTML｜정적 카페 소개 페이지**
 아래 예시는 카페 한 곳의 메뉴와 운영시간을 HTML 안에 직접 작성한 구조
-<iframe src="/web-project-practice-2026/data/samples/caferaon.html" title="카페 라온 정적 소개 페이지 샘플" loading="lazy" style="width:100%;height:560px;border:1px solid #dfe4eb;border-radius:16px;background:#fff"></iframe>
-<p><a href="/web-project-practice-2026/data/samples/caferaon.html" target="_blank" rel="noopener noreferrer">caferaon.html 새 창에서 보기</a></p>
+<embed src="file://%7B%22source%22%3A%22attachment%3A4452d3b2-663a-4eac-a15b-1297f12ed42d%3Acaferaon.html%22%2C%22permissionRecord%22%3A%7B%22table%22%3A%22block%22%2C%22id%22%3A%223b5a50f0-7615-80e4-9c6a-f8a712c7df1c%22%2C%22spaceId%22%3A%2264c8ea2d-c94b-446e-9e04-40905ab83f2a%22%7D%7D"></embed>
 > <span color="gray">메뉴를 추가하려면 HTML의 article 요소를 직접 추가해야 하고, 사용자가 조건을 선택해 결과를 바꾸는 기능은 없음</span>
 ---
 ### 1.4.2 카페 탐색 서비스
@@ -229,8 +227,7 @@
 즐겨찾기한 카페의 `id`를 LocalStorage에 저장하면 브라우저를 다시 열어도 개인 상태를 복원할 수 있음. 이처럼 하나의 데이터셋을 여러 기능과 연결하면 정적 페이지가 데이터 기반 웹서비스로 확장됨
 **예시 HTML｜카페 탐색 서비스 화면 구조**
 HTML에는 검색창·필터·정렬·결과 영역을 만들고 실제 카페 카드는 JavaScript가 JSON을 읽어 동적으로 생성한다고 가정
-<iframe src="/web-project-practice-2026/data/samples/caferaon_db.html" title="카페 탐색 데이터 기반 서비스 샘플" loading="lazy" style="width:100%;height:620px;border:1px solid #dfe4eb;border-radius:16px;background:#fff"></iframe>
-<p><a href="/web-project-practice-2026/data/samples/caferaon_db.html" target="_blank" rel="noopener noreferrer">caferaon_db.html 새 창에서 보기</a></p>
+<embed src="file://%7B%22source%22%3A%22attachment%3A4b2f2611-0058-4f1a-a813-cacb2491c0ce%3Acaferaon_db.html%22%2C%22permissionRecord%22%3A%7B%22table%22%3A%22block%22%2C%22id%22%3A%223b5a50f0-7615-8038-8a16-d57471944899%22%2C%22spaceId%22%3A%2264c8ea2d-c94b-446e-9e04-40905ab83f2a%22%7D%7D"></embed>
 <table fit-page-width="true" header-row="true">
 <tr>
 <td>사용자 행동</td>
@@ -262,7 +259,6 @@ HTML에는 검색창·필터·정렬·결과 영역을 만들고 실제 카페 �
 </callout>
 ---
 # 2. 데이터 기반 웹서비스의 구조
-<figure class="chapter-image"><img src="/web-project-practice-2026/asset/1_2.png" alt="2장 데이터 기반 웹서비스의 구조" loading="eager"></figure>
 ## 2.1 화면·기본 데이터·사용자 데이터
 데이터 기반 웹서비스는 크게 화면, 기본 데이터, 사용자 데이터의 세 층으로 이해하면 구조가 단순해짐
 **① 화면｜사용자가 보고 조작하는 영역**
@@ -382,7 +378,6 @@ JSON 기본 데이터 → JavaScript 처리 → 화면 출력 → 사용자 행�
 </callout>
 ---
 # 3. 웹서비스 사례 분석과 프로젝트 탐색
-<figure class="chapter-image"><img src="/web-project-practice-2026/asset/1_3.png" alt="3장 웹서비스 사례 분석과 프로젝트 탐색" loading="eager"></figure>
 ## 3.1 내가 사용하는 서비스 해부하기
 평소 자주 사용하는 웹서비스 하나를 선정해 화면 디자인보다 사용자·문제·행동·데이터를 중심으로 분석. 쇼핑·배달·지도·여행·콘텐츠·학습 등 분야는 자유롭지만, 검색·필터·선택·저장 같은 사용자 행동이 있는 서비스를 우선
 서비스 목적은 기능 이름이 아니라 사용자가 얻는 결과로 작성. “필터 기능을 제공”보다 “조건에 맞지 않는 후보를 빠르게 제외할 수 있게 함”처럼 표현하면 서비스가 해결하는 문제가 더 분명해짐
