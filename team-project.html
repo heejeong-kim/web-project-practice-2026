@@ -87,19 +87,19 @@
           <div class="member-grid">
             <fieldset class="member-card">
               <legend>팀원 1 <em>필수</em></legend>
-              <label><span>학번</span><input name="studentId1" type="text" inputmode="numeric" maxlength="20" placeholder="학번" required></label>
+              <label><span>학번</span><input name="studentId1" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="학번" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required></label>
               <label><span>이름</span><input name="studentName1" type="text" maxlength="20" placeholder="이름" required></label>
             </fieldset>
 
             <fieldset class="member-card">
               <legend>팀원 2 <em>선택</em></legend>
-              <label><span>학번</span><input name="studentId2" type="text" inputmode="numeric" maxlength="20" placeholder="학번"></label>
+              <label><span>학번</span><input name="studentId2" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="학번" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></label>
               <label><span>이름</span><input name="studentName2" type="text" maxlength="20" placeholder="이름"></label>
             </fieldset>
 
             <fieldset class="member-card">
               <legend>팀원 3 <em>선택</em></legend>
-              <label><span>학번</span><input name="studentId3" type="text" inputmode="numeric" maxlength="20" placeholder="학번"></label>
+              <label><span>학번</span><input name="studentId3" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="학번" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></label>
               <label><span>이름</span><input name="studentName3" type="text" maxlength="20" placeholder="이름"></label>
             </fieldset>
           </div>
