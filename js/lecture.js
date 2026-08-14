@@ -5,7 +5,7 @@ const requestedWeek = Number.isFinite(parsedWeek) ? parsedWeek : 1;
 const week = Math.min(15, Math.max(0, requestedWeek));
 const weekData = window.WEEK_DATA.find(item => item.week === week);
 const READY_WEEKS = new Set([0, 1, 2, 3]);
-const ASSET_VERSION = '20260814-1715';
+const ASSET_VERSION = '20260814-1719';
 
 const titleEl = document.querySelector('#lecture-title');
 const weekEl = document.querySelector('#lecture-week');
@@ -257,6 +257,12 @@ function renderNotionMarkdown(source = '') {
 
     if (!line.trim()) {
       closeList();
+      continue;
+    }
+
+    if (/^<span\s+color="[^"]+">[\s\S]*<\/span>$/.test(line)) {
+      closeList();
+      out.push(inlineMarkdown(line));
       continue;
     }
 
