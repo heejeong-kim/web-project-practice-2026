@@ -58,7 +58,7 @@
     if (formDescription) {
       formDescription.textContent = editingNumber
         ? '선택한 팀 정보를 수정한 뒤 저장하세요.'
-        : '한 팀은 2명으로 구성하며, 두 팀원 모두 필수입니다.';
+        : '팀원 1·2는 필수, 팀원 3은 선택입니다.';
     }
     if (submitButton) submitButton.textContent = editingNumber ? '수정 저장' : '팀 등록';
     if (resetButton) resetButton.textContent = editingNumber ? '수정 취소' : '입력 초기화';
@@ -69,11 +69,7 @@
     return new Promise((resolve, reject) => {
       const callbackName = `__teamProjectCallback${Date.now()}_${jsonpSequence++}`;
       const script = document.createElement('script');
-      const query = new URLSearchParams({
-        ...params,
-        callback: callbackName,
-        _: Date.now()
-      });
+      const query = new URLSearchParams({ ...params, callback: callbackName, _: Date.now() });
       const timeout = window.setTimeout(() => {
         cleanup();
         reject(new Error('Google Sheet 응답 시간이 초과되었습니다.'));
@@ -122,20 +118,25 @@
     const teamName = String(formData.get('teamName') || '').trim();
     const idea = String(formData.get('idea') || '').trim();
     const track = String(formData.get('track') || '').trim();
-    const members = [1, 2].map(index => getMember(formData, index));
+    const members = [1, 2, 3].map(index => getMember(formData, index));
 
     if (!classGroup) return { error: '분반을 선택해 주세요.' };
     if (!teamName) return { error: '팀명을 입력해 주세요.' };
     if (!idea) return { error: '아이디어를 입력해 주세요.' };
     if (!['필수', '심화'].includes(track)) return { error: '트랙 구분을 선택해 주세요.' };
 
-    for (let i = 0; i < members.length; i += 1) {
+    for (let i = 0; i < 2; i += 1) {
       if (!members[i].studentId || !members[i].name) {
         return { error: `팀원 ${i + 1}의 학번과 이름을 모두 입력해 주세요.` };
       }
     }
 
-    if (members[0].studentId === members[1].studentId) {
+    if ((members[2].studentId && !members[2].name) || (!members[2].studentId && members[2].name)) {
+      return { error: '팀원 3을 입력하려면 학번과 이름을 모두 입력해 주세요.' };
+    }
+
+    const studentIds = members.filter(member => member.studentId).map(member => member.studentId);
+    if (new Set(studentIds).size !== studentIds.length) {
       return { error: '같은 학번을 한 팀에 중복 등록할 수 없습니다.' };
     }
 
@@ -180,12 +181,11 @@
         studentName1: members[0].name,
         studentId2: members[1].studentId,
         studentName2: members[1].name,
-        studentId3: '',
-        studentName3: ''
+        studentId3: members[2].studentId,
+        studentName3: members[2].name
       };
 
       const result = await jsonp(params);
-
       const successText = editingNumber
         ? `${classGroup}반 ${teamName} 팀 정보가 수정되었습니다.`
         : `${classGroup}반 ${teamName} 팀이 등록되었습니다.`;
@@ -245,6 +245,7 @@
         <td><span class="track-badge ${team.track === '심화' ? 'is-advanced' : ''}">${escapeHtml(team.track || '-')}</span></td>
         <td class="member-cell">${renderMember(team.members?.[0])}</td>
         <td class="member-cell">${renderMember(team.members?.[1])}</td>
+        <td class="member-cell">${renderMember(team.members?.[2])}</td>
         ${outputCells}
       </tr>`;
     }).join('');
@@ -261,7 +262,7 @@
     const track = team.track || '필수';
     form.querySelector(`[name="track"][value="${track}"]`)?.click();
 
-    [1, 2].forEach(index => {
+    [1, 2, 3].forEach(index => {
       const member = team.members?.[index - 1] || {};
       form.querySelector(`[name="studentId${index}"]`).value = member.studentId || '';
       form.querySelector(`[name="studentName${index}"]`).value = member.name || '';
