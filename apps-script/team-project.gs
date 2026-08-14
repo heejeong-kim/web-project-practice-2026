@@ -6,7 +6,7 @@ const COL = {
   STUDENT_ID_1: 4, STUDENT_NAME_1: 5,
   STUDENT_ID_2: 6, STUDENT_NAME_2: 7,
   STUDENT_ID_3: 8, STUDENT_NAME_3: 9,
-  WEEK_3: 10, CREATED_AT: 23, IDEA: 24, TRACK: 25, NOTION_URL: 26
+  WEEK_3: 10, CREATED_AT: 23, IDEA: 24, TRACK: 25, NOTION_URL: 26, PROJECT_URL: 27
 };
 
 function doGet(e) {
@@ -29,12 +29,13 @@ function doGet(e) {
 
 function initializeSheet() {
   const sheet = getSheet_();
-  const headers = ['번호','분반','팀명','팀원1학번','팀원1이름','팀원2학번','팀원2이름','팀원3학번','팀원3이름','3주차','4주차','5주차','6주차','7주차','8주차','9주차','10주차','11주차','12주차','13주차','14주차','15주차','등록일','아이디어','트랙','산출물 노션 URL'];
+  const headers = ['번호','분반','팀명','팀원1학번','팀원1이름','팀원2학번','팀원2이름','팀원3학번','팀원3이름','3주차','4주차','5주차','6주차','7주차','8주차','9주차','10주차','11주차','12주차','13주차','14주차','15주차','등록일','아이디어','트랙','산출물 노션 URL','프로젝트 URL'];
   if (sheet.getLastRow() === 0) sheet.getRange(1,1,1,headers.length).setValues([headers]);
   else {
     sheet.getRange(1,COL.IDEA).setValue('아이디어');
     sheet.getRange(1,COL.TRACK).setValue('트랙');
     sheet.getRange(1,COL.NOTION_URL).setValue('산출물 노션 URL');
+    sheet.getRange(1,COL.PROJECT_URL).setValue('프로젝트 URL');
   }
 }
 
@@ -42,7 +43,7 @@ function getTeams() {
   const sheet = getSheet_();
   const lastRow = sheet.getLastRow();
   if (lastRow < 2) return [];
-  const rows = sheet.getRange(2,1,lastRow-1,COL.NOTION_URL).getValues();
+  const rows = sheet.getRange(2,1,lastRow-1,COL.PROJECT_URL).getValues();
   return rows.filter(row => row[0] !== '' && row[0] !== null).map(row => ({
     number: Number(row[COL.NUMBER-1]),
     classGroup: String(row[COL.CLASS_GROUP-1] || ''),
@@ -50,6 +51,7 @@ function getTeams() {
     idea: String(row[COL.IDEA-1] || ''),
     track: String(row[COL.TRACK-1] || ''),
     notionUrl: String(row[COL.NOTION_URL-1] || ''),
+    projectUrl: String(row[COL.PROJECT_URL-1] || ''),
     members: [
       { studentId:String(row[COL.STUDENT_ID_1-1]||''), name:String(row[COL.STUDENT_NAME_1-1]||'') },
       { studentId:String(row[COL.STUDENT_ID_2-1]||''), name:String(row[COL.STUDENT_NAME_2-1]||'') },
@@ -64,12 +66,12 @@ function registerTeam(data) {
   try {
     const input = validateTeamInput_(data,null);
     const sheet = getSheet_(); const number = getNextNumber_(sheet);
-    const row = new Array(COL.NOTION_URL).fill('');
+    const row = new Array(COL.PROJECT_URL).fill('');
     row[COL.NUMBER-1]=number; row[COL.CLASS_GROUP-1]=input.classGroup; row[COL.TEAM_NAME-1]=input.teamName;
     row[COL.STUDENT_ID_1-1]=input.members[0].studentId; row[COL.STUDENT_NAME_1-1]=input.members[0].name;
     row[COL.STUDENT_ID_2-1]=input.members[1].studentId; row[COL.STUDENT_NAME_2-1]=input.members[1].name;
     row[COL.STUDENT_ID_3-1]=input.members[2].studentId; row[COL.STUDENT_NAME_3-1]=input.members[2].name;
-    row[COL.CREATED_AT-1]=new Date(); row[COL.IDEA-1]=input.idea; row[COL.TRACK-1]=input.track; row[COL.NOTION_URL-1]=input.notionUrl;
+    row[COL.CREATED_AT-1]=new Date(); row[COL.IDEA-1]=input.idea; row[COL.TRACK-1]=input.track; row[COL.NOTION_URL-1]=input.notionUrl; row[COL.PROJECT_URL-1]=input.projectUrl;
     sheet.appendRow(row); SpreadsheetApp.flush();
     return { success:true, message:'팀이 등록되었습니다.', teams:getTeams() };
   } finally { lock.releaseLock(); }
@@ -83,13 +85,13 @@ function updateTeam(data) {
     const sheet=getSheet_(); const rowIndex=findTeamRow_(sheet,number);
     if (!rowIndex) throw new Error('수정할 팀을 찾을 수 없습니다.');
     const input=validateTeamInput_(data,number);
-    const row=sheet.getRange(rowIndex,1,1,COL.NOTION_URL).getValues()[0];
+    const row=sheet.getRange(rowIndex,1,1,COL.PROJECT_URL).getValues()[0];
     row[COL.CLASS_GROUP-1]=input.classGroup; row[COL.TEAM_NAME-1]=input.teamName;
     row[COL.STUDENT_ID_1-1]=input.members[0].studentId; row[COL.STUDENT_NAME_1-1]=input.members[0].name;
     row[COL.STUDENT_ID_2-1]=input.members[1].studentId; row[COL.STUDENT_NAME_2-1]=input.members[1].name;
     row[COL.STUDENT_ID_3-1]=input.members[2].studentId; row[COL.STUDENT_NAME_3-1]=input.members[2].name;
-    row[COL.IDEA-1]=input.idea; row[COL.TRACK-1]=input.track; row[COL.NOTION_URL-1]=input.notionUrl;
-    sheet.getRange(rowIndex,1,1,COL.NOTION_URL).setValues([row]); SpreadsheetApp.flush();
+    row[COL.IDEA-1]=input.idea; row[COL.TRACK-1]=input.track; row[COL.NOTION_URL-1]=input.notionUrl; row[COL.PROJECT_URL-1]=input.projectUrl;
+    sheet.getRange(rowIndex,1,1,COL.PROJECT_URL).setValues([row]); SpreadsheetApp.flush();
     return { success:true, message:'팀 정보가 수정되었습니다.', teams:getTeams() };
   } finally { lock.releaseLock(); }
 }
@@ -113,6 +115,7 @@ function validateTeamInput_(data, editingNumber) {
   const idea=String(data.idea||'').trim();
   const track=String(data.track||'').trim();
   const notionUrl=String(data.notionUrl||'').trim();
+  const projectUrl=String(data.projectUrl||'').trim();
   const members=[
     {studentId:String(data.studentId1||'').trim(),name:String(data.studentName1||'').trim()},
     {studentId:String(data.studentId2||'').trim(),name:String(data.studentName2||'').trim()},
@@ -131,7 +134,7 @@ function validateTeamInput_(data, editingNumber) {
   if (otherTeams.some(team=>team.classGroup===classGroup&&team.teamName.trim().toLowerCase()===teamName.toLowerCase())) throw new Error('같은 분반에 동일한 팀명이 이미 등록되어 있습니다.');
   const usedIds={}; otherTeams.forEach(team=>(team.members||[]).forEach(member=>{if(member.studentId)usedIds[member.studentId]=team.teamName;}));
   ids.forEach(id=>{if(usedIds[id])throw new Error('학번 '+id+'은(는) 이미 '+usedIds[id]+' 팀에 등록되어 있습니다.');});
-  return { classGroup,teamName,idea,track,notionUrl,members };
+  return { classGroup,teamName,idea,track,notionUrl,projectUrl,members };
 }
 
 function getSheet_(){const spreadsheet=SpreadsheetApp.openById(SPREADSHEET_ID);let sheet=spreadsheet.getSheetByName(SHEET_NAME);if(!sheet)sheet=spreadsheet.insertSheet(SHEET_NAME);return sheet;}
