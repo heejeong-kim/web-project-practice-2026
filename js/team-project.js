@@ -1,5 +1,5 @@
 (() => {
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTo6txGZUXha2YWU3_l_x89kYoANzPPrIOqbNDb08QIv4RmUZkDCeF0c8j3AoEMAeE/exec';
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTo6txGZUXha2YWU3_I_x89kYoANzPPrIOqbNDb08QIv4RmUZkDCeF0c8j3AoEMAeE/exec';
   const OUTPUT_WEEKS = Array.from({ length: 13 }, (_, i) => i + 3);
 
   const form = document.querySelector('#team-form');
