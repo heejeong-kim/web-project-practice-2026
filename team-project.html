@@ -23,7 +23,6 @@
           <small>2026 · 2학기</small>
         </span>
       </a>
-
       <nav class="top-nav" aria-label="주요 메뉴">
         <a href="./index.html#weeks">주차별 수업</a>
         <a href="./index.html#tracks">프로젝트 트랙</a>
@@ -38,7 +37,6 @@
       <div class="hero-orb hero-orb-a" aria-hidden="true"></div>
       <div class="hero-orb hero-orb-b" aria-hidden="true"></div>
       <div class="hero-grid-lines" aria-hidden="true"></div>
-
       <div class="shell team-status-hero-grid">
         <div class="team-status-hero-copy">
           <p class="eyebrow">TEAM PROJECT · STATUS BOARD</p>
@@ -51,7 +49,6 @@
             <a class="button primary" href="./index.html#weeks"><span>주차별 교안 보러 가기</span><b aria-hidden="true">→</b></a>
           </div>
         </div>
-
         <div class="team-status-hero-visual">
           <img src="./asset/team.png" alt="팀프로젝트 협업 및 진행 현황 일러스트">
         </div>
@@ -61,22 +58,24 @@
     <section class="quick-bar" aria-label="팀프로젝트 핵심 정보">
       <div class="shell quick-grid">
         <div><strong>A·B반</strong><span>분반별 팀 현황 관리</span></div>
-        <div><strong>최대 3명</strong><span>팀별 참여 학생 등록</span></div>
+        <div><strong>2명</strong><span>팀원 2명 필수 등록</span></div>
+        <div><strong>필수·심화</strong><span>프로젝트 트랙 구분</span></div>
         <div><strong>3–15주</strong><span>주차별 산출물 완료 체크</span></div>
-        <div><strong>공용 데이터</strong><span>Google Sheet 실시간 연동</span></div>
       </div>
     </section>
 
-    <section class="section shell team-section">
+    <section class="section shell team-section" id="team-form-section">
       <div class="section-heading compact">
         <div>
           <p class="eyebrow">TEAM REGISTRATION</p>
-          <h2>팀 정보 등록</h2>
-          <p>한 팀은 최대 3명까지 등록할 수 있습니다.</p>
+          <h2 id="team-form-title">팀 정보 등록</h2>
+          <p id="team-form-description">한 팀은 2명으로 구성하며, 두 팀원 모두 필수입니다.</p>
         </div>
       </div>
 
       <form id="team-form" class="team-form" novalidate>
+        <input type="hidden" name="teamNumber" id="team-number" value="">
+
         <div class="form-grid form-grid-basic">
           <div class="field-group">
             <span class="field-label">분반</span>
@@ -90,18 +89,31 @@
             <span class="field-label">팀명</span>
             <input id="team-name" name="teamName" type="text" maxlength="30" placeholder="예: 픽셀메이커" required>
           </label>
+
+          <label class="field-group">
+            <span class="field-label">아이디어</span>
+            <input id="project-idea" name="idea" type="text" maxlength="100" placeholder="예: 대학생을 위한 공모전 탐색 서비스" required>
+          </label>
+
+          <div class="field-group">
+            <span class="field-label">트랙 구분</span>
+            <div class="track-choice" role="radiogroup" aria-label="트랙 구분 선택">
+              <label><input type="radio" name="track" value="필수" required><span>필수</span></label>
+              <label><input type="radio" name="track" value="심화" required><span>심화</span></label>
+            </div>
+          </div>
         </div>
 
         <div class="member-panel">
           <div class="member-panel-heading">
             <div>
               <strong>참여 팀원</strong>
-              <p>팀원 1은 필수, 팀원 2·3은 선택입니다.</p>
+              <p>팀원 1·2 모두 학번과 이름을 필수로 입력합니다.</p>
             </div>
-            <span>최대 3명</span>
+            <span>2명 필수</span>
           </div>
 
-          <div class="member-grid">
+          <div class="member-grid member-grid-two">
             <fieldset class="member-card">
               <legend>팀원 1 <em>필수</em></legend>
               <label><span>학번</span><input name="studentId1" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="학번" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required></label>
@@ -109,23 +121,17 @@
             </fieldset>
 
             <fieldset class="member-card">
-              <legend>팀원 2 <em>선택</em></legend>
-              <label><span>학번</span><input name="studentId2" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="학번" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></label>
-              <label><span>이름</span><input name="studentName2" type="text" maxlength="20" placeholder="이름"></label>
-            </fieldset>
-
-            <fieldset class="member-card">
-              <legend>팀원 3 <em>선택</em></legend>
-              <label><span>학번</span><input name="studentId3" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="학번" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></label>
-              <label><span>이름</span><input name="studentName3" type="text" maxlength="20" placeholder="이름"></label>
+              <legend>팀원 2 <em>필수</em></legend>
+              <label><span>학번</span><input name="studentId2" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="학번" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required></label>
+              <label><span>이름</span><input name="studentName2" type="text" maxlength="20" placeholder="이름" required></label>
             </fieldset>
           </div>
         </div>
 
         <div id="form-message" class="form-message" role="status" aria-live="polite"></div>
         <div class="form-actions">
-          <button class="button secondary" type="reset">입력 초기화</button>
-          <button class="button primary" type="submit">팀 등록</button>
+          <button class="button secondary" id="reset-team-button" type="reset">입력 초기화</button>
+          <button class="button primary" id="save-team-button" type="submit">팀 등록</button>
         </div>
       </form>
     </section>
@@ -136,12 +142,11 @@
           <div>
             <p class="eyebrow">REGISTERED TEAMS</p>
             <h2>등록된 팀프로젝트</h2>
-            <p>A·B반 전체 팀 정보와 주차별 산출물 완료 여부를 확인합니다.</p>
+            <p>팀명을 선택하면 등록 정보를 불러와 수정할 수 있습니다.</p>
           </div>
-          <div class="team-filters" role="group" aria-label="분반 필터">
-            <button class="filter-chip is-active" type="button" data-class-filter="all">전체</button>
-            <button class="filter-chip" type="button" data-class-filter="A">A반</button>
-            <button class="filter-chip" type="button" data-class-filter="B">B반</button>
+          <div class="team-filters" role="tablist" aria-label="등록 프로젝트 분반">
+            <button class="filter-chip is-active" type="button" data-class-filter="A" role="tab" aria-selected="true">A반</button>
+            <button class="filter-chip" type="button" data-class-filter="B" role="tab" aria-selected="false">B반</button>
           </div>
         </div>
 
@@ -151,10 +156,11 @@
               <tr>
                 <th rowspan="2">번호</th>
                 <th rowspan="2">분반</th>
-                <th rowspan="2">팀명</th>
+                <th rowspan="2">팀명<br><small>선택 시 수정</small></th>
+                <th rowspan="2">아이디어</th>
+                <th rowspan="2">트랙</th>
                 <th rowspan="2">참여팀원 1<br><small>학번 / 이름</small></th>
                 <th rowspan="2">참여팀원 2<br><small>학번 / 이름</small></th>
-                <th rowspan="2">참여팀원 3<br><small>학번 / 이름</small></th>
                 <th colspan="13" class="week-output-head">주차별 산출물 완료</th>
               </tr>
               <tr class="week-head-row">
@@ -166,8 +172,8 @@
         </div>
 
         <div id="empty-team-state" class="empty-team-state">
-          <strong>아직 등록된 팀이 없습니다.</strong>
-          <p>상단에서 첫 번째 팀을 등록하면 이곳에 목록이 표시됩니다.</p>
+          <strong>A반에 아직 등록된 팀이 없습니다.</strong>
+          <p>상단에서 팀을 등록하면 이곳에 목록이 표시됩니다.</p>
         </div>
 
         <p class="sheet-note">팀 등록 정보와 주차별 완료 상태는 Google Sheet에 저장되어 공용 데이터로 관리됩니다.</p>
