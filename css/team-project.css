@@ -4,7 +4,7 @@ html,body,button,input,a{font-family:"IBM Plex Sans KR",sans-serif}
 
 /* Team status hero */
 .team-status-hero{height:auto!important;min-height:0!important;padding:0!important;display:block;overflow:hidden}
-.team-status-hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(380px,.95fr);align-items:center;gap:56px;width:100%;padding:56px 0}
+.team-status-hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(380px,.95fr);align-items:center;gap:56px;width:min(1180px,calc(100% - 40px))!important;margin:0 auto;padding:56px 0}
 .team-status-hero-copy{position:relative;z-index:2;min-width:0;align-self:center}
 .team-status-hero .eyebrow{color:#ff8738}
 .team-status-hero h1{margin:10px 0 18px;color:#fff;font-size:clamp(54px,5.2vw,82px);line-height:1;letter-spacing:-.055em;font-weight:700}
@@ -97,6 +97,7 @@ html,body,button,input,a{font-family:"IBM Plex Sans KR",sans-serif}
 }
 @media(max-width:680px){
   .shell{width:min(100% - 28px,1180px)}
+  .team-status-hero-grid{width:min(100% - 28px,1180px)!important}
   .team-section,.team-list-section{padding-top:52px;padding-bottom:60px}
   .team-form{padding:18px;border-radius:16px}
   .member-panel-heading{flex-direction:column}
