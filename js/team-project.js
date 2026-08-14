@@ -6,11 +6,13 @@
   const formMessage = document.querySelector('#form-message');
   const tableBody = document.querySelector('#team-table-body');
   const emptyState = document.querySelector('#empty-team-state');
-  const filterButtons = [...document.querySelectorAll('[data-class-filter]')];
+  const filterContainer = document.querySelector('.team-filters');
+  const allFilterButton = document.querySelector('[data-class-filter="all"]');
+  const filterButtons = [...document.querySelectorAll('[data-class-filter="A"], [data-class-filter="B"]')];
   const topButton = document.querySelector('#top-button');
   const submitButton = form?.querySelector('button[type="submit"]');
 
-  let currentFilter = 'all';
+  let currentFilter = 'A';
   let teams = [];
   let jsonpSequence = 0;
 
@@ -149,6 +151,8 @@
       form.reset();
       setMessage(`${classGroup}반 ${teamName} 팀이 등록되었습니다.`, 'success');
       teams = Array.isArray(result.teams) ? result.teams : teams;
+      currentFilter = classGroup;
+      syncTabs();
       renderTeams();
       if (!Array.isArray(result.teams)) await loadTeams();
     } catch (error) {
@@ -165,8 +169,14 @@
   }
 
   function renderTeams() {
-    const filtered = currentFilter === 'all' ? teams : teams.filter(team => team.classGroup === currentFilter);
-    if (emptyState) emptyState.hidden = filtered.length > 0;
+    const filtered = teams.filter(team => team.classGroup === currentFilter);
+    if (emptyState) {
+      emptyState.hidden = filtered.length > 0;
+      const title = emptyState.querySelector('strong');
+      const copy = emptyState.querySelector('p');
+      if (title) title.textContent = `${currentFilter}반에 아직 등록된 팀이 없습니다.`;
+      if (copy) copy.textContent = '상단에서 팀을 등록하면 이곳에 목록이 표시됩니다.';
+    }
     if (!tableBody) return;
 
     tableBody.innerHTML = filtered.map(team => {
@@ -215,17 +225,36 @@
     }
   }
 
+  function syncTabs() {
+    filterButtons.forEach(button => {
+      const isActive = button.dataset.classFilter === currentFilter;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-selected', String(isActive));
+      button.tabIndex = isActive ? 0 : -1;
+    });
+  }
+
   function handleFilter(event) {
     const button = event.currentTarget;
     currentFilter = button.dataset.classFilter;
-    filterButtons.forEach(item => item.classList.toggle('is-active', item === button));
+    syncTabs();
     renderTeams();
   }
+
+  allFilterButton?.remove();
+  if (filterContainer) {
+    filterContainer.setAttribute('role', 'tablist');
+    filterContainer.setAttribute('aria-label', '등록 프로젝트 분반');
+  }
+  filterButtons.forEach(button => {
+    button.setAttribute('role', 'tab');
+    button.addEventListener('click', handleFilter);
+  });
+  syncTabs();
 
   form?.addEventListener('submit', createTeam);
   form?.addEventListener('reset', () => setTimeout(() => setMessage(), 0));
   tableBody?.addEventListener('change', handleWeekCheck);
-  filterButtons.forEach(button => button.addEventListener('click', handleFilter));
 
   if (topButton) {
     const syncTopButton = () => topButton.classList.toggle('is-visible', window.scrollY > 500);
