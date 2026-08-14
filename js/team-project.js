@@ -6,44 +6,19 @@
   const formMessage = document.querySelector('#form-message');
   const tableBody = document.querySelector('#team-table-body');
   const emptyState = document.querySelector('#empty-team-state');
-  const filterContainer = document.querySelector('.team-filters');
-  const allFilterButton = document.querySelector('[data-class-filter="all"]');
   const filterButtons = [...document.querySelectorAll('[data-class-filter="A"], [data-class-filter="B"]')];
   const topButton = document.querySelector('#top-button');
-  const submitButton = form?.querySelector('button[type="submit"]');
+  const submitButton = document.querySelector('#save-team-button');
+  const resetButton = document.querySelector('#reset-team-button');
+  const formTitle = document.querySelector('#team-form-title');
+  const formDescription = document.querySelector('#team-form-description');
+  const formSection = document.querySelector('#team-form-section');
+  const teamNumberInput = document.querySelector('#team-number');
 
   let currentFilter = 'A';
   let teams = [];
+  let editingNumber = null;
   let jsonpSequence = 0;
-
-  function setupIdeaField() {
-    const basicGrid = form?.querySelector('.form-grid-basic');
-    const teamNameInput = form?.querySelector('#team-name');
-    const teamNameField = teamNameInput?.closest('.field-group');
-    if (!basicGrid || !teamNameField || form?.querySelector('#project-idea')) return;
-
-    const detailGrid = document.createElement('div');
-    detailGrid.className = 'team-basic-detail-grid';
-    detailGrid.appendChild(teamNameField);
-
-    const ideaField = document.createElement('label');
-    ideaField.className = 'field-group';
-    ideaField.innerHTML = `
-      <span class="field-label">아이디어</span>
-      <input id="project-idea" name="idea" type="text" maxlength="100" placeholder="예: 대학생을 위한 공모전 탐색 서비스">
-    `;
-    detailGrid.appendChild(ideaField);
-    basicGrid.appendChild(detailGrid);
-
-    const style = document.createElement('style');
-    style.textContent = `
-      .team-basic-detail-grid{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:20px;min-width:0}
-      @media(max-width:760px){.team-basic-detail-grid{grid-template-columns:1fr}}
-    `;
-    document.head.appendChild(style);
-  }
-
-  setupIdeaField();
 
   function escapeHtml(value = '') {
     return String(value)
@@ -61,12 +36,6 @@
     };
   }
 
-  function validateOptionalMember(member, index) {
-    if (!member.studentId && !member.name) return '';
-    if (!member.studentId || !member.name) return `팀원 ${index}의 학번과 이름을 모두 입력해 주세요.`;
-    return '';
-  }
-
   function setMessage(text = '', type = '') {
     if (!formMessage) return;
     formMessage.textContent = text;
@@ -77,7 +46,23 @@
   function setSubmitting(isSubmitting) {
     if (!submitButton) return;
     submitButton.disabled = isSubmitting;
-    submitButton.textContent = isSubmitting ? '등록 중...' : '팀 등록';
+    submitButton.textContent = isSubmitting
+      ? (editingNumber ? '수정 저장 중...' : '등록 중...')
+      : (editingNumber ? '수정 저장' : '팀 등록');
+  }
+
+  function setEditingMode(team = null) {
+    editingNumber = team ? Number(team.number) : null;
+    if (teamNumberInput) teamNumberInput.value = editingNumber || '';
+    if (formTitle) formTitle.textContent = editingNumber ? '팀 정보 수정' : '팀 정보 등록';
+    if (formDescription) {
+      formDescription.textContent = editingNumber
+        ? '선택한 팀 정보를 수정한 뒤 저장하세요.'
+        : '한 팀은 2명으로 구성하며, 두 팀원 모두 필수입니다.';
+    }
+    if (submitButton) submitButton.textContent = editingNumber ? '수정 저장' : '팀 등록';
+    if (resetButton) resetButton.textContent = editingNumber ? '수정 취소' : '입력 초기화';
+    form?.classList.toggle('is-editing', Boolean(editingNumber));
   }
 
   function jsonp(params = {}) {
@@ -132,63 +117,90 @@
     }
   }
 
-  async function createTeam(event) {
+  function validateTeamForm(formData) {
+    const classGroup = String(formData.get('classGroup') || '').trim();
+    const teamName = String(formData.get('teamName') || '').trim();
+    const idea = String(formData.get('idea') || '').trim();
+    const track = String(formData.get('track') || '').trim();
+    const members = [1, 2].map(index => getMember(formData, index));
+
+    if (!classGroup) return { error: '분반을 선택해 주세요.' };
+    if (!teamName) return { error: '팀명을 입력해 주세요.' };
+    if (!idea) return { error: '아이디어를 입력해 주세요.' };
+    if (!['필수', '심화'].includes(track)) return { error: '트랙 구분을 선택해 주세요.' };
+
+    for (let i = 0; i < members.length; i += 1) {
+      if (!members[i].studentId || !members[i].name) {
+        return { error: `팀원 ${i + 1}의 학번과 이름을 모두 입력해 주세요.` };
+      }
+    }
+
+    if (members[0].studentId === members[1].studentId) {
+      return { error: '같은 학번을 한 팀에 중복 등록할 수 없습니다.' };
+    }
+
+    const duplicateTeam = teams.some(team =>
+      Number(team.number) !== Number(editingNumber) &&
+      team.classGroup === classGroup &&
+      String(team.teamName || '').trim().toLowerCase() === teamName.toLowerCase()
+    );
+
+    if (duplicateTeam) {
+      return { error: '같은 분반에 동일한 팀명이 이미 등록되어 있습니다.' };
+    }
+
+    return { classGroup, teamName, idea, track, members };
+  }
+
+  async function saveTeam(event) {
     event.preventDefault();
     setMessage();
     if (!form?.reportValidity()) return;
 
     const formData = new FormData(form);
-    const classGroup = String(formData.get('classGroup') || '').trim();
-    const teamName = String(formData.get('teamName') || '').trim();
-    const idea = String(formData.get('idea') || '').trim();
-    const members = [1, 2, 3].map(index => getMember(formData, index));
-
-    const optionalError = validateOptionalMember(members[1], 2) || validateOptionalMember(members[2], 3);
-    if (optionalError) {
-      setMessage(optionalError, 'error');
+    const validation = validateTeamForm(formData);
+    if (validation.error) {
+      setMessage(validation.error, 'error');
       return;
     }
 
-    const duplicateStudentIds = members
-      .filter(member => member.studentId)
-      .map(member => member.studentId)
-      .filter((id, index, array) => array.indexOf(id) !== index);
-
-    if (duplicateStudentIds.length) {
-      setMessage('같은 학번을 한 팀에 중복 등록할 수 없습니다.', 'error');
-      return;
-    }
-
-    if (teams.some(team => team.classGroup === classGroup && String(team.teamName || '').toLowerCase() === teamName.toLowerCase())) {
-      setMessage('같은 분반에 동일한 팀명이 이미 등록되어 있습니다.', 'error');
-      return;
-    }
+    const { classGroup, teamName, idea, track, members } = validation;
 
     try {
       setSubmitting(true);
-      const result = await jsonp({
-        action: 'register',
+
+      const params = {
+        action: editingNumber ? 'updateTeam' : 'register',
+        number: editingNumber ? String(editingNumber) : '',
         classGroup,
         teamName,
         idea,
+        track,
         studentId1: members[0].studentId,
         studentName1: members[0].name,
         studentId2: members[1].studentId,
         studentName2: members[1].name,
-        studentId3: members[2].studentId,
-        studentName3: members[2].name
-      });
+        studentId3: '',
+        studentName3: ''
+      };
+
+      const result = await jsonp(params);
+
+      const successText = editingNumber
+        ? `${classGroup}반 ${teamName} 팀 정보가 수정되었습니다.`
+        : `${classGroup}반 ${teamName} 팀이 등록되었습니다.`;
 
       form.reset();
-      setMessage(`${classGroup}반 ${teamName} 팀이 등록되었습니다.`, 'success');
+      setEditingMode(null);
+      setMessage(successText, 'success');
       teams = Array.isArray(result.teams) ? result.teams : teams;
       currentFilter = classGroup;
       syncTabs();
       renderTeams();
       if (!Array.isArray(result.teams)) await loadTeams();
     } catch (error) {
-      console.error('팀 등록에 실패했습니다.', error);
-      setMessage(error.message || '팀 등록에 실패했습니다.', 'error');
+      console.error(editingNumber ? '팀 수정에 실패했습니다.' : '팀 등록에 실패했습니다.', error);
+      setMessage(error.message || (editingNumber ? '팀 수정에 실패했습니다.' : '팀 등록에 실패했습니다.'), 'error');
     } finally {
       setSubmitting(false);
     }
@@ -201,6 +213,7 @@
 
   function renderTeams() {
     const filtered = teams.filter(team => team.classGroup === currentFilter);
+
     if (emptyState) {
       emptyState.hidden = filtered.length > 0;
       const title = emptyState.querySelector('strong');
@@ -208,6 +221,7 @@
       if (title) title.textContent = `${currentFilter}반에 아직 등록된 팀이 없습니다.`;
       if (copy) copy.textContent = '상단에서 팀을 등록하면 이곳에 목록이 표시됩니다.';
     }
+
     if (!tableBody) return;
 
     tableBody.innerHTML = filtered.map(team => {
@@ -222,13 +236,47 @@
       return `<tr>
         <td>${number}</td>
         <td><span class="class-badge">${escapeHtml(team.classGroup)}</span></td>
-        <td class="team-name-cell">${escapeHtml(team.teamName)}</td>
+        <td class="team-name-cell">
+          <button type="button" class="team-edit-button" data-edit-team="${number}" title="${escapeHtml(team.teamName)} 팀 정보 수정">
+            ${escapeHtml(team.teamName)}
+          </button>
+        </td>
+        <td class="idea-cell">${escapeHtml(team.idea || '-')}</td>
+        <td><span class="track-badge ${team.track === '심화' ? 'is-advanced' : ''}">${escapeHtml(team.track || '-')}</span></td>
         <td class="member-cell">${renderMember(team.members?.[0])}</td>
         <td class="member-cell">${renderMember(team.members?.[1])}</td>
-        <td class="member-cell">${renderMember(team.members?.[2])}</td>
         ${outputCells}
       </tr>`;
     }).join('');
+  }
+
+  function fillFormForEdit(team) {
+    if (!form || !team) return;
+
+    setEditingMode(team);
+    form.querySelector(`[name="classGroup"][value="${team.classGroup}"]`)?.click();
+    form.querySelector('#team-name').value = team.teamName || '';
+    form.querySelector('#project-idea').value = team.idea || '';
+
+    const track = team.track || '필수';
+    form.querySelector(`[name="track"][value="${track}"]`)?.click();
+
+    [1, 2].forEach(index => {
+      const member = team.members?.[index - 1] || {};
+      form.querySelector(`[name="studentId${index}"]`).value = member.studentId || '';
+      form.querySelector(`[name="studentName${index}"]`).value = member.name || '';
+    });
+
+    setMessage(`${team.teamName} 팀 정보를 수정 중입니다.`, 'success');
+    formSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function handleTeamEdit(event) {
+    const button = event.target.closest('[data-edit-team]');
+    if (!button) return;
+    const number = Number(button.dataset.editTeam);
+    const team = teams.find(item => Number(item.number) === number);
+    if (team) fillFormForEdit(team);
   }
 
   async function handleWeekCheck(event) {
@@ -266,25 +314,25 @@
   }
 
   function handleFilter(event) {
-    const button = event.currentTarget;
-    currentFilter = button.dataset.classFilter;
+    currentFilter = event.currentTarget.dataset.classFilter;
     syncTabs();
     renderTeams();
   }
 
-  allFilterButton?.remove();
-  if (filterContainer) {
-    filterContainer.setAttribute('role', 'tablist');
-    filterContainer.setAttribute('aria-label', '등록 프로젝트 분반');
+  function handleReset() {
+    const wasEditing = Boolean(editingNumber);
+    setTimeout(() => {
+      setEditingMode(null);
+      setMessage(wasEditing ? '수정을 취소했습니다.' : '');
+    }, 0);
   }
-  filterButtons.forEach(button => {
-    button.setAttribute('role', 'tab');
-    button.addEventListener('click', handleFilter);
-  });
+
+  filterButtons.forEach(button => button.addEventListener('click', handleFilter));
   syncTabs();
 
-  form?.addEventListener('submit', createTeam);
-  form?.addEventListener('reset', () => setTimeout(() => setMessage(), 0));
+  form?.addEventListener('submit', saveTeam);
+  form?.addEventListener('reset', handleReset);
+  tableBody?.addEventListener('click', handleTeamEdit);
   tableBody?.addEventListener('change', handleWeekCheck);
 
   if (topButton) {
