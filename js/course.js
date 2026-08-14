@@ -13,6 +13,22 @@ let activeFilter = 'all';
 let cardObserver;
 let motionObserver;
 
+function normalizeHeaderNavigation() {
+  const nav = document.querySelector('.top-nav');
+  if (!nav) return;
+
+  [...nav.querySelectorAll('a')].forEach(link => {
+    const text = link.textContent.trim();
+    if (text === '프로젝트 트랙' || text === '수업 진행') link.remove();
+  });
+
+  const weekLink = [...nav.querySelectorAll('a')].find(link => link.getAttribute('href') === '#weeks' || link.getAttribute('href')?.endsWith('#weeks'));
+  if (weekLink) weekLink.textContent = '주차별 수업';
+
+  const teamLink = [...nav.querySelectorAll('a')].find(link => link.getAttribute('href')?.includes('team-project.html'));
+  if (teamLink) teamLink.textContent = '팀별 현황';
+}
+
 function injectThumbnailStyles() {
   if (document.querySelector('#week-thumbnail-styles')) return;
   const style = document.createElement('style');
@@ -188,6 +204,7 @@ if (topButton) {
   topButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 }
 
+normalizeHeaderNavigation();
 injectThumbnailStyles();
 window.addEventListener('pageshow', restartHeroMotion);
 render();
