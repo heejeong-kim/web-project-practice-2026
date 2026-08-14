@@ -17,13 +17,19 @@
     .week-card.is-pending .notion-link:hover{transform:none;box-shadow:none;background:#e7ebf1;color:#5f6979}
     .week-card.is-exam .type-badge{font-size:0}
     .week-card.is-exam .type-badge::after{content:"평가";font-size:11px}
+    .hero h1{font-size:clamp(22px,6vw,82px);line-height:1.03;letter-spacing:-.055em}
+    .hero-title-line{display:block;white-space:nowrap}
+    .hero h1 .hero-title-accent{display:block;color:var(--accent);white-space:nowrap;text-shadow:0 0 24px rgba(255,138,61,.16)}
     @media(max-width:1200px){.week-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
     @media(max-width:1024px){.week-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:860px){
       .menu-toggle{display:none!important}
       .top-nav{display:none!important}
     }
-    @media(max-width:680px){.shell{width:min(100% - 28px,1520px)}}
+    @media(max-width:680px){
+      .shell{width:min(100% - 28px,1520px)}
+      .hero h1{font-size:clamp(21px,6.05vw,38px);letter-spacing:-.06em}
+    }
     @media(max-width:620px){
       .quick-bar{display:none!important}
       .week-grid{grid-template-columns:1fr;gap:10px}
@@ -72,7 +78,7 @@
       <div class="shell hero-grid">
         <div class="hero-copy-area">
           <p class="eyebrow hero-reveal hero-reveal-1">WEB PROJECT PRACTICE · COURSE LAB</p>
-          <h1 class="hero-reveal hero-reveal-2">시장분석과 니즈로<br><span>실행되는 서비스 구현</span>까지</h1>
+          <h1 class="hero-reveal hero-reveal-2"><span class="hero-title-line">시장분석과 니즈로</span><span class="hero-title-accent">실행되는 서비스 구현까지</span></h1>
           <p class="hero-copy hero-reveal hero-reveal-3">
             1주차부터 15주차까지 강의교안과 실제 실습 결과를 하나의 웹뷰에서 연결한다<br>
             수업에서는 개념을 확인하고 코드를 구현한 뒤 같은 화면에서 완성 결과를 비교한다
