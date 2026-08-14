@@ -51,7 +51,7 @@
 ---
 **\[참고\] 교안 안내**
 <callout icon="📌" color="gray_bg">
-	- <span color="gray">본 강의교안의 초안은 생성형 AI(ChatGPT, Claude)와 함께 진행, 이후 교수자가 맥락, 용어, 규칙, 패턴, 내용 검수 후 완결함</span>
+	- <span color="gray">본 강의교안의 초안은 생성형 AI(ChatGPT, Claude)를 통해 30% 제작, 이후 교수자가 맥락, 용어, 규칙, 패턴, 내용 검수 후 100% 완결함</span>
 	- <span color="gray">본 강의교안에 사용된 이미지는 미드저니를 통해 별도 제작하여 삽입함</span>
 	- <span color="gray">웹뷰로 제작된 강의교안은 ChatGPT, Claude로 초안 제작하여 교수자가 소스 일부 수정하면서 깃허브에 업로드 한 것임</span>
 </callout>
