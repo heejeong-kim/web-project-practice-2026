@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/lecture.css?v=20260814-1600">
+  <link rel="stylesheet" href="../css/lecture.css?v=20260814-1615">
   <style>
     html,body,button,input,a,select{font-family:"IBM Plex Sans KR",sans-serif}
     html body .lecture-shell{width:min(1520px,calc(100% - 64px))!important}
@@ -130,19 +130,35 @@
 
   <button class="top-button" id="top-button" type="button" aria-label="페이지 맨 위로 이동"><span>↑</span><small>TOP</small></button>
 
-  <script src="../data/weeks.js?v=20260814-1600"></script>
-  <script src="../js/lecture.js?v=20260814-1600"></script>
+  <script src="../data/weeks.js?v=20260814-1615"></script>
+  <script src="../js/lecture.js?v=20260814-1615"></script>
   <script>
     (() => {
       const content = document.querySelector('#lecture-content');
+      const activeWeek = Number(new URLSearchParams(window.location.search).get('week') || 1);
       const chapterSources = {
-        '1장 웹프로젝트 실습의 이해': '/web-project-practice-2026/asset/1_1.png?v=20260814-1600',
-        '2장 데이터 기반 웹서비스의 구조': '/web-project-practice-2026/asset/1_2.png?v=20260814-1600',
-        '3장 웹서비스 사례 분석과 프로젝트 탐색': '/web-project-practice-2026/asset/1_3.png?v=20260814-1600'
+        '1장 웹프로젝트 실습의 이해': '/web-project-practice-2026/asset/1_1.png?v=20260814-1615',
+        '2장 데이터 기반 웹서비스의 구조': '/web-project-practice-2026/asset/1_2.png?v=20260814-1615',
+        '3장 웹서비스 사례 분석과 프로젝트 탐색': '/web-project-practice-2026/asset/1_3.png?v=20260814-1615'
+      };
+      const chapterImageMap = {
+        2: [
+          { prefix: '1.', src: '/web-project-practice-2026/asset/2_1.png?v=20260814-1615', alt: '1장 서비스 역분석 방법' },
+          { prefix: '2.', src: '/web-project-practice-2026/asset/2_2.png?v=20260814-1615', alt: '2장 시장 트랜드 분석' },
+          { prefix: '3.', src: '/web-project-practice-2026/asset/2_3.png?v=20260814-1615', alt: '3장 경쟁서비스 분석 및 UIUX 분석' },
+          { prefix: '4.', src: '/web-project-practice-2026/asset/2_4.png?v=20260814-1615', alt: '4장 프로젝트 기회 영역 도출' }
+        ],
+        3: [
+          { prefix: '0.', src: '/web-project-practice-2026/asset/3_0.png?v=20260814-1615', alt: '0장 사전 팀 빌딩 후 수업 참여' },
+          { prefix: '1.', src: '/web-project-practice-2026/asset/3_1.png?v=20260814-1615', alt: '1장 개인 아이디어 취합과 프로젝트 후보 선택' },
+          { prefix: '2.', src: '/web-project-practice-2026/asset/3_2.png?v=20260814-1615', alt: '2장 사용자 분석과 핵심 사용자 정의' },
+          { prefix: '3.', src: '/web-project-practice-2026/asset/3_3.png?v=20260814-1615', alt: '3장 페르소나와 문제 정의' },
+          { prefix: '4.', src: '/web-project-practice-2026/asset/3_4.png?v=20260814-1615', alt: '4장 팀프로젝트 주제 및 트랙 확정' }
+        ]
       };
       const sampleSources = {
-        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260814-1600',
-        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260814-1600'
+        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260814-1615',
+        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260814-1615'
       };
       const examplePattern = /^(?:>\s*)?(예시\)|예\)|예시\s*[:：])/;
 
@@ -158,7 +174,23 @@
         });
       };
 
+      const insertChapterImages = () => {
+        const items = chapterImageMap[activeWeek] || [];
+        if (!items.length) return;
+        const headings = [...content.querySelectorAll('h1')];
+        items.forEach(item => {
+          const heading = headings.find(h1 => h1.textContent.trim().startsWith(item.prefix));
+          if (!heading || heading.nextElementSibling?.classList.contains('chapter-image')) return;
+          const figure = document.createElement('figure');
+          figure.className = 'chapter-image';
+          figure.innerHTML = `<img src="${item.src}" alt="${item.alt}" loading="eager">`;
+          heading.insertAdjacentElement('afterend', figure);
+        });
+      };
+
       const fixLectureAssets = () => {
+        insertChapterImages();
+
         content.querySelectorAll('.chapter-image img').forEach(img => {
           const key = img.alt.trim();
           if (chapterSources[key] && img.getAttribute('src') !== chapterSources[key]) {
