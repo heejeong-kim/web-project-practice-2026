@@ -1,5 +1,5 @@
 (() => {
-  const STORAGE_KEY = 'webProjectPractice2026Teams';
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxt1SLxfp6RwlCIUVK-F1zxI4ek80zbMA0rUTczH9A5nyUsnJSV19xkFIVTrMnigMWp/exec';
   const OUTPUT_WEEKS = Array.from({ length: 13 }, (_, i) => i + 3);
 
   const form = document.querySelector('#team-form');
@@ -8,25 +8,10 @@
   const emptyState = document.querySelector('#empty-team-state');
   const filterButtons = [...document.querySelectorAll('[data-class-filter]')];
   const topButton = document.querySelector('#top-button');
+  const submitButton = form?.querySelector('button[type="submit"]');
 
   let currentFilter = 'all';
-  let teams = loadTeams();
-
-  function loadTeams() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return [];
-      const parsed = JSON.parse(saved);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (error) {
-      console.error('팀 데이터를 불러오지 못했습니다.', error);
-      return [];
-    }
-  }
-
-  function saveTeams() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(teams));
-  }
+  let teams = [];
 
   function escapeHtml(value = '') {
     return String(value)
@@ -50,16 +35,53 @@
   }
 
   function setMessage(text = '', type = '') {
+    if (!formMessage) return;
     formMessage.textContent = text;
     formMessage.className = 'form-message';
     if (type) formMessage.classList.add(`is-${type}`);
   }
 
-  function createTeam(event) {
+  function setSubmitting(isSubmitting) {
+    if (!submitButton) return;
+    submitButton.disabled = isSubmitting;
+    submitButton.textContent = isSubmitting ? '등록 중...' : '팀 등록';
+  }
+
+  async function request(url, options = {}) {
+    const response = await fetch(url, {
+      redirect: 'follow',
+      ...options
+    });
+
+    if (!response.ok) {
+      throw new Error(`서버 요청에 실패했습니다. (${response.status})`);
+    }
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.message || '요청을 처리하지 못했습니다.');
+    }
+    return result;
+  }
+
+  async function loadTeams() {
+    try {
+      const result = await request(`${GOOGLE_SCRIPT_URL}?action=list&_=${Date.now()}`);
+      teams = Array.isArray(result.teams) ? result.teams : [];
+      renderTeams();
+    } catch (error) {
+      console.error('팀 데이터를 불러오지 못했습니다.', error);
+      teams = [];
+      renderTeams();
+      setMessage('Google Sheet에서 팀 목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.', 'error');
+    }
+  }
+
+  async function createTeam(event) {
     event.preventDefault();
     setMessage();
 
-    if (!form.reportValidity()) return;
+    if (!form?.reportValidity()) return;
 
     const formData = new FormData(form);
     const classGroup = String(formData.get('classGroup') || '').trim();
@@ -82,26 +104,50 @@
       return;
     }
 
-    const duplicatedTeam = teams.some(team => team.classGroup === classGroup && team.teamName.toLowerCase() === teamName.toLowerCase());
+    const duplicatedTeam = teams.some(team =>
+      team.classGroup === classGroup &&
+      String(team.teamName || '').toLowerCase() === teamName.toLowerCase()
+    );
+
     if (duplicatedTeam) {
       setMessage('같은 분반에 동일한 팀명이 이미 등록되어 있습니다.', 'error');
       return;
     }
 
-    const team = {
-      id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    const payload = {
+      action: 'register',
       classGroup,
       teamName,
-      members,
-      outputs: Object.fromEntries(OUTPUT_WEEKS.map(week => [week, false])),
-      createdAt: new Date().toISOString()
+      studentId1: members[0].studentId,
+      studentName1: members[0].name,
+      studentId2: members[1].studentId,
+      studentName2: members[1].name,
+      studentId3: members[2].studentId,
+      studentName3: members[2].name
     };
 
-    teams.push(team);
-    saveTeams();
-    form.reset();
-    setMessage(`${classGroup}반 ${teamName} 팀이 등록되었습니다.`, 'success');
-    renderTeams();
+    try {
+      setSubmitting(true);
+      const result = await request(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      form.reset();
+      setMessage(`${classGroup}반 ${teamName} 팀이 등록되었습니다.`, 'success');
+
+      if (Array.isArray(result.teams)) {
+        teams = result.teams;
+        renderTeams();
+      } else {
+        await loadTeams();
+      }
+    } catch (error) {
+      console.error('팀 등록에 실패했습니다.', error);
+      setMessage(error.message || '팀 등록에 실패했습니다.', 'error');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function renderMember(member) {
@@ -114,19 +160,23 @@
       ? teams
       : teams.filter(team => team.classGroup === currentFilter);
 
-    emptyState.hidden = filtered.length > 0;
-    tableBody.innerHTML = filtered.map((team, index) => {
+    if (emptyState) emptyState.hidden = filtered.length > 0;
+    if (!tableBody) return;
+
+    tableBody.innerHTML = filtered.map(team => {
+      const number = Number(team.number);
+      const weeks = team.weeks || {};
       const outputCells = OUTPUT_WEEKS.map(week => `
         <td>
           <label class="week-check" title="${week}주차 산출물 완료">
-            <input type="checkbox" data-team-id="${escapeHtml(team.id)}" data-week="${week}" ${team.outputs?.[week] ? 'checked' : ''} aria-label="${escapeHtml(team.teamName)} ${week}주차 산출물 완료">
+            <input type="checkbox" data-team-number="${number}" data-week="${week}" ${weeks[week] ? 'checked' : ''} aria-label="${escapeHtml(team.teamName)} ${week}주차 산출물 완료">
           </label>
         </td>
       `).join('');
 
       return `
         <tr>
-          <td>${index + 1}</td>
+          <td>${number}</td>
           <td><span class="class-badge">${escapeHtml(team.classGroup)}</span></td>
           <td class="team-name-cell">${escapeHtml(team.teamName)}</td>
           <td class="member-cell">${renderMember(team.members?.[0])}</td>
@@ -138,17 +188,39 @@
     }).join('');
   }
 
-  function handleWeekCheck(event) {
-    const checkbox = event.target.closest('input[data-team-id][data-week]');
+  async function handleWeekCheck(event) {
+    const checkbox = event.target.closest('input[data-team-number][data-week]');
     if (!checkbox) return;
 
-    const team = teams.find(item => item.id === checkbox.dataset.teamId);
-    if (!team) return;
-
+    const number = Number(checkbox.dataset.teamNumber);
     const week = Number(checkbox.dataset.week);
-    team.outputs = team.outputs || {};
-    team.outputs[week] = checkbox.checked;
-    saveTeams();
+    const checked = checkbox.checked;
+
+    checkbox.disabled = true;
+
+    try {
+      await request(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'updateWeek',
+          number,
+          week,
+          checked
+        })
+      });
+
+      const team = teams.find(item => Number(item.number) === number);
+      if (team) {
+        team.weeks = team.weeks || {};
+        team.weeks[week] = checked;
+      }
+    } catch (error) {
+      console.error('주차별 산출물 상태 저장에 실패했습니다.', error);
+      checkbox.checked = !checked;
+      setMessage(`${week}주차 완료 상태를 저장하지 못했습니다.`, 'error');
+    } finally {
+      checkbox.disabled = false;
+    }
   }
 
   function handleFilter(event) {
@@ -170,5 +242,5 @@
     syncTopButton();
   }
 
-  renderTeams();
+  loadTeams();
 })();
