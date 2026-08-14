@@ -5,7 +5,7 @@ const requestedWeek = Number.isFinite(parsedWeek) ? parsedWeek : 1;
 const week = Math.min(15, Math.max(0, requestedWeek));
 const weekData = window.WEEK_DATA.find(item => item.week === week);
 const READY_WEEKS = new Set([0, 1, 2, 3]);
-const ASSET_VERSION = '20260814-1600';
+const ASSET_VERSION = '20260814-1625';
 
 const titleEl = document.querySelector('#lecture-title');
 const weekEl = document.querySelector('#lecture-week');
@@ -36,6 +36,13 @@ function injectLectureImageStyles() {
     .chapter-image img{display:block;width:100%;height:auto}
     .callout.no-icon{grid-template-columns:minmax(0,1fr)}
     .callout.no-icon .callout-icon{display:none}
+    .callout-body>p:first-child{margin-top:0}
+    .callout-body>p:last-child{margin-bottom:0}
+    .lecture-content .practice-heading,.lecture-content .practice-heading *{color:#2563eb!important}
+    .lecture-content .notion-blue{color:#2563eb!important}
+    .lecture-content .notion-red{color:#dc2626!important}
+    .lecture-content .notion-gray{color:#667085!important}
+    .lecture-content .lecture-example::first-letter{font-weight:inherit!important}
     .callout.is-production-note{background:#f4f5f7!important;border-left-color:#98a2b3!important;color:#667085!important;font-size:13.5px!important}
     .callout.is-production-note .callout-body,.callout.is-production-note .callout-body p,.callout.is-production-note .callout-body li,.callout.is-production-note .callout-body span,.callout.is-production-note .callout-body strong{color:#667085!important;font-size:13.5px!important;line-height:1.65}
     @media(max-width:680px){
@@ -86,14 +93,26 @@ function escapeHtml(value = '') {
   }[char]));
 }
 
+function notionInlineSpans(value = '') {
+  return value.replace(/<span\s+color="([^"]+)">([\s\S]*?)<\/span>/g, (_, color, text) => {
+    const className = color.includes('blue') ? 'notion-blue'
+      : color.includes('red') ? 'notion-red'
+      : color.includes('gray') ? 'notion-gray'
+      : '';
+    return className ? `<span class="${className}">${text}</span>` : `<span>${text}</span>`;
+  });
+}
+
 function inlineMarkdown(value = '') {
-  return value
-    .replace(/\\([\[\]~*`])/g, '$1')
+  return notionInlineSpans(value)
+    .replace(/\\([\[\]~*`|])/g, '$1')
     .replace(/!\[([^\]]*)\]\((https?:\/\/[^)]+)\)/g, '<img class="lecture-image" src="$2" alt="$1" loading="lazy">')
     .replace(/!\[([^\]]*)\]\((\.\.?\/[^)]+)\)/g, '<img class="lecture-image" src="$2" alt="$1" loading="lazy">')
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
     .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[\s>])\*\*(?=\s|[📌📦🖇️⚠️✅🚀💡])/g, '$1')
+    .replace(/\*\*(?=\s*(?:<\/span>)?$)/g, '');
 }
 
 function calloutClass(color = '') {
@@ -209,7 +228,8 @@ function renderNotionMarkdown(source = '') {
     if (heading) {
       closeList();
       const level = Math.min(4, heading[1].length);
-      out.push(`<h${level}>${inlineMarkdown(heading[2])}</h${level}>`);
+      const practiceClass = /(?:🖇️\s*)?실습[｜|]/.test(heading[2]) ? ' class="practice-heading"' : '';
+      out.push(`<h${level}${practiceClass}>${inlineMarkdown(heading[2])}</h${level}>`);
       continue;
     }
 
@@ -242,7 +262,7 @@ function renderNotionMarkdown(source = '') {
 
     if (/^<[^>]+>/.test(line)) {
       closeList();
-      out.push(line);
+      out.push(notionInlineSpans(line));
       continue;
     }
 
