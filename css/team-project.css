@@ -1,6 +1,15 @@
 html,body,button,input,a{font-family:"IBM Plex Sans KR",sans-serif}
 .shell{width:min(1520px,calc(100% - 64px));margin-left:auto;margin-right:auto}
 .team-url-link.is-current{font-weight:700;color:#111827}
+.team-status-hero{min-height:510px;display:flex;align-items:center}
+.team-status-hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(420px,.95fr);align-items:center;gap:72px;width:100%;padding:72px 0}
+.team-status-hero-copy{position:relative;z-index:2}
+.team-status-hero .eyebrow{color:#ff8738}
+.team-status-hero h1{margin:10px 0 18px;color:#fff;font-size:clamp(62px,7vw,104px);line-height:.98;letter-spacing:-.055em;font-weight:700}
+.team-status-hero .hero-copy{max-width:760px;color:#d7dceb;font-size:17px;line-height:1.8}
+.team-status-hero .hero-actions{margin-top:30px}
+.team-status-hero-visual{display:flex;align-items:center;justify-content:center;min-height:390px;padding:22px;border:1px solid rgba(255,255,255,.12);border-radius:32px;background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(115,135,255,.12));box-shadow:0 24px 70px rgba(0,0,0,.22);backdrop-filter:blur(10px)}
+.team-status-hero-visual img{display:block;width:100%;max-width:620px;max-height:390px;object-fit:contain;filter:drop-shadow(0 18px 28px rgba(0,0,0,.24))}
 .team-hero{position:relative;overflow:hidden;padding:88px 0 72px;background:linear-gradient(135deg,#f7f9fc 0%,#eef4ff 48%,#f9fbff 100%);border-bottom:1px solid #e8edf5}
 .team-hero::before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:rgba(79,70,229,.08);right:-140px;top:-190px;filter:blur(2px)}
 .team-hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(500px,1fr);align-items:center;gap:64px}
@@ -64,7 +73,7 @@ html,body,button,input,a{font-family:"IBM Plex Sans KR",sans-serif}
 .empty-team-state strong{font-size:18px;color:#344054}
 .empty-team-state p{margin:8px 0 0;color:#7b8494;font-size:14px}
 .sheet-note{margin:16px 0 0;color:#858d9b;font-size:12px;line-height:1.6}
-@media(max-width:1200px){.team-hero-grid{grid-template-columns:minmax(0,1fr) minmax(420px,.9fr);gap:42px}.team-hero-image{min-height:380px}}
-@media(max-width:1024px){.team-hero-grid{grid-template-columns:1fr}.team-hero-image{min-height:360px}.member-grid{grid-template-columns:1fr}.form-grid-basic{grid-template-columns:1fr}}
-@media(max-width:860px){.top-nav{display:none!important}.team-hero{padding:64px 0 48px}.team-hero h1{font-size:44px}.team-hero-image{display:none}.team-list-heading{align-items:flex-start}.team-filters{margin-top:18px}}
-@media(max-width:680px){.shell{width:min(100% - 28px,1520px)}.team-section,.team-list-section{padding-top:52px;padding-bottom:60px}.team-form{padding:18px;border-radius:16px}.member-panel-heading{flex-direction:column}.form-actions{display:grid;grid-template-columns:1fr 1fr}.form-actions .button{width:100%;justify-content:center}.team-hero h1{font-size:37px}.team-hero-copy{font-size:15px}}
+@media(max-width:1200px){.team-status-hero-grid{grid-template-columns:minmax(0,1fr) minmax(360px,.85fr);gap:42px}.team-status-hero-visual{min-height:340px}.team-hero-grid{grid-template-columns:minmax(0,1fr) minmax(420px,.9fr);gap:42px}.team-hero-image{min-height:380px}}
+@media(max-width:1024px){.team-status-hero-grid{grid-template-columns:1fr}.team-status-hero-visual{min-height:320px}.team-hero-grid{grid-template-columns:1fr}.team-hero-image{min-height:360px}.member-grid{grid-template-columns:1fr}.form-grid-basic{grid-template-columns:1fr}}
+@media(max-width:860px){.top-nav{display:none!important}.team-status-hero{min-height:auto}.team-status-hero-grid{padding:56px 0;gap:34px}.team-status-hero h1{font-size:58px}.team-status-hero-visual{min-height:280px;padding:14px}.team-status-hero-visual img{max-height:290px}.team-hero{padding:64px 0 48px}.team-hero h1{font-size:44px}.team-hero-image{display:none}.team-list-heading{align-items:flex-start}.team-filters{margin-top:18px}}
+@media(max-width:680px){.shell{width:min(100% - 28px,1520px)}.team-section,.team-list-section{padding-top:52px;padding-bottom:60px}.team-form{padding:18px;border-radius:16px}.member-panel-heading{flex-direction:column}.form-actions{display:grid;grid-template-columns:1fr 1fr}.form-actions .button{width:100%;justify-content:center}.team-status-hero-grid{padding:44px 0}.team-status-hero h1{font-size:48px}.team-status-hero .hero-copy{font-size:15px}.team-status-hero-visual{min-height:230px;border-radius:22px}.team-status-hero-visual img{max-height:240px}.team-hero h1{font-size:37px}.team-hero-copy{font-size:15px}}
