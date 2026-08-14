@@ -9,19 +9,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/course.css">
-  <link rel="stylesheet" href="./css/team-project.css?v=20260814-1655">
+  <link rel="stylesheet" href="./css/team-project.css?v=20260814-1702">
 </head>
 <body>
   <a class="skip-link" href="#main-content">본문 바로가기</a>
-
   <header class="site-header" id="top">
     <div class="shell header-inner">
       <a class="brand" href="./index.html" aria-label="웹프로젝트 실습 홈">
         <span class="brand-mark" aria-hidden="true">WP</span>
-        <span class="brand-text">
-          <strong>웹프로젝트 실습</strong>
-          <small>2026 · 2학기</small>
-        </span>
+        <span class="brand-text"><strong>웹프로젝트 실습</strong><small>2026 · 2학기</small></span>
       </a>
       <nav class="top-nav" aria-label="주요 메뉴">
         <a href="./index.html#weeks">주차별 수업</a>
@@ -29,174 +25,51 @@
       </nav>
     </div>
   </header>
-
   <main id="main-content">
     <section class="hero team-status-hero">
-      <div class="hero-orb hero-orb-a" aria-hidden="true"></div>
-      <div class="hero-orb hero-orb-b" aria-hidden="true"></div>
-      <div class="hero-grid-lines" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb-a" aria-hidden="true"></div><div class="hero-orb hero-orb-b" aria-hidden="true"></div><div class="hero-grid-lines" aria-hidden="true"></div>
       <div class="shell team-status-hero-grid">
         <div class="team-status-hero-copy">
-          <p class="eyebrow">TEAM PROJECT · STATUS BOARD</p>
-          <h1>팀 현황</h1>
+          <p class="eyebrow">TEAM PROJECT · STATUS BOARD</p><h1>팀 현황</h1>
           <p class="hero-copy">A·B반 팀 구성과 프로젝트 아이디어를 등록하고,<br>팀별 산출물 노션 문서를 한 화면에서 관리합니다.</p>
-          <div class="hero-actions">
-            <a class="button primary" href="./index.html#weeks"><span>주차별 교안 보러 가기</span><b aria-hidden="true">→</b></a>
-          </div>
+          <div class="hero-actions"><a class="button primary" href="./index.html#weeks"><span>주차별 교안 보러 가기</span><b aria-hidden="true">→</b></a></div>
         </div>
-        <div class="team-status-hero-visual">
-          <img src="./asset/team.png" alt="팀프로젝트 협업 및 진행 현황 일러스트">
-        </div>
+        <div class="team-status-hero-visual"><img src="./asset/team.png" alt="팀프로젝트 협업 및 진행 현황 일러스트"></div>
       </div>
     </section>
-
-    <section class="quick-bar" aria-label="팀프로젝트 핵심 정보">
-      <div class="shell quick-grid">
-        <div><strong>A·B반</strong><span>분반별 팀 현황 관리</span></div>
-        <div><strong>2–3명</strong><span>2명 필수 · 1명 선택</span></div>
-        <div><strong>필수·심화</strong><span>프로젝트 트랙 구분</span></div>
-        <div><strong>Notion</strong><span>팀 산출물 문서 연결</span></div>
-      </div>
-    </section>
-
+    <section class="quick-bar" aria-label="팀프로젝트 핵심 정보"><div class="shell quick-grid"><div><strong>A·B반</strong><span>분반별 팀 현황 관리</span></div><div><strong>2–3명</strong><span>2명 필수 · 1명 선택</span></div><div><strong>필수·심화</strong><span>프로젝트 트랙 구분</span></div><div><strong>Notion</strong><span>팀 산출물 문서 연결</span></div></div></section>
     <section class="section shell team-section" id="team-form-section">
-      <div class="section-heading compact">
-        <div>
-          <p class="eyebrow">TEAM REGISTRATION</p>
-          <h2 id="team-form-title">팀 정보 등록</h2>
-          <p id="team-form-description">팀원 1·2는 필수, 팀원 3은 선택입니다.</p>
-        </div>
-      </div>
-
+      <div class="section-heading compact"><div><p class="eyebrow">TEAM REGISTRATION</p><h2 id="team-form-title">팀 정보 등록</h2><p id="team-form-description">팀원 1·2는 필수, 팀원 3은 선택입니다.</p></div></div>
       <form id="team-form" class="team-form" novalidate>
         <input type="hidden" name="teamNumber" id="team-number" value="">
-
         <div class="form-grid form-grid-basic">
-          <div class="field-group">
-            <span class="field-label">분반</span>
-            <div class="class-choice" role="radiogroup" aria-label="분반 선택">
-              <label><input type="radio" name="classGroup" value="A" required><span>A반</span></label>
-              <label><input type="radio" name="classGroup" value="B" required><span>B반</span></label>
-            </div>
-          </div>
-
-          <label class="field-group">
-            <span class="field-label">팀명</span>
-            <input id="team-name" name="teamName" type="text" maxlength="30" placeholder="예: 픽셀메이커" required>
-          </label>
-
-          <label class="field-group idea-autocomplete-field">
-            <span class="field-label">아이디어</span>
-            <input id="project-idea" name="idea" type="text" maxlength="100" placeholder="예: 대학생을 위한 공모전 탐색 서비스" autocomplete="off" required>
-          </label>
-
-          <div class="field-group">
-            <span class="field-label">트랙 구분</span>
-            <div class="track-choice" role="radiogroup" aria-label="트랙 구분 선택">
-              <label><input type="radio" name="track" value="필수" required><span>필수</span></label>
-              <label><input type="radio" name="track" value="심화" required><span>심화</span></label>
-            </div>
-          </div>
-
-          <label class="field-group notion-url-field">
-            <span class="field-label">산출물 노션 URL</span>
-            <input id="notion-url" name="notionUrl" type="url" maxlength="500" placeholder="https://www.notion.so/... 또는 https://app.notion.com/..." inputmode="url" autocomplete="url" required>
-          </label>
+          <div class="field-group"><span class="field-label">분반</span><div class="class-choice" role="radiogroup" aria-label="분반 선택"><label><input type="radio" name="classGroup" value="A" required><span>A반</span></label><label><input type="radio" name="classGroup" value="B" required><span>B반</span></label></div></div>
+          <label class="field-group"><span class="field-label">팀명</span><input id="team-name" name="teamName" type="text" maxlength="30" placeholder="예: 픽셀메이커" required></label>
+          <label class="field-group idea-autocomplete-field"><span class="field-label">아이디어</span><input id="project-idea" name="idea" type="text" maxlength="100" placeholder="예: 대학생을 위한 공모전 탐색 서비스" autocomplete="off" required></label>
+          <div class="field-group"><span class="field-label">트랙 구분</span><div class="track-choice" role="radiogroup" aria-label="트랙 구분 선택"><label><input type="radio" name="track" value="필수" required><span>필수</span></label><label><input type="radio" name="track" value="심화" required><span>심화</span></label></div></div>
+          <label class="field-group notion-url-field"><span class="field-label">산출물 노션 URL</span><input id="notion-url" name="notionUrl" type="text" maxlength="500" placeholder="산출물 노션 URL 입력" autocomplete="off" required></label>
         </div>
-
         <div class="member-panel">
-          <div class="member-panel-heading">
-            <div>
-              <strong>참여 팀원</strong>
-              <p>팀원 1·2는 학번과 이름을 필수로 입력하고, 팀원 3은 선택입니다.</p>
-            </div>
-            <span>최대 3명</span>
-          </div>
-
+          <div class="member-panel-heading"><div><strong>참여 팀원</strong><p>팀원 1·2는 학번과 이름을 필수로 입력하고, 팀원 3은 선택입니다.</p></div><span>최대 3명</span></div>
           <div class="member-grid">
-            <fieldset class="member-card">
-              <legend>팀원 1 <em>필수</em></legend>
-              <label><span>학번</span><input name="studentId1" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="학번" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required></label>
-              <label><span>이름</span><input name="studentName1" type="text" maxlength="20" placeholder="이름" required></label>
-            </fieldset>
-
-            <fieldset class="member-card">
-              <legend>팀원 2 <em>필수</em></legend>
-              <label><span>학번</span><input name="studentId2" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="학번" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required></label>
-              <label><span>이름</span><input name="studentName2" type="text" maxlength="20" placeholder="이름" required></label>
-            </fieldset>
-
-            <fieldset class="member-card">
-              <legend>팀원 3 <em>선택</em></legend>
-              <label><span>학번</span><input name="studentId3" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="학번" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></label>
-              <label><span>이름</span><input name="studentName3" type="text" maxlength="20" placeholder="이름"></label>
-            </fieldset>
+            <fieldset class="member-card"><legend>팀원 1 <em>필수</em></legend><label><span>학번</span><input name="studentId1" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="학번" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required></label><label><span>이름</span><input name="studentName1" type="text" maxlength="20" placeholder="이름" required></label></fieldset>
+            <fieldset class="member-card"><legend>팀원 2 <em>필수</em></legend><label><span>학번</span><input name="studentId2" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="학번" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required></label><label><span>이름</span><input name="studentName2" type="text" maxlength="20" placeholder="이름" required></label></fieldset>
+            <fieldset class="member-card"><legend>팀원 3 <em>선택</em></legend><label><span>학번</span><input name="studentId3" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="20" placeholder="학번" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></label><label><span>이름</span><input name="studentName3" type="text" maxlength="20" placeholder="이름"></label></fieldset>
           </div>
         </div>
-
         <div id="form-message" class="form-message" role="status" aria-live="polite"></div>
-        <div class="form-actions">
-          <button class="button secondary" id="reset-team-button" type="reset">입력 초기화</button>
-          <button class="button primary" id="save-team-button" type="submit">팀 등록</button>
-        </div>
+        <div class="form-actions"><button class="button secondary" id="reset-team-button" type="reset">입력 초기화</button><button class="button primary" id="save-team-button" type="submit">팀 등록</button></div>
       </form>
     </section>
-
-    <section class="section muted-section team-list-section">
-      <div class="shell">
-        <div class="section-heading compact team-list-heading">
-          <div>
-            <p class="eyebrow">REGISTERED TEAMS</p>
-            <h2>등록된 팀프로젝트</h2>
-            <p>팀명을 선택하면 등록 정보를 수정할 수 있고, 산출물 노션 URL에서 팀 문서를 바로 열 수 있습니다.</p>
-          </div>
-          <div class="team-filters" role="tablist" aria-label="등록 프로젝트 분반">
-            <button class="filter-chip is-active" type="button" data-class-filter="A" role="tab" aria-selected="true">A반</button>
-            <button class="filter-chip" type="button" data-class-filter="B" role="tab" aria-selected="false">B반</button>
-          </div>
-        </div>
-
-        <div class="table-scroll" tabindex="0" aria-label="등록 팀 목록 가로 스크롤 영역">
-          <table class="team-table">
-            <thead>
-              <tr>
-                <th>번호</th>
-                <th>분반</th>
-                <th>팀명<br><small>선택 시 수정</small></th>
-                <th>아이디어</th>
-                <th>트랙</th>
-                <th>산출물 노션 URL</th>
-                <th>참여팀원 1<br><small>학번 / 이름</small></th>
-                <th>참여팀원 2<br><small>학번 / 이름</small></th>
-                <th>참여팀원 3<br><small>학번 / 이름</small></th>
-              </tr>
-            </thead>
-            <tbody id="team-table-body"></tbody>
-          </table>
-        </div>
-
-        <div id="empty-team-state" class="empty-team-state">
-          <strong>A반에 아직 등록된 팀이 없습니다.</strong>
-          <p>상단에서 팀을 등록하면 이곳에 목록이 표시됩니다.</p>
-        </div>
-
-        <p class="sheet-note">팀 등록 정보와 산출물 노션 URL은 Google Sheet에 저장되어 공용 데이터로 관리됩니다.</p>
-      </div>
-    </section>
+    <section class="section muted-section team-list-section"><div class="shell">
+      <div class="section-heading compact team-list-heading"><div><p class="eyebrow">REGISTERED TEAMS</p><h2>등록된 팀프로젝트</h2><p>팀명을 선택하면 등록 정보를 수정할 수 있고, 산출물 노션 URL에서 팀 문서를 바로 열 수 있습니다.</p></div><div class="team-filters" role="tablist" aria-label="등록 프로젝트 분반"><button class="filter-chip is-active" type="button" data-class-filter="A" role="tab" aria-selected="true">A반</button><button class="filter-chip" type="button" data-class-filter="B" role="tab" aria-selected="false">B반</button></div></div>
+      <div class="table-scroll" tabindex="0" aria-label="등록 팀 목록 가로 스크롤 영역"><table class="team-table"><thead><tr><th>번호</th><th>분반</th><th>팀명<br><small>선택 시 수정</small></th><th>아이디어</th><th>트랙</th><th>산출물 노션 URL</th><th>참여팀원 1<br><small>학번 / 이름</small></th><th>참여팀원 2<br><small>학번 / 이름</small></th><th>참여팀원 3<br><small>학번 / 이름</small></th></tr></thead><tbody id="team-table-body"></tbody></table></div>
+      <div id="empty-team-state" class="empty-team-state"><strong>A반에 아직 등록된 팀이 없습니다.</strong><p>상단에서 팀을 등록하면 이곳에 목록이 표시됩니다.</p></div>
+      <p class="sheet-note">팀 등록 정보와 산출물 노션 URL은 Google Sheet에 저장되어 공용 데이터로 관리됩니다.</p>
+    </div></section>
   </main>
-
-  <footer class="site-footer">
-    <div class="shell footer-inner">
-      <div><strong>웹프로젝트 실습</strong><p>2026년 2학기 · 팀프로젝트 관리</p></div>
-      <a class="footer-team-link" href="./index.html#weeks">주차별 교안 보러 가기 →</a>
-    </div>
-  </footer>
-
-  <button class="top-button" id="top-button" type="button" aria-label="페이지 맨 위로 이동">
-    <span aria-hidden="true">↑</span>
-    <small>TOP</small>
-  </button>
-
-  <script src="./js/team-project.js?v=20260814-1655"></script>
+  <footer class="site-footer"><div class="shell footer-inner"><div><strong>웹프로젝트 실습</strong><p>2026년 2학기 · 팀프로젝트 관리</p></div><a class="footer-team-link" href="./index.html#weeks">주차별 교안 보러 가기 →</a></div></footer>
+  <button class="top-button" id="top-button" type="button" aria-label="페이지 맨 위로 이동"><span aria-hidden="true">↑</span><small>TOP</small></button>
+  <script src="./js/team-project.js?v=20260814-1702"></script>
 </body>
 </html>
