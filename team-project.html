@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="2026년 2학기 웹프로젝트 실습 팀프로젝트 등록 및 주차별 산출물 관리">
+  <meta name="description" content="2026년 2학기 웹프로젝트 실습 팀프로젝트 등록 및 산출물 관리">
   <title>팀별 현황 | 웹프로젝트 실습 2026-2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/course.css">
-  <link rel="stylesheet" href="./css/team-project.css">
+  <link rel="stylesheet" href="./css/team-project.css?v=20260814-1655">
 </head>
 <body>
   <a class="skip-link" href="#main-content">본문 바로가기</a>
@@ -25,8 +25,6 @@
       </a>
       <nav class="top-nav" aria-label="주요 메뉴">
         <a href="./index.html#weeks">주차별 수업</a>
-        <a href="./index.html#tracks">프로젝트 트랙</a>
-        <a href="./index.html#workflow">수업 진행</a>
         <a class="team-url-link is-current" href="./team-project.html" aria-current="page">팀별 현황</a>
       </nav>
     </div>
@@ -41,10 +39,7 @@
         <div class="team-status-hero-copy">
           <p class="eyebrow">TEAM PROJECT · STATUS BOARD</p>
           <h1>팀 현황</h1>
-          <p class="hero-copy">
-            A·B반 팀 구성과 프로젝트 아이디어를 등록하고,<br>
-            3주차부터 15주차까지 팀별 산출물 진행 현황을 한 화면에서 관리합니다.
-          </p>
+          <p class="hero-copy">A·B반 팀 구성과 프로젝트 아이디어를 등록하고,<br>팀별 산출물 노션 문서를 한 화면에서 관리합니다.</p>
           <div class="hero-actions">
             <a class="button primary" href="./index.html#weeks"><span>주차별 교안 보러 가기</span><b aria-hidden="true">→</b></a>
           </div>
@@ -60,7 +55,7 @@
         <div><strong>A·B반</strong><span>분반별 팀 현황 관리</span></div>
         <div><strong>2–3명</strong><span>2명 필수 · 1명 선택</span></div>
         <div><strong>필수·심화</strong><span>프로젝트 트랙 구분</span></div>
-        <div><strong>3–15주</strong><span>주차별 산출물 완료 체크</span></div>
+        <div><strong>Notion</strong><span>팀 산출물 문서 연결</span></div>
       </div>
     </section>
 
@@ -90,9 +85,9 @@
             <input id="team-name" name="teamName" type="text" maxlength="30" placeholder="예: 픽셀메이커" required>
           </label>
 
-          <label class="field-group">
+          <label class="field-group idea-autocomplete-field">
             <span class="field-label">아이디어</span>
-            <input id="project-idea" name="idea" type="text" maxlength="100" placeholder="예: 대학생을 위한 공모전 탐색 서비스" required>
+            <input id="project-idea" name="idea" type="text" maxlength="100" placeholder="예: 대학생을 위한 공모전 탐색 서비스" autocomplete="off" required>
           </label>
 
           <div class="field-group">
@@ -102,6 +97,11 @@
               <label><input type="radio" name="track" value="심화" required><span>심화</span></label>
             </div>
           </div>
+
+          <label class="field-group notion-url-field">
+            <span class="field-label">산출물 노션 URL</span>
+            <input id="notion-url" name="notionUrl" type="url" maxlength="500" placeholder="https://www.notion.so/... 또는 https://app.notion.com/..." inputmode="url" autocomplete="url" required>
+          </label>
         </div>
 
         <div class="member-panel">
@@ -148,7 +148,7 @@
           <div>
             <p class="eyebrow">REGISTERED TEAMS</p>
             <h2>등록된 팀프로젝트</h2>
-            <p>팀명을 선택하면 등록 정보를 불러와 수정할 수 있습니다.</p>
+            <p>팀명을 선택하면 등록 정보를 수정할 수 있고, 산출물 노션 URL에서 팀 문서를 바로 열 수 있습니다.</p>
           </div>
           <div class="team-filters" role="tablist" aria-label="등록 프로젝트 분반">
             <button class="filter-chip is-active" type="button" data-class-filter="A" role="tab" aria-selected="true">A반</button>
@@ -160,18 +160,15 @@
           <table class="team-table">
             <thead>
               <tr>
-                <th rowspan="2">번호</th>
-                <th rowspan="2">분반</th>
-                <th rowspan="2">팀명<br><small>선택 시 수정</small></th>
-                <th rowspan="2">아이디어</th>
-                <th rowspan="2">트랙</th>
-                <th rowspan="2">참여팀원 1<br><small>학번 / 이름</small></th>
-                <th rowspan="2">참여팀원 2<br><small>학번 / 이름</small></th>
-                <th rowspan="2">참여팀원 3<br><small>학번 / 이름</small></th>
-                <th colspan="13" class="week-output-head">주차별 산출물 완료</th>
-              </tr>
-              <tr class="week-head-row">
-                <th>3주</th><th>4주</th><th>5주</th><th>6주</th><th>7주</th><th>8주</th><th>9주</th><th>10주</th><th>11주</th><th>12주</th><th>13주</th><th>14주</th><th>15주</th>
+                <th>번호</th>
+                <th>분반</th>
+                <th>팀명<br><small>선택 시 수정</small></th>
+                <th>아이디어</th>
+                <th>트랙</th>
+                <th>산출물 노션 URL</th>
+                <th>참여팀원 1<br><small>학번 / 이름</small></th>
+                <th>참여팀원 2<br><small>학번 / 이름</small></th>
+                <th>참여팀원 3<br><small>학번 / 이름</small></th>
               </tr>
             </thead>
             <tbody id="team-table-body"></tbody>
@@ -183,7 +180,7 @@
           <p>상단에서 팀을 등록하면 이곳에 목록이 표시됩니다.</p>
         </div>
 
-        <p class="sheet-note">팀 등록 정보와 주차별 완료 상태는 Google Sheet에 저장되어 공용 데이터로 관리됩니다.</p>
+        <p class="sheet-note">팀 등록 정보와 산출물 노션 URL은 Google Sheet에 저장되어 공용 데이터로 관리됩니다.</p>
       </div>
     </section>
   </main>
@@ -200,6 +197,6 @@
     <small>TOP</small>
   </button>
 
-  <script src="./js/team-project.js"></script>
+  <script src="./js/team-project.js?v=20260814-1655"></script>
 </body>
 </html>
