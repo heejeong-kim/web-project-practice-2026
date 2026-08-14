@@ -38,6 +38,7 @@ html,body,button,input,a{font-family:"IBM Plex Sans KR",sans-serif}
 .member-card{margin:0;padding:18px;border:1px solid #e4e9f0;border-radius:16px;background:#fbfcfe;min-width:0}
 .member-card legend{padding:0 6px;font-size:14px;font-weight:700;color:#344054}
 .member-card legend em{margin-left:4px;font-style:normal;font-size:11px;color:#7c3aed}
+.member-card:nth-child(1) legend em,.member-card:nth-child(2) legend em{color:#d92d20}
 .member-card label{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;gap:10px;margin-top:10px}
 .member-card label>span{font-size:12px;color:#667085}
 .member-card input{height:42px;background:#fff}
