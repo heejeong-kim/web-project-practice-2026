@@ -1,5 +1,6 @@
 html,body,button,input,a{font-family:"IBM Plex Sans KR",sans-serif}
 .shell{width:min(1180px,calc(100% - 40px));margin-left:auto;margin-right:auto}
+.header-inner,.team-status-hero-grid,.quick-grid{width:min(1520px,calc(100% - 64px));margin-left:auto;margin-right:auto}
 .team-url-link.is-current{font-weight:700;color:#111827}
 
 /* Team status hero - same responsive rhythm as the course hero */
@@ -113,6 +114,7 @@ html,body,button,input,a{font-family:"IBM Plex Sans KR",sans-serif}
 }
 @media(max-width:680px){
   .shell{width:min(100% - 28px,1180px)}
+  .header-inner,.team-status-hero-grid,.quick-grid{width:min(100% - 28px,1520px)}
   .team-section,.team-list-section{padding-top:52px;padding-bottom:60px}
   .team-form{padding:18px;border-radius:16px}
   .member-panel-heading{flex-direction:column}
