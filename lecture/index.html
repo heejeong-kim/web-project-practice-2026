@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/lecture.css?v=20260814-1625">
+  <link rel="stylesheet" href="../css/lecture.css?v=20260814-1715">
   <style>
     html,body,button,input,a,select{font-family:"IBM Plex Sans KR",sans-serif}
     html body .lecture-shell{width:min(1520px,calc(100% - 64px))!important}
@@ -67,7 +67,7 @@
         <span><strong>웹프로젝트 실습</strong><small>2026 · 2학기</small></span>
       </a>
       <nav class="lecture-nav" aria-label="강의교안 메뉴">
-        <a href="../index.html#weeks">전체 주차</a>
+        <a href="../index.html#weeks">주차별 수업</a>
         <a href="../team-project.html">팀별 현황</a>
       </nav>
     </div>
@@ -130,35 +130,35 @@
 
   <button class="top-button" id="top-button" type="button" aria-label="페이지 맨 위로 이동"><span>↑</span><small>TOP</small></button>
 
-  <script src="../data/weeks.js?v=20260814-1625"></script>
-  <script src="../js/lecture.js?v=20260814-1625"></script>
+  <script src="../data/weeks.js?v=20260814-1715"></script>
+  <script src="../js/lecture.js?v=20260814-1715"></script>
   <script>
     (() => {
       const content = document.querySelector('#lecture-content');
       const activeWeek = Number(new URLSearchParams(window.location.search).get('week') || 1);
       const chapterSources = {
-        '1장 웹프로젝트 실습의 이해': '/web-project-practice-2026/asset/1_1.png?v=20260814-1625',
-        '2장 데이터 기반 웹서비스의 구조': '/web-project-practice-2026/asset/1_2.png?v=20260814-1625',
-        '3장 웹서비스 사례 분석과 프로젝트 탐색': '/web-project-practice-2026/asset/1_3.png?v=20260814-1625'
+        '1장 웹프로젝트 실습의 이해': '/web-project-practice-2026/asset/1_1.png?v=20260814-1715',
+        '2장 데이터 기반 웹서비스의 구조': '/web-project-practice-2026/asset/1_2.png?v=20260814-1715',
+        '3장 웹서비스 사례 분석과 프로젝트 탐색': '/web-project-practice-2026/asset/1_3.png?v=20260814-1715'
       };
       const chapterImageMap = {
         2: [
-          { prefix: '1.', src: '/web-project-practice-2026/asset/2_1.png?v=20260814-1625', alt: '1장 서비스 역분석 방법' },
-          { prefix: '2.', src: '/web-project-practice-2026/asset/2_2.png?v=20260814-1625', alt: '2장 시장 트랜드 분석' },
-          { prefix: '3.', src: '/web-project-practice-2026/asset/2_3.png?v=20260814-1625', alt: '3장 경쟁서비스 분석 및 UIUX 분석' },
-          { prefix: '4.', src: '/web-project-practice-2026/asset/2_4.png?v=20260814-1625', alt: '4장 프로젝트 기회 영역 도출' }
+          { prefix: '1.', src: '/web-project-practice-2026/asset/2_1.png?v=20260814-1715', alt: '1장 서비스 역분석 방법' },
+          { prefix: '2.', src: '/web-project-practice-2026/asset/2_2.png?v=20260814-1715', alt: '2장 시장 트랜드 분석' },
+          { prefix: '3.', src: '/web-project-practice-2026/asset/2_3.png?v=20260814-1715', alt: '3장 경쟁서비스 분석 및 UIUX 분석' },
+          { prefix: '4.', src: '/web-project-practice-2026/asset/2_4.png?v=20260814-1715', alt: '4장 프로젝트 기회 영역 도출' }
         ],
         3: [
-          { prefix: '0.', src: '/web-project-practice-2026/asset/3_0.png?v=20260814-1625', alt: '0장 사전 팀 빌딩 후 수업 참여' },
-          { prefix: '1.', src: '/web-project-practice-2026/asset/3_1.png?v=20260814-1625', alt: '1장 개인 아이디어 취합과 프로젝트 후보 선택' },
-          { prefix: '2.', src: '/web-project-practice-2026/asset/3_2.png?v=20260814-1625', alt: '2장 사용자 분석과 핵심 사용자 정의' },
-          { prefix: '3.', src: '/web-project-practice-2026/asset/3_3.png?v=20260814-1625', alt: '3장 페르소나와 문제 정의' },
-          { prefix: '4.', src: '/web-project-practice-2026/asset/3_4.png?v=20260814-1625', alt: '4장 팀프로젝트 주제 및 트랙 확정' }
+          { prefix: '0.', src: '/web-project-practice-2026/asset/3_0.png?v=20260814-1715', alt: '0장 사전 팀 빌딩 후 수업 참여' },
+          { prefix: '1.', src: '/web-project-practice-2026/asset/3_1.png?v=20260814-1715', alt: '1장 개인 아이디어 취합과 프로젝트 후보 선택' },
+          { prefix: '2.', src: '/web-project-practice-2026/asset/3_2.png?v=20260814-1715', alt: '2장 사용자 분석과 핵심 사용자 정의' },
+          { prefix: '3.', src: '/web-project-practice-2026/asset/3_3.png?v=20260814-1715', alt: '3장 페르소나와 문제 정의' },
+          { prefix: '4.', src: '/web-project-practice-2026/asset/3_4.png?v=20260814-1715', alt: '4장 팀프로젝트 주제 및 트랙 확정' }
         ]
       };
       const sampleSources = {
-        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260814-1625',
-        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260814-1625'
+        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260814-1715',
+        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260814-1715'
       };
       const examplePattern = /^(?:>\s*)?(예시\)|예\)|예시\s*[:：])/;
 
