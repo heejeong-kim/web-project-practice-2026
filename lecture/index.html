@@ -11,11 +11,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/lecture.css?v=20260814-1719">
+  <link rel="stylesheet" href="../css/lecture.css?v=20260815-1200">
   <style>
     html,body,button,input,a,select{font-family:"IBM Plex Sans KR",sans-serif}
     html body .lecture-shell{width:min(1520px,calc(100% - 64px))!important}
-    .lecture-layout{grid-template-columns:264px minmax(0,1fr)!important}
+    .lecture-layout{grid-template-columns:264px minmax(0,1fr)!important;column-gap:44px!important;row-gap:18px!important;padding-top:32px!important}
+    .lecture-layout.is-side-closed{grid-template-columns:minmax(0,1fr)!important}
+    .lecture-layout.is-side-closed .lecture-toc{display:none}
+    .lecture-layout.is-side-closed .lecture-main-column{grid-column:1/-1}
+    .lecture-side-toggle{grid-column:1/-1;justify-self:start;display:inline-flex;align-items:center;gap:7px;padding:9px 13px;border:1px solid #dfe4eb;border-radius:10px;background:#fff;color:#b95516;font-size:13px;font-weight:700;cursor:pointer;transition:background .2s ease,border-color .2s ease}
+    .lecture-side-toggle:hover{background:#fff3eb;border-color:#ffbe94}
+    .lecture-side-toggle:focus-visible{outline:2px solid #ff8a3d;outline-offset:2px}
     .lecture-header{position:sticky!important;top:0!important;z-index:100!important}
     .toc-card{top:94px!important;max-height:calc(100vh - 118px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
     .week-select-wrap{margin:0 0 18px;padding:0 0 18px;border-bottom:1px solid #e3e7ee}
@@ -46,6 +52,7 @@
     .lecture-pending a{margin-top:26px;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:10px;background:#ff8a3d;color:#1e1209;text-decoration:none;font-weight:700}
     @media(max-width:920px){
       .lecture-layout{grid-template-columns:1fr!important}
+      .lecture-side-toggle{display:none}
       .mobile-week-select-wrap{display:block}
     }
     @media(max-width:680px){
@@ -91,8 +98,12 @@
       </div>
     </section>
 
-    <div class="lecture-shell lecture-layout">
-      <aside class="lecture-toc" aria-label="페이지 목차">
+    <div class="lecture-shell lecture-layout" id="lecture-layout">
+      <button type="button" class="lecture-side-toggle" id="lecture-side-toggle" aria-controls="lecture-toc" aria-expanded="true">
+        <span aria-hidden="true">◀</span> 왼쪽 영역 닫기
+      </button>
+
+      <aside class="lecture-toc" id="lecture-toc" aria-label="페이지 목차">
         <div class="toc-card">
           <div class="week-select-wrap">
             <label for="week-select">주차 선택</label>
@@ -130,35 +141,35 @@
 
   <button class="top-button" id="top-button" type="button" aria-label="페이지 맨 위로 이동"><span>↑</span><small>TOP</small></button>
 
-  <script src="../data/weeks.js?v=20260814-1719"></script>
-  <script src="../js/lecture.js?v=20260814-1719"></script>
+  <script src="../data/weeks.js?v=20260815-1200"></script>
+  <script src="../js/lecture.js?v=20260815-1200"></script>
   <script>
     (() => {
       const content = document.querySelector('#lecture-content');
       const activeWeek = Number(new URLSearchParams(window.location.search).get('week') || 1);
       const chapterSources = {
-        '1장 웹프로젝트 실습의 이해': '/web-project-practice-2026/asset/1_1.png?v=20260814-1719',
-        '2장 데이터 기반 웹서비스의 구조': '/web-project-practice-2026/asset/1_2.png?v=20260814-1719',
-        '3장 웹서비스 사례 분석과 프로젝트 탐색': '/web-project-practice-2026/asset/1_3.png?v=20260814-1719'
+        '1장 웹프로젝트 실습의 이해': '/web-project-practice-2026/asset/1_1.png?v=20260815-1200',
+        '2장 데이터 기반 웹서비스의 구조': '/web-project-practice-2026/asset/1_2.png?v=20260815-1200',
+        '3장 웹서비스 사례 분석과 프로젝트 탐색': '/web-project-practice-2026/asset/1_3.png?v=20260815-1200'
       };
       const chapterImageMap = {
         2: [
-          { prefix: '1.', src: '/web-project-practice-2026/asset/2_1.png?v=20260814-1719', alt: '1장 서비스 역분석 방법' },
-          { prefix: '2.', src: '/web-project-practice-2026/asset/2_2.png?v=20260814-1719', alt: '2장 시장 트랜드 분석' },
-          { prefix: '3.', src: '/web-project-practice-2026/asset/2_3.png?v=20260814-1719', alt: '3장 경쟁서비스 분석 및 UIUX 분석' },
-          { prefix: '4.', src: '/web-project-practice-2026/asset/2_4.png?v=20260814-1719', alt: '4장 프로젝트 기회 영역 도출' }
+          { prefix: '1.', src: '/web-project-practice-2026/asset/2_1.png?v=20260815-1200', alt: '1장 서비스 역분석 방법' },
+          { prefix: '2.', src: '/web-project-practice-2026/asset/2_2.png?v=20260815-1200', alt: '2장 시장 트랜드 분석' },
+          { prefix: '3.', src: '/web-project-practice-2026/asset/2_3.png?v=20260815-1200', alt: '3장 경쟁서비스 분석 및 UIUX 분석' },
+          { prefix: '4.', src: '/web-project-practice-2026/asset/2_4.png?v=20260815-1200', alt: '4장 프로젝트 기회 영역 도출' }
         ],
         3: [
-          { prefix: '0.', src: '/web-project-practice-2026/asset/3_0.png?v=20260814-1719', alt: '0장 사전 팀 빌딩 후 수업 참여' },
-          { prefix: '1.', src: '/web-project-practice-2026/asset/3_1.png?v=20260814-1719', alt: '1장 개인 아이디어 취합과 프로젝트 후보 선택' },
-          { prefix: '2.', src: '/web-project-practice-2026/asset/3_2.png?v=20260814-1719', alt: '2장 사용자 분석과 핵심 사용자 정의' },
-          { prefix: '3.', src: '/web-project-practice-2026/asset/3_3.png?v=20260814-1719', alt: '3장 페르소나와 문제 정의' },
-          { prefix: '4.', src: '/web-project-practice-2026/asset/3_4.png?v=20260814-1719', alt: '4장 팀프로젝트 주제 및 트랙 확정' }
+          { prefix: '0.', src: '/web-project-practice-2026/asset/3_0.png?v=20260815-1200', alt: '0장 사전 팀 빌딩 후 수업 참여' },
+          { prefix: '1.', src: '/web-project-practice-2026/asset/3_1.png?v=20260815-1200', alt: '1장 개인 아이디어 취합과 프로젝트 후보 선택' },
+          { prefix: '2.', src: '/web-project-practice-2026/asset/3_2.png?v=20260815-1200', alt: '2장 사용자 분석과 핵심 사용자 정의' },
+          { prefix: '3.', src: '/web-project-practice-2026/asset/3_3.png?v=20260815-1200', alt: '3장 페르소나와 문제 정의' },
+          { prefix: '4.', src: '/web-project-practice-2026/asset/3_4.png?v=20260815-1200', alt: '4장 팀프로젝트 주제 및 트랙 확정' }
         ]
       };
       const sampleSources = {
-        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260814-1719',
-        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260814-1719'
+        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260815-1200',
+        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260815-1200'
       };
       const examplePattern = /^(?:>\s*)?(예시\)|예\)|예시\s*[:：])/;
 
