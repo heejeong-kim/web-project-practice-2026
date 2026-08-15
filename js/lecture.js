@@ -5,7 +5,7 @@ const requestedWeek = Number.isFinite(parsedWeek) ? parsedWeek : 1;
 const week = Math.min(15, Math.max(0, requestedWeek));
 const weekData = window.WEEK_DATA.find(item => item.week === week);
 const READY_WEEKS = new Set([0, 1, 2, 3]);
-const ASSET_VERSION = '20260814-1719';
+const ASSET_VERSION = '20260815-1200';
 
 const titleEl = document.querySelector('#lecture-title');
 const weekEl = document.querySelector('#lecture-week');
@@ -19,6 +19,35 @@ const mobileWeekSelect = document.querySelector('#mobile-week-select');
 const prevWeek = document.querySelector('#prev-week');
 const nextWeek = document.querySelector('#next-week');
 const topButton = document.querySelector('#top-button');
+const lectureLayout = document.querySelector('#lecture-layout');
+const lectureSideToggle = document.querySelector('#lecture-side-toggle');
+const LECTURE_SIDE_STORAGE_KEY = 'web-project-lecture-side-closed';
+
+function setupLectureSideToggle() {
+  if (!lectureLayout || !lectureSideToggle) return;
+
+  const setClosed = closed => {
+    lectureLayout.classList.toggle('is-side-closed', closed);
+    lectureSideToggle.setAttribute('aria-expanded', String(!closed));
+    lectureSideToggle.innerHTML = closed
+      ? '<span aria-hidden="true">▶</span> 왼쪽 영역 열기'
+      : '<span aria-hidden="true">◀</span> 왼쪽 영역 닫기';
+  };
+
+  let savedClosed = false;
+  try {
+    savedClosed = localStorage.getItem(LECTURE_SIDE_STORAGE_KEY) === 'true';
+  } catch {}
+  setClosed(savedClosed);
+
+  lectureSideToggle.addEventListener('click', () => {
+    const closed = !lectureLayout.classList.contains('is-side-closed');
+    setClosed(closed);
+    try {
+      localStorage.setItem(LECTURE_SIDE_STORAGE_KEY, String(closed));
+    } catch {}
+  });
+}
 
 function itemLabel(item) {
   return item?.week === 0 ? 'OT' : `${item?.week}주차`;
@@ -455,6 +484,7 @@ const updateTopButton = () => topButton.classList.toggle('is-visible', window.sc
 window.addEventListener('scroll', updateTopButton, { passive: true });
 topButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
+setupLectureSideToggle();
 injectLectureImageStyles();
 renderPage();
 updateTopButton();
