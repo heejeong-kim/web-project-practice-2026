@@ -38,7 +38,11 @@
     .lecture-content .lecture-image{display:block;max-width:100%;height:auto;margin:22px auto;border-radius:14px}
     .lecture-content .chapter-image{display:block;margin:18px 0 34px;border-radius:18px;overflow:hidden;background:#eef1f5}
     .lecture-content .chapter-image img{display:block;width:100%;height:auto}
-    .lecture-content .lecture-sample-frame{display:block;width:100%;min-height:520px;margin:18px 0 24px;border:1px solid #dfe4eb;border-radius:14px;background:#fff}
+    .lecture-content .lecture-sample-frame{display:block;width:100%;min-height:520px;margin:18px 0 10px;border:1px solid #dfe4eb;border-radius:14px;background:#fff}
+    .lecture-content .lecture-sample-actions{display:flex;justify-content:flex-end;margin:0 0 24px}
+    .lecture-content .lecture-sample-open{display:inline-flex;align-items:center;gap:7px;min-height:42px;padding:0 14px;border:1px solid #ffb27f;border-radius:10px;background:#fff;color:#b95516!important;text-decoration:none!important;font-size:14px;font-weight:800;transition:background .2s ease,border-color .2s ease,transform .2s ease}
+    .lecture-content .lecture-sample-open:hover{background:#fff3eb;border-color:#ff8a3d;transform:translateY(-1px)}
+    .lecture-content .lecture-sample-open:focus-visible{outline:2px solid #ff8a3d;outline-offset:2px}
     .lecture-content .ot-reference,.lecture-content .ot-reference p,.lecture-content .ot-reference li,.lecture-content .ot-reference strong{color:#111827!important;font-size:18px!important;line-height:1.75}
     .lecture-content .lecture-example{margin:20px 0!important;padding:18px 22px!important;background:#fff3e8!important;border:0!important;border-left:4px solid #ff8a3d!important;border-radius:0!important;color:#5f412e!important;font-size:18px!important;line-height:1.75!important;box-shadow:none!important}
     .lecture-content .lecture-example strong{color:#c85d12!important;font-weight:700!important}
@@ -171,8 +175,8 @@
         ]
       };
       const sampleSources = {
-        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260818-0927',
-        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260818-0927'
+        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260818-0930',
+        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260818-0930'
       };
       const examplePattern = /^(?:>\s*)?(예시\)|예\)|예시\s*[:：])/;
 
@@ -215,6 +219,22 @@
         frame.title = fileName === 'caferaon_db.html' ? '카페 탐색 서비스 예시' : '정적 카페 소개 페이지 예시';
         frame.loading = 'lazy';
         return frame;
+      };
+
+      const addSampleOpenCta = (frame, fileName) => {
+        const next = frame.nextElementSibling;
+        if (next?.classList.contains('lecture-sample-actions')) return;
+        const actions = document.createElement('div');
+        actions.className = 'lecture-sample-actions';
+        const link = document.createElement('a');
+        link.className = 'lecture-sample-open';
+        link.href = sampleSources[fileName];
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = '새창으로 열기 ↗';
+        link.setAttribute('aria-label', `${frame.title} 새창으로 열기`);
+        actions.appendChild(link);
+        frame.insertAdjacentElement('afterend', actions);
       };
 
       const replaceSampleEmbeds = () => {
@@ -262,7 +282,10 @@
           if (fileName && frame.getAttribute('src') !== sampleSources[fileName]) {
             frame.src = sampleSources[fileName];
           }
-          if (fileName) frame.classList.add('lecture-sample-frame');
+          if (fileName) {
+            frame.classList.add('lecture-sample-frame');
+            addSampleOpenCta(frame, fileName);
+          }
         });
 
         content.querySelectorAll('a').forEach(link => {
