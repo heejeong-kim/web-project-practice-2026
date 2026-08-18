@@ -171,8 +171,8 @@
         ]
       };
       const sampleSources = {
-        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260818-0922',
-        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260818-0922'
+        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260818-0927',
+        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260818-0927'
       };
       const examplePattern = /^(?:>\s*)?(예시\)|예\)|예시\s*[:：])/;
 
@@ -227,6 +227,13 @@
       };
 
       const replaceRenderedSampleAttachments = () => {
+        content.querySelectorAll('.notion-embed').forEach(attachment => {
+          const text = attachment.textContent || '';
+          const fileName = getSampleFileName(text);
+          if (!fileName) return;
+          attachment.replaceWith(createSampleFrame(fileName));
+        });
+
         content.querySelectorAll('p').forEach(paragraph => {
           const text = paragraph.textContent || '';
           const fileName = getSampleFileName(text);
