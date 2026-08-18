@@ -171,8 +171,8 @@
         ]
       };
       const sampleSources = {
-        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260818-0916',
-        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260818-0916'
+        'caferaon.html': '/web-project-practice-2026/data/samples/caferaon.html?v=20260818-0922',
+        'caferaon_db.html': '/web-project-practice-2026/data/samples/caferaon_db.html?v=20260818-0922'
       };
       const examplePattern = /^(?:>\s*)?(예시\)|예\)|예시\s*[:：])/;
 
@@ -208,24 +208,39 @@
         return '';
       };
 
+      const createSampleFrame = fileName => {
+        const frame = document.createElement('iframe');
+        frame.src = sampleSources[fileName];
+        frame.className = 'lecture-sample-frame';
+        frame.title = fileName === 'caferaon_db.html' ? '카페 탐색 서비스 예시' : '정적 카페 소개 페이지 예시';
+        frame.loading = 'lazy';
+        return frame;
+      };
+
       const replaceSampleEmbeds = () => {
         content.querySelectorAll('embed').forEach(embed => {
           const src = embed.getAttribute('src') || '';
           const fileName = getSampleFileName(src);
           if (!fileName) return;
+          embed.replaceWith(createSampleFrame(fileName));
+        });
+      };
 
-          const frame = document.createElement('iframe');
-          frame.src = sampleSources[fileName];
-          frame.className = 'lecture-sample-frame';
-          frame.title = fileName === 'caferaon_db.html' ? '카페 탐색 서비스 예시' : '정적 카페 소개 페이지 예시';
-          frame.loading = 'lazy';
-          embed.replaceWith(frame);
+      const replaceRenderedSampleAttachments = () => {
+        content.querySelectorAll('p').forEach(paragraph => {
+          const text = paragraph.textContent || '';
+          const fileName = getSampleFileName(text);
+          if (!fileName) return;
+          const isAttachmentFallback = text.includes('첨부 실습 파일') || text.includes('Notion 원문의 첨부 블록') || text.includes('file://') || text.includes('attachment:');
+          if (!isAttachmentFallback) return;
+          paragraph.replaceWith(createSampleFrame(fileName));
         });
       };
 
       const fixLectureAssets = () => {
         insertChapterImages();
         replaceSampleEmbeds();
+        replaceRenderedSampleAttachments();
 
         content.querySelectorAll('.chapter-image img').forEach(img => {
           const key = img.alt.trim();
