@@ -5,6 +5,9 @@ const requestedWeek = Number.isFinite(parsedWeek) ? parsedWeek : 1;
 const week = Math.min(15, Math.max(0, requestedWeek));
 const weekData = window.WEEK_DATA.find(item => item.week === week);
 const READY_WEEKS = new Set([0, 1, 2, 3]);
+const PROTECTED_WEEKS = new Set([2, 3]);
+const LECTURE_PASSWORD = '8989';
+const LECTURE_ACCESS_KEY = 'web-project-lecture-access';
 const ASSET_VERSION = '20260815-1200';
 
 const titleEl = document.querySelector('#lecture-title');
@@ -22,6 +25,49 @@ const topButton = document.querySelector('#top-button');
 const lectureLayout = document.querySelector('#lecture-layout');
 const lectureSideToggle = document.querySelector('#lecture-side-toggle');
 const LECTURE_SIDE_STORAGE_KEY = 'web-project-lecture-side-closed';
+
+function requestLecturePassword(targetWeek) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.58);backdrop-filter:blur(4px)';
+    overlay.innerHTML = `<form style="width:min(100%,360px);padding:28px;border-radius:18px;background:#fff;box-shadow:0 24px 70px rgba(15,23,42,.3)"><h2 style="margin:0 0 8px;font-size:22px">${targetWeek}주차 강의교안</h2><p style="margin:0 0 18px;color:#667085">비밀번호를 입력해 주세요.</p><input type="password" inputmode="numeric" autocomplete="off" aria-label="강의교안 비밀번호" style="box-sizing:border-box;width:100%;height:46px;padding:0 13px;border:1px solid #cfd5df;border-radius:10px;font-size:18px"><p data-error role="alert" style="display:none;margin:8px 0 0;color:#dc2626;font-size:14px">비밀번호가 올바르지 않습니다.</p><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px"><button type="button" data-cancel style="min-height:42px;padding:0 15px;border:1px solid #d0d5dd;border-radius:9px;background:#fff">취소</button><button type="submit" style="min-height:42px;padding:0 17px;border:0;border-radius:9px;background:#172033;color:#fff;font-weight:700">확인</button></div></form>`;
+    document.body.appendChild(overlay);
+    const input = overlay.querySelector('input');
+    const close = result => { overlay.remove(); resolve(result); };
+    overlay.querySelector('form').addEventListener('submit', event => {
+      event.preventDefault();
+      if (input.value === LECTURE_PASSWORD) close(true);
+      else { overlay.querySelector('[data-error]').style.display = 'block'; input.select(); }
+    });
+    overlay.querySelector('[data-cancel]').addEventListener('click', () => close(false));
+    overlay.addEventListener('click', event => { if (event.target === overlay) close(false); });
+    input.focus();
+  });
+}
+
+async function requestLectureAccess(targetWeek) {
+  if (!PROTECTED_WEEKS.has(targetWeek)) return true;
+  return requestLecturePassword(targetWeek);
+}
+
+function grantNextLectureAccess(targetWeek) {
+  try { sessionStorage.setItem(LECTURE_ACCESS_KEY, String(targetWeek)); } catch {}
+}
+
+async function verifyInitialLectureAccess() {
+  if (!PROTECTED_WEEKS.has(week)) return true;
+  try {
+    if (sessionStorage.getItem(LECTURE_ACCESS_KEY) === String(week)) {
+      sessionStorage.removeItem(LECTURE_ACCESS_KEY);
+      return true;
+    }
+  } catch {}
+  if (await requestLectureAccess(week)) return true;
+  window.location.replace('../index.html#weeks');
+  return false;
+}
+
+const lectureAccessPromise = verifyInitialLectureAccess();
 
 function setupLectureSideToggle() {
   if (!lectureLayout || !lectureSideToggle) return;
@@ -431,7 +477,13 @@ function fillWeekSelect(selectEl) {
     return `<option value="${number}"${selected}${disabled}>${label}</option>`;
   }).join('');
 
-  selectEl.addEventListener('change', () => {
+  selectEl.addEventListener('change', async () => {
+    const targetWeek = Number(selectEl.value);
+    if (!await requestLectureAccess(targetWeek)) {
+      selectEl.value = String(week).padStart(2, '0');
+      return;
+    }
+    grantNextLectureAccess(targetWeek);
     window.location.href = `?week=${selectEl.value}`;
   });
 }
@@ -467,6 +519,14 @@ function setPagerCard(element, target, direction) {
   }
 
   element.href = `?week=${String(target.week).padStart(2, '0')}`;
+  if (PROTECTED_WEEKS.has(target.week)) {
+    element.addEventListener('click', async event => {
+      event.preventDefault();
+      if (!await requestLectureAccess(target.week)) return;
+      grantNextLectureAccess(target.week);
+      window.location.href = element.href;
+    });
+  }
 }
 
 function buildPager() {
@@ -486,5 +546,5 @@ topButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 's
 
 setupLectureSideToggle();
 injectLectureImageStyles();
-renderPage();
+lectureAccessPromise.then(hasAccess => { if (hasAccess) renderPage(); });
 updateTopButton();
