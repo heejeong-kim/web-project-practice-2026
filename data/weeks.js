@@ -3,7 +3,7 @@ window.WEEK_DATA = [
   {week:1,title:'웹프로젝트 이해',type:'class',keywords:['웹서비스','JSON','LocalStorage'],summary:'웹페이지와 데이터 기반 웹서비스의 차이, 프로젝트 범위와 트랙을 이해한다',page:'./lecture/?week=01'},
   {week:2,title:'서비스 역분석 및 시장·트렌드 조사',type:'class',keywords:['Reverse Analysis','Market Trend','Opportunity'],summary:'기존 서비스를 사용자·문제·기능·데이터 관점에서 역분석하고 시장·경쟁서비스 비교를 통해 프로젝트 기회 영역을 찾는다',page:'./lecture/?week=02'},
   {week:3,title:'사용자 분석 및 프로젝트 문제 정의',type:'class',keywords:['Persona','Problem Statement','Value Proposition'],summary:'개인 아이디어를 팀에서 비교해 후보를 선택하고 핵심 사용자·문제·가치 제안을 정의해 프로젝트 주제와 트랙을 확정한다',page:'./lecture/?week=03'},
-  {week:4,title:'서비스 구조 및 UX 설계',type:'class',keywords:['MVP','IA','User Flow'],summary:'핵심 기능, 정보구조, 사용자 흐름, 와이어프레임을 설계한다',page:''},
+  {week:4,title:'서비스 구조 및 UX 설계',type:'class',keywords:['MVP','IA','User Flow'],summary:'핵심 기능, 정보구조, 사용자 흐름, 와이어프레임을 설계한다',page:'./lecture/?week=04'},
   {week:5,title:'JavaScript 프로젝트 기초',type:'class',keywords:['DOM','Event','Function'],summary:'정적 HTML·CSS에 JavaScript 상호작용을 연결하고 입력→처리→출력 구조를 익힌다',page:''},
   {week:6,title:'JSON 데이터셋 설계',type:'class',keywords:['Dataset','Field','ID'],summary:'검색·필터·정렬·상세보기에 필요한 JSON 데이터 구조와 명세를 설계한다',page:''},
   {week:7,title:'JSON 기반 화면 구현',type:'class',keywords:['fetch','Rendering','Empty State'],summary:'JSON을 불러와 반복 렌더링하고 결과 건수·빈 상태·오류 상태를 처리한다',page:''},
