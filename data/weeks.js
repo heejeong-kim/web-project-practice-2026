@@ -192,7 +192,7 @@ window.WEEK_DATA = [
   const week = Number(new URLSearchParams(window.location.search).get('week'));
   if (week !== 4) return;
 
-  const escapeHtml = value => String(value || '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+  const escapeHtml = value => String(value || '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[char]));
   const inline = value => String(value || '')
     .replace(/<span\s+color="([^"]+)">([\s\S]*?)<\/span>/g, (_, color, text) => `<span class="${color.includes('blue') ? 'notion-blue' : color.includes('red') ? 'notion-red' : color.includes('gray') ? 'notion-gray' : ''}">${text}</span>`)
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
@@ -250,6 +250,52 @@ window.WEEK_DATA = [
     toc.innerHTML = headings.map(heading => `<a href="#${heading.id}"${heading.tagName === 'H2' ? ' class="toc-depth-2"' : ''}>${escapeHtml(heading.textContent)}</a>`).join('');
   };
 
+  const enhanceWeek4Content = content => {
+    if (!document.querySelector('#week4-preview-styles')) {
+      const style = document.createElement('style');
+      style.id = 'week4-preview-styles';
+      style.textContent = `
+        .lecture-content .week4-chapter-image{display:block;margin:18px 0 34px;border-radius:18px;overflow:hidden;background:#eef1f5}
+        .lecture-content .week4-chapter-image img{display:block;width:100%;height:auto}
+        .lecture-content .week4-wireframe-wrap{margin:18px 0 24px}
+        .lecture-content .week4-wireframe-frame{display:block;width:100%;height:min(78vh,900px);min-height:620px;border:1px solid #dfe4eb;border-radius:14px;background:#fff}
+        .lecture-content .week4-wireframe-actions{display:flex;justify-content:flex-end;margin-top:10px}
+        .lecture-content .week4-wireframe-open{display:inline-flex;align-items:center;min-height:40px;padding:0 13px;border:1px solid #ffb27f;border-radius:9px;background:#fff;color:#b95516!important;text-decoration:none!important;font-size:13px;font-weight:800}
+        .lecture-content .week4-wireframe-open:hover{background:#fff3eb;border-color:#ff8a3d}
+        @media(max-width:680px){.lecture-content .week4-chapter-image{margin:14px 0 28px;border-radius:14px}.lecture-content .week4-wireframe-frame{min-height:560px;height:72vh}}
+      `;
+      document.head.appendChild(style);
+    }
+
+    const chapterImages = [
+      { prefix: '0.', src: '../asset/4_0.png?v=20260831-1145', alt: '0장 팀 작업 준비' },
+      { prefix: '1.', src: '../asset/4_1.png?v=20260831-1145', alt: '1장 사용자 시나리오와 기능 구조' },
+      { prefix: '2.', src: '../asset/4_2.png?v=20260831-1145', alt: '2장 정보구조와 사용자 흐름 설계' },
+      { prefix: '3.', src: '../asset/4_3.png?v=20260831-1145', alt: '3장 와이어프레임과 데이터 연결' },
+      { prefix: '4.', src: '../asset/4_4.png?v=20260831-1145', alt: '4장 설계 검토와 구현 범위 확정' }
+    ];
+    const h1List = [...content.querySelectorAll('h1')];
+    chapterImages.forEach(item => {
+      const heading = h1List.find(h1 => h1.textContent.trim().startsWith(item.prefix));
+      if (!heading || heading.nextElementSibling?.classList.contains('week4-chapter-image')) return;
+      const figure = document.createElement('figure');
+      figure.className = 'week4-chapter-image';
+      figure.innerHTML = `<img src="${item.src}" alt="${item.alt}" loading="eager">`;
+      heading.insertAdjacentElement('afterend', figure);
+    });
+
+    const targetDetails = [...content.querySelectorAll('details')].find(details => details.querySelector('summary')?.textContent.includes('와이어프레임 및 화면별 데이터 매핑'));
+    if (targetDetails && !targetDetails.querySelector('.week4-wireframe-wrap')) {
+      const placeholder = [...targetDetails.querySelectorAll('.callout')].find(node => node.textContent.includes('[도면 삽입 위치]'));
+      if (placeholder) {
+        const wrap = document.createElement('div');
+        wrap.className = 'week4-wireframe-wrap';
+        wrap.innerHTML = `<iframe class="week4-wireframe-frame" src="../data/samples/kagong-wireframe.html?v=20260831-1145" title="카공 공간 조건 탐색 서비스 로우파이 와이어프레임" loading="lazy"></iframe><div class="week4-wireframe-actions"><a class="week4-wireframe-open" href="../data/samples/kagong-wireframe.html?v=20260831-1145" target="_blank" rel="noopener noreferrer">새창으로 열기 ↗</a></div>`;
+        placeholder.replaceWith(wrap);
+      }
+    }
+  };
+
   const renderPreview = async () => {
     const content = document.querySelector('#lecture-content');
     if (!content) return;
@@ -262,6 +308,7 @@ window.WEEK_DATA = [
       document.querySelector('#lecture-summary').textContent = data.summary;
       document.querySelector('#lecture-keywords').innerHTML = data.keywords.map(keyword => `<span>${escapeHtml(keyword)}</span>`).join('');
       content.innerHTML = renderMarkdown(source);
+      enhanceWeek4Content(content);
       buildToc(content);
     } catch (error) {
       content.innerHTML = `<div class="callout red"><strong>강의교안 로드 오류</strong><p>${escapeHtml(error.message)}</p></div>`;
