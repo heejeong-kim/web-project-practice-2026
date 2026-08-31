@@ -22,27 +22,41 @@ window.WEEK_DATA = [
 
   const week = Number(new URLSearchParams(window.location.search).get('week'));
   const locks = {
-    2: { password: '2918', titles: ['1.4', '2.5', '3.5', '4.5', '활동내역 및 산출물'] },
-    3: { password: '7293', titles: ['1.2', '2.3', '3.5'] }
+    2: { hash: 'aaa635313e40478b612d05958cfc10a9f44932746c2acb5a92031baee1dba2e4', titles: ['1.4', '2.5', '3.5', '4.5', '활동내역 및 산출물'] },
+    3: { hash: 'f7f7b664724bce5c7c5ec139634d8f5557fa1693090c19b400236d4e6cb6779c', titles: ['1.2', '2.3', '3.5'] }
   };
   const config = locks[week];
   if (!config) return;
 
-  const accessKey = `web-project-section-access-week-${week}`;
-  const isUnlocked = () => {
-    try { return sessionStorage.getItem(accessKey) === 'true'; }
-    catch { return false; }
+  try { sessionStorage.setItem('web-project-lecture-access', String(week)); } catch {}
+
+  const digest = async value => {
+    const bytes = new TextEncoder().encode(value);
+    const buffer = await crypto.subtle.digest('SHA-256', bytes);
+    return [...new Uint8Array(buffer)].map(byte => byte.toString(16).padStart(2, '0')).join('');
   };
 
-  const matchesTarget = heading => {
-    const text = heading.textContent.trim();
-    return config.titles.some(title => title === '활동내역 및 산출물'
+  const normalizeHeadingText = heading => {
+    if (heading.dataset.sectionLockTitle) return heading.dataset.sectionLockTitle;
+    const clone = heading.cloneNode(true);
+    clone.querySelectorAll('.section-lock-cta').forEach(node => node.remove());
+    return clone.textContent.trim();
+  };
+
+  const findTargetTitle = heading => {
+    const text = normalizeHeadingText(heading);
+    return config.titles.find(title => title === '활동내역 및 산출물'
       ? text.includes(title)
       : text === title || text.startsWith(`${title} `) || text.startsWith(`${title}.`));
   };
 
-  const headingLevel = element => Number(element.tagName.slice(1));
+  const sectionAccessKey = title => `web-project-section-access-week-${week}-item-${config.titles.indexOf(title)}`;
+  const isUnlocked = title => {
+    try { return sessionStorage.getItem(sectionAccessKey(title)) === 'true'; }
+    catch { return false; }
+  };
 
+  const headingLevel = element => Number(element.tagName.slice(1));
   const getSectionNodes = heading => {
     const level = headingLevel(heading);
     const nodes = [];
@@ -55,64 +69,90 @@ window.WEEK_DATA = [
     return nodes;
   };
 
+  const ensureStyles = () => {
+    if (document.querySelector('#section-lock-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'section-lock-styles';
+    style.textContent = `
+      .lecture-content [data-section-locked="true"]{cursor:pointer}
+      .lecture-content .section-lock-cta{display:inline-flex;align-items:center;justify-content:center;margin-left:10px;padding:4px 9px;border:1px solid #ff8a3d;border-radius:7px;background:#fff3eb;color:#b95516;font:700 12px/1.2 "IBM Plex Sans KR",sans-serif;vertical-align:middle;cursor:pointer;transition:background .2s ease,border-color .2s ease,transform .2s ease}
+      .lecture-content .section-lock-cta:hover{background:#ffe2cf;border-color:#e96f20;transform:translateY(-1px)}
+      .lecture-content .section-lock-cta:focus-visible{outline:2px solid #ff8a3d;outline-offset:2px}
+    `;
+    document.head.appendChild(style);
+  };
+
   const showSection = heading => {
     getSectionNodes(heading).forEach(node => { node.hidden = false; });
-    heading.removeAttribute('data-section-locked');
+    heading.dataset.sectionLocked = 'false';
     heading.removeAttribute('role');
     heading.removeAttribute('tabindex');
     heading.removeAttribute('aria-label');
     heading.style.cursor = '';
+    heading.querySelector('.section-lock-cta')?.remove();
   };
 
-  const hideSection = heading => {
+  const hideSection = (heading, title) => {
     getSectionNodes(heading).forEach(node => { node.hidden = true; });
+    heading.dataset.sectionLockTitle = title;
     heading.dataset.sectionLocked = 'true';
     heading.setAttribute('role', 'button');
     heading.setAttribute('tabindex', '0');
-    heading.setAttribute('aria-label', `${heading.textContent.trim()} 내용 보기. 비밀번호 필요`);
+    heading.setAttribute('aria-label', `${normalizeHeadingText(heading)} 내용 보기. 비밀번호 필요`);
     heading.style.cursor = 'pointer';
+    if (!heading.querySelector('.section-lock-cta')) {
+      const cta = document.createElement('button');
+      cta.type = 'button';
+      cta.className = 'section-lock-cta';
+      cta.textContent = '[클릭]';
+      cta.setAttribute('aria-label', `${normalizeHeadingText(heading)} 숨김 내용 열기`);
+      heading.appendChild(cta);
+    }
   };
 
   let dialogOpen = false;
-  const requestPassword = heading => {
-    if (dialogOpen || isUnlocked()) return;
+  const requestPassword = (heading, title) => {
+    if (dialogOpen || isUnlocked(title)) return;
     dialogOpen = true;
-
+    const headingLabel = normalizeHeadingText(heading);
     const overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.58);backdrop-filter:blur(4px)';
-    overlay.innerHTML = `<form style="box-sizing:border-box;width:min(100%,360px);padding:28px;border-radius:18px;background:#fff;box-shadow:0 24px 70px rgba(15,23,42,.3)"><h2 style="margin:0 0 8px;font-size:22px">${week}주차 숨김 내용</h2><p style="margin:0 0 18px;color:#667085">비밀번호를 입력하면 숨겨진 내용이 표시됩니다.</p><input type="password" inputmode="numeric" autocomplete="off" aria-label="${week}주차 비밀번호" style="box-sizing:border-box;width:100%;height:46px;padding:0 13px;border:1px solid #cfd5df;border-radius:10px;font-size:18px"><p data-error role="alert" style="display:none;margin:8px 0 0;color:#dc2626;font-size:14px">비밀번호가 올바르지 않습니다.</p><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px"><button type="button" data-cancel style="min-height:42px;padding:0 15px;border:1px solid #d0d5dd;border-radius:9px;background:#fff">취소</button><button type="submit" style="min-height:42px;padding:0 17px;border:0;border-radius:9px;background:#172033;color:#fff;font-weight:700">확인</button></div></form>`;
+    overlay.innerHTML = `<form style="box-sizing:border-box;width:min(100%,380px);padding:28px;border-radius:18px;background:#fff;box-shadow:0 24px 70px rgba(15,23,42,.3)"><h2 style="margin:0 0 8px;font-size:22px">${week}주차 · ${headingLabel}</h2><p style="margin:0 0 18px;color:#667085">비밀번호를 입력하면 이 항목의 숨겨진 내용만 표시됩니다.</p><input type="password" inputmode="numeric" autocomplete="off" aria-label="${week}주차 ${headingLabel} 비밀번호" style="box-sizing:border-box;width:100%;height:46px;padding:0 13px;border:1px solid #cfd5df;border-radius:10px;font-size:18px"><p data-error role="alert" style="display:none;margin:8px 0 0;color:#dc2626;font-size:14px">비밀번호가 올바르지 않습니다.</p><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px"><button type="button" data-cancel style="min-height:42px;padding:0 15px;border:1px solid #d0d5dd;border-radius:9px;background:#fff">취소</button><button type="submit" style="min-height:42px;padding:0 17px;border:0;border-radius:9px;background:#172033;color:#fff;font-weight:700">확인</button></div></form>`;
     document.body.appendChild(overlay);
-
     const input = overlay.querySelector('input');
     const close = () => { overlay.remove(); dialogOpen = false; heading.focus(); };
-    overlay.querySelector('form').addEventListener('submit', event => {
+    overlay.querySelector('form').addEventListener('submit', async event => {
       event.preventDefault();
-      if (input.value !== config.password) {
+      const inputHash = await digest(input.value);
+      if (inputHash !== config.hash) {
         overlay.querySelector('[data-error]').style.display = 'block';
         input.select();
         return;
       }
-      try { sessionStorage.setItem(accessKey, 'true'); } catch {}
+      try { sessionStorage.setItem(sectionAccessKey(title), 'true'); } catch {}
       overlay.remove();
       dialogOpen = false;
-      applyLocks();
+      showSection(heading);
     });
     overlay.querySelector('[data-cancel]').addEventListener('click', close);
     overlay.addEventListener('click', event => { if (event.target === overlay) close(); });
     input.focus();
   };
 
-  const bindHeading = heading => {
+  const bindHeading = (heading, title) => {
     if (heading.dataset.sectionLockBound === 'true') return;
     heading.dataset.sectionLockBound = 'true';
-    heading.addEventListener('click', () => {
-      if (heading.dataset.sectionLocked === 'true') requestPassword(heading);
+    heading.addEventListener('click', event => {
+      if (heading.dataset.sectionLocked !== 'true') return;
+      if (event.target.closest('.section-lock-cta')) event.preventDefault();
+      requestPassword(heading, heading.dataset.sectionLockTitle || title);
     });
     heading.addEventListener('keydown', event => {
       if (heading.dataset.sectionLocked !== 'true') return;
+      if (event.target.closest?.('.section-lock-cta')) return;
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        requestPassword(heading);
+        requestPassword(heading, heading.dataset.sectionLockTitle || title);
       }
     });
   };
@@ -120,17 +160,20 @@ window.WEEK_DATA = [
   const applyLocks = () => {
     const content = document.querySelector('#lecture-content');
     if (!content) return;
-    const headings = [...content.querySelectorAll('h1,h2,h3,h4,h5,h6')].filter(matchesTarget);
-    headings.forEach(heading => {
-      bindHeading(heading);
-      if (isUnlocked()) showSection(heading);
-      else hideSection(heading);
+    [...content.querySelectorAll('h1,h2,h3,h4,h5,h6')].forEach(heading => {
+      const title = findTargetTitle(heading);
+      if (!title) return;
+      heading.dataset.sectionLockTitle = title;
+      bindHeading(heading, title);
+      if (isUnlocked(title)) showSection(heading);
+      else hideSection(heading, title);
     });
   };
 
   const start = () => {
     const content = document.querySelector('#lecture-content');
     if (!content) return;
+    ensureStyles();
     applyLocks();
     new MutationObserver(applyLocks).observe(content, { childList: true, subtree: false });
   };
