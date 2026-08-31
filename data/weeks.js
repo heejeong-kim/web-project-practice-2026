@@ -28,26 +28,30 @@ window.WEEK_DATA = [
   const config = locks[week];
   if (!config) return;
 
-  try { sessionStorage.setItem('web-project-lecture-access', String(week)); } catch {}
-
   const digest = async value => {
     const bytes = new TextEncoder().encode(value);
     const buffer = await crypto.subtle.digest('SHA-256', bytes);
     return [...new Uint8Array(buffer)].map(byte => byte.toString(16).padStart(2, '0')).join('');
   };
 
+  const cleanText = value => String(value || '').replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
+
   const normalizeHeadingText = heading => {
-    if (heading.dataset.sectionLockTitle) return heading.dataset.sectionLockTitle;
+    if (heading.dataset.sectionLockTitle) return cleanText(heading.dataset.sectionLockTitle);
     const clone = heading.cloneNode(true);
     clone.querySelectorAll('.section-lock-cta').forEach(node => node.remove());
-    return clone.textContent.trim();
+    return cleanText(clone.textContent);
   };
 
   const findTargetTitle = heading => {
     const text = normalizeHeadingText(heading);
-    return config.titles.find(title => title === '활동내역 및 산출물'
-      ? text.includes(title)
-      : text === title || text.startsWith(`${title} `) || text.startsWith(`${title}.`));
+    return config.titles.find(title => {
+      if (title === '활동내역 및 산출물') return text.includes(title);
+      const escaped = title.replace('.', '\\.');
+      const numberedPractice = new RegExp(`^${escaped}(?:\\s+🖇️)?\\s*실습(?:\\s*[｜|])?`, 'i');
+      const exactSection = new RegExp(`^${escaped}(?:\\s|$)`);
+      return numberedPractice.test(text) || exactSection.test(text);
+    });
   };
 
   const sectionAccessKey = title => `web-project-section-access-week-${week}-item-${config.titles.indexOf(title)}`;
