@@ -4,7 +4,7 @@ const parsedWeek = weekParam === null ? 1 : Number(weekParam);
 const requestedWeek = Number.isFinite(parsedWeek) ? parsedWeek : 1;
 const week = Math.min(15, Math.max(0, requestedWeek));
 const weekData = window.WEEK_DATA.find(item => item.week === week);
-const READY_WEEKS = new Set([0, 1, 2, 3]);
+const READY_WEEKS = new Set([0, 1, 2, 3, 4]);
 const ASSET_VERSION = '20260815-1200';
 
 const titleEl = document.querySelector('#lecture-title');
