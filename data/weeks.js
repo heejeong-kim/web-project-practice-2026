@@ -204,8 +204,9 @@ window.WEEK_DATA = [
     const out = [];
     let listType = null;
     const closeList = () => { if (listType) out.push(`</${listType}>`); listType = null; };
+    const unescapeNotion = value => String(value || '').replace(/\\([\[\]~|])/g, '$1');
     for (let i = 0; i < lines.length; i += 1) {
-      const line = lines[i].replace(/^\t+/, '');
+      const line = unescapeNotion(lines[i].replace(/^\t+/, ''));
       const callout = line.match(/^<callout(?:\s+icon="([^"]*)")?\s+color="([^"]*)">$/);
       if (callout) {
         closeList();
