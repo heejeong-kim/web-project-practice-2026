@@ -242,19 +242,109 @@ MVP는 화면 수가 적은 프로젝트가 아니라 사용자가 최소한의 
 - 심화 기능 실패 시 대체 상태 표시
 ---
 ## <span color="blue">3.5 🖇️ 실습｜와이어프레임과 데이터 매핑</span>
-- 모바일 세로 화면 기준으로 목록·상세 화면을 로우파이 수준으로 작성
-- 결과 없음과 저장 완료 상태 추가
-- 화면의 모든 정보 요소 옆에 데이터 항목 이름과 자료형 표기
-- 검색·필터·정렬·상세·저장 중 어떤 기능에 쓰이는지 용도 구분
-- 화면에 보이지 않지만 필요한 id 확인
-- Must 기능이 모두 화면에 배치되었는지 대조
+와이어프레임을 먼저 완성한 뒤 데이터를 찾는 것이 아니라, 화면을 그리면서 각 정보 요소 옆에 데이터 항목 이름을 바로 적는 방식으로 진행해야 누락이 줄어듦
+- 모바일 세로 화면 기준으로 목록·상세 화면을 로우파이(Lo-fi) 수준으로 먼저 작성
+- 2.4의 다섯 가지 상태 중 결과 없음과 저장 완료 상태를 추가로 작성
+- 화면의 모든 정보 요소 옆에 데이터 항목 이름과 자료형을 표기
+- 검색·필터·정렬·상세·저장 중 어떤 기능에 쓰이는지 용도를 구분
+- 화면에 보이지 않지만 필요한 id를 확인
+- Must 기능 5개가 모두 화면에 배치되었는지 대조
 <details>
-<summary><span color="blue">**[참고] 와이어프레임 및 화면별 데이터 매핑 예시**</span></summary>
-**카공 공간 조건 탐색 서비스**
-- 목록: 지역 검색, 복수 필터, 조건 요약, 결과 건수, 정렬, 조건 배지가 포함된 카드 목록
-- 상세: 공간명, 이미지, 콘센트·소음·시간제한·영업시간, 주소·좌석·와이파이, 즐겨찾기 저장
-- 데이터 예시: `id`, `name`, `area`, `address`, `hasOutlet`, `noiseLevel`, `seatType`, `hasTimeLimit`, `closeTime`, `openTime`, `hasWifi`, `image`, `description`
-- 화면 상태: 초기, 로딩, 결과 없음, 오류, 저장 완료, 저장 없음
+<summary><span color="blue">**[참고] 와이어프레임 및 화면별 데이터 매핑 (추후 팀프로젝트 산출물로 제출)**</span></summary>
+**프로젝트: 카공 공간 조건 탐색 서비스**
+---
+**1. 로우파이(Lo-fi) 와이어프레임 도면**
+홈 → 목록 → 상세 → 마이 순서의 화면 5개와 결과 없음·오류·저장 완료·저장 없음 상태를 함께 표기한 도면으로 회색조는 화면 요소, 적색 번호는 화면에 표시되지 않는 데이터 주석을 의미
+<callout icon="🖼️" color="gray_bg">
+[도면 삽입 위치]
+</callout>
+---
+**2. 목록 화면 구성 (모바일 세로 기준)**
+<table header-row="true">
+<colgroup>
+<col width="60">
+<col width="134">
+<col width="451">
+</colgroup>
+<tr><td>순서</td><td>영역</td><td>구성 내용</td></tr>
+<tr><td>①</td><td>상단 고정</td><td>서비스명, 현재 선택한 지역, 지역 변경 행동</td></tr>
+<tr><td>②</td><td>검색</td><td>공간명·지역 통합 검색창</td></tr>
+<tr><td>③</td><td>조건 필터</td><td>콘센트·조용함·시간제한 없음 3개를 기본 노출, 나머지 조건은 더보기로 접음</td></tr>
+<tr><td>④</td><td>조건 요약</td><td>선택된 조건 칩과 전체 초기화 행동, 결과 건수 표시</td></tr>
+<tr><td>⑤</td><td>정렬</td><td>영업 종료 시간 늦은 순 / 이름순</td></tr>
+<tr><td>⑥</td><td>카드 목록</td><td>이미지 소형, 공간명, 지역, 조건 배지 3개(콘센트·소음·종료시간), 즐겨찾기 아이콘</td></tr>
+<tr><td>⑦</td><td>결과 없음 상태</td><td>0건 안내 문구와 마지막 적용 조건 해제 행동</td></tr>
+</table>
+---
+**3. 상세 화면 구성**
+<table header-row="true">
+<colgroup>
+<col width="60">
+<col width="110">
+<col width="476">
+</colgroup>
+<tr><td>순서</td><td>영역</td><td>구성 내용</td></tr>
+<tr><td>①</td><td>헤더</td><td>목록으로 돌아가기(조건 유지), 공간명</td></tr>
+<tr><td>②</td><td>대표 이미지</td><td>공간 이미지 1장</td></tr>
+<tr><td>③</td><td>판단 정보</td><td>콘센트, 소음 수준, 시간제한, 영업 시작·종료 시간</td></tr>
+<tr><td>④</td><td>보조 정보</td><td>주소, 좌석 유형, 와이파이, 설명</td></tr>
+<tr><td>⑤</td><td>하단 고정</td><td>즐겨찾기 저장 버튼과 현재 저장 여부 표시</td></tr>
+</table>
+---
+**4. 화면별 데이터 매핑**
+<table header-row="true">
+<colgroup>
+<col width="150">
+<col width="130">
+<col width="120">
+<col>
+</colgroup>
+<tr><td>화면 요소</td><td>데이터 항목</td><td>자료형</td><td>사용 목적</td></tr>
+<tr><td>항목 식별(비노출)</td><td>id</td><td>숫자</td><td>상세 연결, 즐겨찾기·최근 본 공간 저장</td></tr>
+<tr><td>카드 제목</td><td>name</td><td>문자열</td><td>목록 표시와 검색</td></tr>
+<tr><td>지역 표기</td><td>area</td><td>문자열</td><td>검색과 지역 필터</td></tr>
+<tr><td>상세 주소</td><td>address</td><td>문자열</td><td>상세 표시</td></tr>
+<tr><td>콘센트 배지</td><td>hasOutlet</td><td>참·거짓</td><td>필터와 목록 배지</td></tr>
+<tr><td>소음 배지</td><td>noiseLevel</td><td>지정 값(quiet·normal·talkable)</td><td>필터와 목록 배지, 보조 사용자 조건 수용</td></tr>
+<tr><td>좌석 유형</td><td>seatType</td><td>지정 값(single·group)</td><td>필터, 보조 사용자 조건 수용</td></tr>
+<tr><td>시간제한</td><td>hasTimeLimit</td><td>참·거짓</td><td>필터와 상세 표시</td></tr>
+<tr><td>영업 종료 시간</td><td>closeTime</td><td>24시 형식 문자열</td><td>정렬과 목록 배지</td></tr>
+<tr><td>영업 시작 시간</td><td>openTime</td><td>24시 형식 문자열</td><td>상세 표시</td></tr>
+<tr><td>와이파이</td><td>hasWifi</td><td>참·거짓</td><td>필터와 상세 표시</td></tr>
+<tr><td>대표 이미지</td><td>image</td><td>문자열(경로)</td><td>목록과 상세 표시</td></tr>
+<tr><td>설명</td><td>description</td><td>문자열</td><td>상세 표시</td></tr>
+</table>
+영업 종료 시간을 정렬에 사용하기 위해 “오후 10시”가 아니라 `22:00` 형식으로 통일함
+---
+**5. 트랙별 설계 표시**
+<table header-row="true">
+<colgroup>
+<col width="174">
+<col width="230">
+<col width="297">
+</colgroup>
+<tr><td>구분</td><td>대상</td><td>표시 내용</td></tr>
+<tr><td>필수 · JSON</td><td>공간 기본 데이터 30건 이상</td><td>목록·상세 화면의 모든 정보 요소</td></tr>
+<tr><td>필수 · JavaScript</td><td>검색·조건 필터·정렬</td><td>목록 화면 ②③⑤ 영역</td></tr>
+<tr><td>필수 · LocalStorage</td><td>즐겨찾기 id 목록, 최근 본 공간 id와 순서</td><td>카드 아이콘, 상세 하단 버튼, 마이 화면</td></tr>
+<tr><td>심화 · 검토</td><td>지도 표시</td><td>상세 화면 ④ 하단에 연결 위치만 표시. 실패 시 주소 텍스트로 대체</td></tr>
+</table>
+---
+**6. 화면 상태 정의**
+<table header-row="true">
+<colgroup>
+<col width="110">
+<col width="200">
+<col>
+</colgroup>
+<tr><td>상태</td><td>발생 화면</td><td>제공 내용</td></tr>
+<tr><td>초기</td><td>목록</td><td>선택 지역의 전체 공간과 조건 필터 안내</td></tr>
+<tr><td>로딩</td><td>목록</td><td>데이터를 불러오는 중임을 알리는 표시</td></tr>
+<tr><td>결과 없음</td><td>목록</td><td>0건 안내와 마지막 조건 해제·전체 초기화 행동</td></tr>
+<tr><td>오류</td><td>목록</td><td>데이터 불러오기 실패 안내와 다시 시도 행동</td></tr>
+<tr><td>저장 완료</td><td>목록·상세</td><td>즐겨찾기 아이콘 상태 변경과 저장 여부 표시</td></tr>
+<tr><td>저장 없음</td><td>마이</td><td>저장한 공간이 없을 때 목록으로 이동하는 탐색 시작 행동</td></tr>
+</table>
 </details>
 ---
 # 4. 설계 검토와 구현 범위 확정
