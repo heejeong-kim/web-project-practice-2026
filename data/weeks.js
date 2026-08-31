@@ -16,3 +16,125 @@ window.WEEK_DATA = [
   {week:14,title:'프로젝트 개선 및 최종 완성',type:'class',keywords:['Deployment','Production','Demo'],summary:'최종 QA, 반응형 검수, 실제 배포와 발표 시연을 준비한다',page:''},
   {week:15,title:'기말평가',type:'exam',keywords:['필기시험','Final Demo','최종 자료 제출'],summary:'9~14주차 필기평가와 Final Demo, 최종 자료 제출을 진행한다',page:''}
 ];
+
+(() => {
+  if (!/\/lecture\/?$/.test(window.location.pathname)) return;
+
+  const week = Number(new URLSearchParams(window.location.search).get('week'));
+  const locks = {
+    2: { password: '2918', titles: ['1.4', '2.5', '3.5', '4.5', '활동내역 및 산출물'] },
+    3: { password: '7293', titles: ['1.2', '2.3', '3.5'] }
+  };
+  const config = locks[week];
+  if (!config) return;
+
+  const accessKey = `web-project-section-access-week-${week}`;
+  const isUnlocked = () => {
+    try { return sessionStorage.getItem(accessKey) === 'true'; }
+    catch { return false; }
+  };
+
+  const matchesTarget = heading => {
+    const text = heading.textContent.trim();
+    return config.titles.some(title => title === '활동내역 및 산출물'
+      ? text.includes(title)
+      : text === title || text.startsWith(`${title} `) || text.startsWith(`${title}.`));
+  };
+
+  const headingLevel = element => Number(element.tagName.slice(1));
+
+  const getSectionNodes = heading => {
+    const level = headingLevel(heading);
+    const nodes = [];
+    let node = heading.nextElementSibling;
+    while (node) {
+      if (/^H[1-6]$/.test(node.tagName) && headingLevel(node) <= level) break;
+      nodes.push(node);
+      node = node.nextElementSibling;
+    }
+    return nodes;
+  };
+
+  const showSection = heading => {
+    getSectionNodes(heading).forEach(node => { node.hidden = false; });
+    heading.removeAttribute('data-section-locked');
+    heading.removeAttribute('role');
+    heading.removeAttribute('tabindex');
+    heading.removeAttribute('aria-label');
+    heading.style.cursor = '';
+  };
+
+  const hideSection = heading => {
+    getSectionNodes(heading).forEach(node => { node.hidden = true; });
+    heading.dataset.sectionLocked = 'true';
+    heading.setAttribute('role', 'button');
+    heading.setAttribute('tabindex', '0');
+    heading.setAttribute('aria-label', `${heading.textContent.trim()} 내용 보기. 비밀번호 필요`);
+    heading.style.cursor = 'pointer';
+  };
+
+  let dialogOpen = false;
+  const requestPassword = heading => {
+    if (dialogOpen || isUnlocked()) return;
+    dialogOpen = true;
+
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.58);backdrop-filter:blur(4px)';
+    overlay.innerHTML = `<form style="box-sizing:border-box;width:min(100%,360px);padding:28px;border-radius:18px;background:#fff;box-shadow:0 24px 70px rgba(15,23,42,.3)"><h2 style="margin:0 0 8px;font-size:22px">${week}주차 숨김 내용</h2><p style="margin:0 0 18px;color:#667085">비밀번호를 입력하면 숨겨진 내용이 표시됩니다.</p><input type="password" inputmode="numeric" autocomplete="off" aria-label="${week}주차 비밀번호" style="box-sizing:border-box;width:100%;height:46px;padding:0 13px;border:1px solid #cfd5df;border-radius:10px;font-size:18px"><p data-error role="alert" style="display:none;margin:8px 0 0;color:#dc2626;font-size:14px">비밀번호가 올바르지 않습니다.</p><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px"><button type="button" data-cancel style="min-height:42px;padding:0 15px;border:1px solid #d0d5dd;border-radius:9px;background:#fff">취소</button><button type="submit" style="min-height:42px;padding:0 17px;border:0;border-radius:9px;background:#172033;color:#fff;font-weight:700">확인</button></div></form>`;
+    document.body.appendChild(overlay);
+
+    const input = overlay.querySelector('input');
+    const close = () => { overlay.remove(); dialogOpen = false; heading.focus(); };
+    overlay.querySelector('form').addEventListener('submit', event => {
+      event.preventDefault();
+      if (input.value !== config.password) {
+        overlay.querySelector('[data-error]').style.display = 'block';
+        input.select();
+        return;
+      }
+      try { sessionStorage.setItem(accessKey, 'true'); } catch {}
+      overlay.remove();
+      dialogOpen = false;
+      applyLocks();
+    });
+    overlay.querySelector('[data-cancel]').addEventListener('click', close);
+    overlay.addEventListener('click', event => { if (event.target === overlay) close(); });
+    input.focus();
+  };
+
+  const bindHeading = heading => {
+    if (heading.dataset.sectionLockBound === 'true') return;
+    heading.dataset.sectionLockBound = 'true';
+    heading.addEventListener('click', () => {
+      if (heading.dataset.sectionLocked === 'true') requestPassword(heading);
+    });
+    heading.addEventListener('keydown', event => {
+      if (heading.dataset.sectionLocked !== 'true') return;
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        requestPassword(heading);
+      }
+    });
+  };
+
+  const applyLocks = () => {
+    const content = document.querySelector('#lecture-content');
+    if (!content) return;
+    const headings = [...content.querySelectorAll('h1,h2,h3,h4,h5,h6')].filter(matchesTarget);
+    headings.forEach(heading => {
+      bindHeading(heading);
+      if (isUnlocked()) showSection(heading);
+      else hideSection(heading);
+    });
+  };
+
+  const start = () => {
+    const content = document.querySelector('#lecture-content');
+    if (!content) return;
+    applyLocks();
+    new MutationObserver(applyLocks).observe(content, { childList: true, subtree: false });
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
+})();
