@@ -23,7 +23,8 @@ window.WEEK_DATA = [
   const week = Number(new URLSearchParams(window.location.search).get('week'));
   const locks = {
     2: { hash: 'aaa635313e40478b612d05958cfc10a9f44932746c2acb5a92031baee1dba2e4', titles: ['1.4', '2.5', '3.5', '4.5', '활동내역 및 산출물'] },
-    3: { hash: 'f7f7b664724bce5c7c5ec139634d8f5557fa1693090c19b400236d4e6cb6779c', titles: ['1.2', '2.3', '3.5'] }
+    3: { hash: 'f7f7b664724bce5c7c5ec139634d8f5557fa1693090c19b400236d4e6cb6779c', titles: ['1.2', '2.3', '3.5'] },
+    4: { hash: 'df9d46565657e21f36797f3c60a06e557113b1117e56f093a869f1387fbfba66', titles: ['1.4', '2.5', '3.5'] }
   };
   const config = locks[week];
   if (!config) return;
@@ -184,4 +185,89 @@ window.WEEK_DATA = [
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
+})();
+
+(() => {
+  if (!/\/lecture\/?$/.test(window.location.pathname)) return;
+  const week = Number(new URLSearchParams(window.location.search).get('week'));
+  if (week !== 4) return;
+
+  const escapeHtml = value => String(value || '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+  const inline = value => String(value || '')
+    .replace(/<span\s+color="([^"]+)">([\s\S]*?)<\/span>/g, (_, color, text) => `<span class="${color.includes('blue') ? 'notion-blue' : color.includes('red') ? 'notion-red' : color.includes('gray') ? 'notion-gray' : ''}">${text}</span>`)
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+    .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+  const renderMarkdown = source => {
+    const lines = source.replace(/\r\n/g, '\n').split('\n');
+    const out = [];
+    let listType = null;
+    const closeList = () => { if (listType) out.push(`</${listType}>`); listType = null; };
+    for (let i = 0; i < lines.length; i += 1) {
+      const line = lines[i].replace(/^\t+/, '');
+      const callout = line.match(/^<callout(?:\s+icon="([^"]*)")?\s+color="([^"]*)">$/);
+      if (callout) {
+        closeList();
+        const color = callout[2].includes('blue') ? 'blue' : callout[2].includes('purple') ? 'purple' : callout[2].includes('green') ? 'green' : callout[2].includes('yellow') ? 'yellow' : callout[2].includes('red') ? 'red' : 'gray';
+        const icon = callout[1] ? `<span class="callout-icon" aria-hidden="true">${escapeHtml(callout[1])}</span>` : '<span class="callout-icon" aria-hidden="true"></span>';
+        out.push(`<div class="callout ${color}${callout[1] ? '' : ' no-icon'}">${icon}<div class="callout-body">`);
+        continue;
+      }
+      if (line === '</callout>') { closeList(); out.push('</div></div>'); continue; }
+      if (/^<details>|^<\/details>/.test(line)) { closeList(); out.push(line); continue; }
+      if (line.startsWith('<summary>')) { closeList(); out.push(`<summary>${inline(line.replace('<summary>', '').replace('</summary>', ''))}</summary>`); continue; }
+      if (/^<table|^<\/table>|^<colgroup|^<\/colgroup>|^<col\b|^<tr>|^<\/tr>|^<thead|^<\/thead>|^<tbody|^<\/tbody>/.test(line)) { closeList(); out.push(line.replace(/ fit-page-width="true"| header-row="true"/g, '')); continue; }
+      const cell = line.match(/^<(td|th)>([\s\S]*)<\/(td|th)>$/);
+      if (cell) { closeList(); out.push(`<${cell[1]}>${inline(cell[2])}</${cell[3]}>`); continue; }
+      if (line === '---') { closeList(); if (out[out.length - 1] !== '<hr>') out.push('<hr>'); continue; }
+      const heading = line.match(/^(#{1,4})\s+(.+)$/);
+      if (heading) {
+        closeList();
+        const level = Math.min(4, heading[1].length);
+        const practiceClass = /(?:🖇️\s*)?실습[｜|]/.test(heading[2]) ? ' class="practice-heading"' : '';
+        out.push(`<h${level}${practiceClass}>${inline(heading[2])}</h${level}>`);
+        continue;
+      }
+      const bullet = line.match(/^[-*]\s+(.+)$/);
+      if (bullet) { if (listType !== 'ul') { closeList(); listType = 'ul'; out.push('<ul>'); } out.push(`<li>${inline(bullet[1])}</li>`); continue; }
+      const numbered = line.match(/^\d+[.)]\s+(.+)$/);
+      if (numbered) { if (listType !== 'ol') { closeList(); listType = 'ol'; out.push('<ol>'); } out.push(`<li>${inline(numbered[1])}</li>`); continue; }
+      if (!line.trim()) { closeList(); continue; }
+      if (/^<span\s+color=/.test(line)) { closeList(); out.push(inline(line)); continue; }
+      if (line.startsWith('> ')) { closeList(); out.push(`<p class="lecture-example">${inline(line.slice(2))}</p>`); continue; }
+      closeList(); out.push(`<p>${inline(line)}</p>`);
+    }
+    closeList();
+    return out.join('\n');
+  };
+
+  const buildToc = content => {
+    const toc = document.querySelector('#toc-list');
+    if (!toc) return;
+    const headings = [...content.querySelectorAll('h1,h2')].filter(heading => !heading.closest('details'));
+    headings.forEach((heading, index) => { heading.id = `section-${index + 1}`; });
+    toc.innerHTML = headings.map(heading => `<a href="#${heading.id}"${heading.tagName === 'H2' ? ' class="toc-depth-2"' : ''}>${escapeHtml(heading.textContent)}</a>`).join('');
+  };
+
+  const renderPreview = async () => {
+    const content = document.querySelector('#lecture-content');
+    if (!content) return;
+    try {
+      const response = await fetch('../data/lectures/week04.md?v=20260831-1130', { cache: 'no-store' });
+      if (!response.ok) throw new Error('4주차 교안 원문을 불러오지 못했습니다.');
+      const source = await response.text();
+      const data = window.WEEK_DATA.find(item => item.week === 4);
+      document.title = `4주차 · ${data.title} | 웹프로젝트 실습`;
+      document.querySelector('#lecture-summary').textContent = data.summary;
+      document.querySelector('#lecture-keywords').innerHTML = data.keywords.map(keyword => `<span>${escapeHtml(keyword)}</span>`).join('');
+      content.innerHTML = renderMarkdown(source);
+      buildToc(content);
+    } catch (error) {
+      content.innerHTML = `<div class="callout red"><strong>강의교안 로드 오류</strong><p>${escapeHtml(error.message)}</p></div>`;
+    }
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(renderPreview, 0), { once: true });
+  else setTimeout(renderPreview, 0);
 })();
