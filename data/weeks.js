@@ -24,7 +24,7 @@ window.WEEK_DATA = [
   const locks = {
     2: { hash: 'aaa635313e40478b612d05958cfc10a9f44932746c2acb5a92031baee1dba2e4', titles: ['1.4', '2.5', '3.5', '4.5', '활동내역 및 산출물'] },
     3: { hash: 'f7f7b664724bce5c7c5ec139634d8f5557fa1693090c19b400236d4e6cb6779c', titles: ['1.2', '2.3', '3.5'] },
-    4: { hash: 'df9d46565657e21f36797f3c60a06e557113b1117e56f093a869f1387fbfba66', titles: ['1.4', '2.5', '3.5'] }
+    4: { hash: 'df9d46565657e21f36797f3c60a06e557113b1117e56f093a869f1387fbfba66', titles: ['1.4', '2.5', '3.5', '활동내역 및 산출물'] }
   };
   const config = locks[week];
   if (!config) return;
@@ -262,6 +262,7 @@ window.WEEK_DATA = [
         .lecture-content .week4-wireframe-actions{display:flex;justify-content:flex-end;margin-top:10px}
         .lecture-content .week4-wireframe-open{display:inline-flex;align-items:center;min-height:40px;padding:0 13px;border:1px solid #ffb27f;border-radius:9px;background:#fff;color:#b95516!important;text-decoration:none!important;font-size:13px;font-weight:800}
         .lecture-content .week4-wireframe-open:hover{background:#fff3eb;border-color:#ff8a3d}
+        .lecture-content table.week4-nowrap-category th:first-child,.lecture-content table.week4-nowrap-category td:first-child{white-space:nowrap;width:1%}
         @media(max-width:680px){.lecture-content .week4-chapter-image{margin:14px 0 28px;border-radius:14px}.lecture-content .week4-wireframe-frame{min-height:560px;height:72vh}}
       `;
       document.head.appendChild(style);
@@ -282,6 +283,11 @@ window.WEEK_DATA = [
       figure.className = 'week4-chapter-image';
       figure.innerHTML = `<img src="${item.src}" alt="${item.alt}" loading="eager">`;
       heading.insertAdjacentElement('afterend', figure);
+    });
+
+    [...content.querySelectorAll('table')].forEach(table => {
+      const firstCell = table.querySelector('tr:first-child > th:first-child, tr:first-child > td:first-child');
+      if (firstCell?.textContent.trim() === '구분') table.classList.add('week4-nowrap-category');
     });
 
     const targetDetails = [...content.querySelectorAll('details')].find(details => details.querySelector('summary')?.textContent.includes('와이어프레임 및 화면별 데이터 매핑'));
