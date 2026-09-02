@@ -1,0 +1,12 @@
+const fs=require('fs');
+let s=fs.readFileSync('data/weeks.js','utf8');
+const marker='const locks = {}; const legacyLocks = {';
+const markerIndex=s.indexOf(marker);
+if(markerIndex<0) throw new Error('legacy lock marker not found');
+const start=s.lastIndexOf('(() => {',markerIndex);
+const next=s.indexOf('\n})();\n\n(() => {',markerIndex);
+if(start<0||next<0) throw new Error('legacy lock block bounds not found');
+s=s.slice(0,start)+s.slice(next+'\n})();\n\n'.length);
+fs.writeFileSync('data/weeks.js',s);
+if(fs.existsSync('.github/workflows/remove-legacy-locks.yml'))fs.unlinkSync('.github/workflows/remove-legacy-locks.yml');
+if(fs.existsSync('tools/remove-legacy-locks.js'))fs.unlinkSync('tools/remove-legacy-locks.js');
