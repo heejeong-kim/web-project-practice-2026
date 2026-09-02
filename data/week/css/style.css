@@ -1,0 +1,373 @@
+/* =========================================================
+   카공 공간 조건 탐색 서비스 - 5주차 목록 화면
+   시각 완성도가 아니라 영역 구획과 모바일 표시를 우선함
+   ========================================================= */
+
+/* ---------- 공통 ---------- */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #1c1c1e;
+  background: #f5f5f7;
+}
+
+/* 화면에는 보이지 않지만 스크린리더가 읽는 텍스트 */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+/* 상태 영역을 숨기고 보이는 데 사용하는 공통 클래스 */
+.is-hidden { display: none; }
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+/* ---------- ① 상단 고정 ---------- */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 12px 16px;
+  background: #fff;
+  border-bottom: 1px solid #e3e3e8;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 18px;
+}
+
+.area-line {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #6b6b70;
+}
+
+.current-area { font-weight: 600; color: #1c1c1e; }
+
+.area-change {
+  margin-left: 6px;
+  padding: 2px 8px;
+  font-size: 12px;
+  background: #fff;
+  border: 1px solid #d0d0d6;
+  border-radius: 12px;
+}
+
+/* ---------- 본문 ---------- */
+.app-main {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 12px 16px 40px;
+}
+
+/* ---------- ② 검색 ---------- */
+.search-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid #d0d0d6;
+  border-radius: 8px;
+  background: #fff;
+}
+
+/* ---------- ③ 조건 필터 ---------- */
+.filter-section { margin-top: 12px; }
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-group + .filter-group { margin-top: 6px; }
+
+.filter-button {
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #3a3a3f;
+  background: #fff;
+  border: 1px solid #d0d0d6;
+  border-radius: 16px;
+}
+
+/* 선택된 필터 상태 (실습 1에서 토글) */
+.filter-button.is-active {
+  color: #fff;
+  background: #2f6df6;
+  border-color: #2f6df6;
+}
+
+.filter-more {
+  margin-top: 8px;
+  padding: 0;
+  font-size: 13px;
+  color: #2f6df6;
+  background: none;
+  border: 0;
+  text-decoration: underline;
+}
+
+/* ---------- ④ 조건 요약 · 결과 건수 ---------- */
+.summary-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 10px;
+  background: #ececf0;
+  border-radius: 8px;
+}
+
+.selected-conditions {
+  margin: 0;
+  font-size: 13px;
+  color: #3a3a3f;
+}
+
+.summary-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.result-count {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.reset-button {
+  padding: 0;
+  font-size: 12px;
+  color: #6b6b70;
+  background: none;
+  border: 0;
+  text-decoration: underline;
+}
+
+/* ---------- ⑤ 정렬 ---------- */
+.sort-section { margin-top: 10px; text-align: right; }
+
+.sort-select {
+  padding: 6px 8px;
+  font-size: 13px;
+  border: 1px solid #d0d0d6;
+  border-radius: 6px;
+  background: #fff;
+}
+
+/* ---------- 상태 영역 (로딩 · 오류 · 결과 없음) ---------- */
+.state-box {
+  margin: 16px 0 0;
+  padding: 24px 16px;
+  font-size: 14px;
+  color: #6b6b70;
+  text-align: center;
+  background: #fff;
+  border: 1px dashed #d0d0d6;
+  border-radius: 8px;
+}
+
+.state-box button {
+  margin-top: 10px;
+  padding: 6px 14px;
+  font-size: 13px;
+  background: #fff;
+  border: 1px solid #d0d0d6;
+  border-radius: 6px;
+}
+
+/* ---------- ⑥ 카드 목록 ---------- */
+.space-list {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.space-card {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #e3e3e8;
+  border-radius: 10px;
+}
+
+/* 이미지는 6주차 데이터 준비 시 교체할 자리 */
+.space-image {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  background: #e3e3e8;
+  border-radius: 8px;
+}
+
+.space-body { flex: 1; min-width: 0; }
+
+.space-name {
+  margin: 0;
+  font-size: 15px;
+}
+
+.space-area {
+  margin: 2px 0 6px;
+  font-size: 12px;
+  color: #6b6b70;
+}
+
+.badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.badge {
+  padding: 2px 8px;
+  font-size: 11px;
+  color: #3a3a3f;
+  background: #f0f0f4;
+  border-radius: 10px;
+}
+
+.favorite-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 2px 6px;
+  font-size: 16px;
+  color: #b0b0b6;
+  background: none;
+  border: 0;
+}
+
+/* ---------- 상세 영역 (10주차에 데이터 연결) ---------- */
+.detail-panel {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  padding: 16px 16px 80px;
+  background: #fff;
+  z-index: 20;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e3e3e8;
+}
+
+.detail-close {
+  padding: 4px 10px;
+  font-size: 13px;
+  background: #fff;
+  border: 1px solid #d0d0d6;
+  border-radius: 6px;
+}
+
+.detail-name { margin: 0; font-size: 17px; }
+
+.detail-image {
+  width: 100%;
+  height: 160px;
+  margin-top: 12px;
+  background: #e3e3e8;
+  border-radius: 8px;
+}
+
+.detail-subtitle {
+  margin: 20px 0 6px;
+  font-size: 13px;
+  color: #6b6b70;
+}
+
+.detail-list {
+  margin: 0;
+  padding: 12px;
+  font-size: 14px;
+  background: #f5f5f7;
+  border-radius: 8px;
+}
+
+.detail-list dt {
+  float: left;
+  width: 88px;
+  color: #6b6b70;
+}
+
+.detail-list dd { margin: 0 0 6px 88px; }
+
+.detail-description {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #3a3a3f;
+}
+
+.detail-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px 16px;
+  background: #fff;
+  border-top: 1px solid #e3e3e8;
+}
+
+.detail-favorite {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  color: #fff;
+  background: #2f6df6;
+  border: 0;
+  border-radius: 8px;
+}
+
+/* ---------- 저장 완료 표시 (11~12주차에 사용) ---------- */
+.save-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 90px;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #fff;
+  background: rgba(28, 28, 30, 0.9);
+  border-radius: 18px;
+  z-index: 30;
+}
+
+/* ---------- 데스크톱 확장 ---------- */
+@media (min-width: 768px) {
+  .app-main { max-width: 640px; }
+  .detail-panel {
+    inset: 40px 50% auto auto;
+    width: 560px;
+    max-height: 80vh;
+    transform: translateX(50%);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  }
+  .detail-footer { position: static; border-top: 0; padding: 16px 0 0; }
+}

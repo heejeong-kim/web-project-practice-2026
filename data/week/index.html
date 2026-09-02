@@ -1,1 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>카공 공간 조건 탐색</title>
+  <!-- CSS는 head에서 link로 연결 (5주차 2.1.2) -->
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
 
+  <!-- ① 상단 고정 · 현재 탐색 범위 -->
+  <header class="app-header">
+    <h1 class="page-title">카공 공간 찾기</h1>
+    <p class="area-line">
+      현재 지역 <span id="current-area" class="current-area">성수동</span>
+      <button type="button" id="area-change" class="area-change">변경</button>
+    </p>
+  </header>
+
+  <main class="app-main">
+
+    <!-- ② 검색창 -->
+    <section class="search-section">
+      <label class="sr-only" for="search-input">공간명 또는 지역 검색</label>
+      <input type="search" id="search-input" class="search-input"
+             placeholder="공간명이나 지역을 입력">
+    </section>
+
+    <!-- ③ 조건 필터 : 4주차 Must 기준 3개 기본 노출, 나머지는 더보기 -->
+    <section class="filter-section">
+      <h2 class="sr-only">체류 조건 필터</h2>
+      <div id="filter-group" class="filter-group">
+        <button type="button" class="filter-button" data-filter="hasOutlet"    data-value="true">콘센트</button>
+        <button type="button" class="filter-button" data-filter="noiseLevel"   data-value="quiet">조용함</button>
+        <button type="button" class="filter-button" data-filter="hasTimeLimit" data-value="false">시간제한 없음</button>
+      </div>
+      <div id="filter-more-group" class="filter-group is-hidden">
+        <button type="button" class="filter-button" data-filter="hasWifi"  data-value="true">와이파이</button>
+        <button type="button" class="filter-button" data-filter="seatType" data-value="single">1인석</button>
+        <button type="button" class="filter-button" data-filter="seatType" data-value="group">단체석</button>
+      </div>
+      <button type="button" id="filter-more" class="filter-more">조건 더보기</button>
+    </section>
+
+    <!-- ④ 조건 요약 · 결과 건수 -->
+    <section class="summary-section">
+      <p id="selected-conditions" class="selected-conditions">선택한 조건 없음</p>
+      <div class="summary-right">
+        <p id="result-count" class="result-count">총 3곳</p>
+        <button type="button" id="reset-button" class="reset-button">전체 초기화</button>
+      </div>
+    </section>
+
+    <!-- ⑤ 정렬 -->
+    <section class="sort-section">
+      <label class="sr-only" for="sort-select">정렬 기준</label>
+      <select id="sort-select" class="sort-select">
+        <option value="close-desc">영업 종료 늦은 순</option>
+        <option value="name-asc">이름순</option>
+      </select>
+    </section>
+
+    <!-- 상태 영역 : 로딩 (7주차 fetch에서 사용) -->
+    <p id="loading-state" class="state-box is-hidden">공간 정보를 불러오는 중</p>
+
+    <!-- 상태 영역 : 오류 (7주차 catch에서 사용) -->
+    <div id="error-state" class="state-box is-hidden">
+      <p>공간 정보를 불러오지 못했습니다</p>
+      <button type="button" id="retry-button">다시 시도</button>
+    </div>
+
+    <!-- 상태 영역 : 결과 없음 (9주차 검색·필터에서 사용) -->
+    <div id="empty-state" class="state-box is-hidden">
+      <p>선택한 조건에 맞는 공간이 없습니다</p>
+      <button type="button" id="empty-reset-button">마지막 조건 해제</button>
+    </div>
+
+    <!-- ⑥ 카드 목록 : 반복될 카드 1건 구조를 3건만 직접 작성 (7주차에 JSON으로 반복 생성) -->
+    <ul id="space-list" class="space-list">
+
+      <li class="space-card" data-id="1">
+        <div class="space-image" aria-hidden="true"></div>
+        <div class="space-body">
+          <h3 class="space-name">라온 스터디카페</h3>
+          <p class="space-area">성수동</p>
+          <ul class="badge-list">
+            <li class="badge">콘센트</li>
+            <li class="badge">조용함</li>
+            <li class="badge">22:00 마감</li>
+          </ul>
+        </div>
+        <button type="button" class="favorite-button" aria-label="즐겨찾기 저장">☆</button>
+      </li>
+
+      <li class="space-card" data-id="2">
+        <div class="space-image" aria-hidden="true"></div>
+        <div class="space-body">
+          <h3 class="space-name">브릭 커피</h3>
+          <p class="space-area">성수동</p>
+          <ul class="badge-list">
+            <li class="badge">콘센트</li>
+            <li class="badge">보통</li>
+            <li class="badge">21:00 마감</li>
+          </ul>
+        </div>
+        <button type="button" class="favorite-button" aria-label="즐겨찾기 저장">☆</button>
+      </li>
+
+      <li class="space-card" data-id="3">
+        <div class="space-image" aria-hidden="true"></div>
+        <div class="space-body">
+          <h3 class="space-name">모먼트 라운지</h3>
+          <p class="space-area">성수동</p>
+          <ul class="badge-list">
+            <li class="badge">콘센트 없음</li>
+            <li class="badge">대화 가능</li>
+            <li class="badge">24시</li>
+          </ul>
+        </div>
+        <button type="button" class="favorite-button" aria-label="즐겨찾기 저장">☆</button>
+      </li>
+
+    </ul>
+  </main>
+
+  <!-- 상세 영역 : 별도 페이지가 아니라 숨김 영역 (10주차에 데이터 연결) -->
+  <section id="detail-panel" class="detail-panel is-hidden" aria-label="공간 상세정보">
+    <header class="detail-header">
+      <button type="button" id="detail-close" class="detail-close">목록으로</button>
+      <h2 id="detail-name" class="detail-name">공간명</h2>
+    </header>
+
+    <div class="detail-image" aria-hidden="true"></div>
+
+    <h3 class="detail-subtitle">판단 정보</h3>
+    <dl class="detail-list">
+      <dt>콘센트</dt>   <dd id="detail-outlet">-</dd>
+      <dt>소음 수준</dt> <dd id="detail-noise">-</dd>
+      <dt>시간제한</dt>  <dd id="detail-timelimit">-</dd>
+      <dt>영업시간</dt>  <dd id="detail-hours">-</dd>
+    </dl>
+
+    <h3 class="detail-subtitle">보조 정보</h3>
+    <dl class="detail-list">
+      <dt>주소</dt>      <dd id="detail-address">-</dd>
+      <dt>좌석 유형</dt> <dd id="detail-seat">-</dd>
+      <dt>와이파이</dt>  <dd id="detail-wifi">-</dd>
+    </dl>
+    <p id="detail-description" class="detail-description">-</p>
+
+    <footer class="detail-footer">
+      <button type="button" id="detail-favorite" class="detail-favorite">즐겨찾기 저장</button>
+    </footer>
+  </section>
+
+  <!-- 상태 영역 : 저장 완료 (11~12주차 LocalStorage에서 사용) -->
+  <p id="save-toast" class="save-toast is-hidden">저장되었습니다</p>
+
+  <!-- JavaScript는 body 끝에서 연결 (5주차 2.1.2) -->
+  <script src="./js/app.js"></script>
+</body>
+</html>
