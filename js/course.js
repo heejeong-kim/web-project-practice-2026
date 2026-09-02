@@ -16,15 +16,12 @@ let motionObserver;
 function normalizeHeaderNavigation() {
   const nav = document.querySelector('.top-nav');
   if (!nav) return;
-
   [...nav.querySelectorAll('a')].forEach(link => {
     const text = link.textContent.trim();
     if (text === '프로젝트 트랙' || text === '수업 진행') link.remove();
   });
-
   const weekLink = [...nav.querySelectorAll('a')].find(link => link.getAttribute('href') === '#weeks' || link.getAttribute('href')?.endsWith('#weeks'));
   if (weekLink) weekLink.textContent = '주차별 수업';
-
   const teamLink = [...nav.querySelectorAll('a')].find(link => link.getAttribute('href')?.includes('team-project.html'));
   if (teamLink) teamLink.textContent = '팀별 현황';
 }
@@ -68,18 +65,23 @@ function injectThumbnailStyles() {
   document.head.appendChild(style);
 }
 
+function pageFor(item) {
+  if (item.week === 5) return './lecture/?week=05';
+  return item.page;
+}
+
 function cardTemplate(item) {
   const isReady = READY_WEEKS.has(item.week);
   const isOt = item.week === 0;
   const itemLabel = isOt ? 'OT' : `${item.week}주차`;
   const thumbnail = isOt ? './asset/ot.png' : `./asset/${item.week}.png`;
+  const target = pageFor(item);
   const linkAttrs = isReady
-    ? `href="${item.page}"`
+    ? `href="${target}"`
     : `href="#" data-pending-lecture="true" aria-label="${itemLabel} 강의교안 준비중"`;
   const lectureLink = isReady
-    ? `<a class="notion-link" href="${item.page}">강의교안</a>`
+    ? `<a class="notion-link" href="${target}">강의교안</a>`
     : `<a class="notion-link is-pending" href="#" data-pending-lecture="true" aria-label="${itemLabel} 강의교안 준비중">강의교안</a>`;
-
   return `
     <article class="week-card ${item.type === 'exam' ? 'is-exam' : ''} ${isReady ? 'is-ready' : 'is-pending'}">
       <a class="week-thumbnail week-thumbnail-link" ${linkAttrs}>
@@ -91,12 +93,8 @@ function cardTemplate(item) {
       </div>
       <h3><a class="week-title-link" ${linkAttrs}>${item.title}</a></h3>
       <p>${item.summary}</p>
-      <div class="week-keywords">
-        ${item.keywords.map(keyword => `<span>${keyword}</span>`).join('')}
-      </div>
-      <div class="week-actions">
-        ${lectureLink}
-      </div>
+      <div class="week-keywords">${item.keywords.map(keyword => `<span>${keyword}</span>`).join('')}</div>
+      <div class="week-actions">${lectureLink}</div>
     </article>`;
 }
 
@@ -111,7 +109,6 @@ function setupPendingLectureLinks() {
 
 function setupWeekCardMotion() {
   if (cardObserver) cardObserver.disconnect();
-
   const cards = [...document.querySelectorAll('.week-card')];
   cardObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
@@ -120,7 +117,6 @@ function setupWeekCardMotion() {
       cardObserver.unobserve(entry.target);
     });
   }, { threshold: 0.12, rootMargin: '0px 0px -24px 0px' });
-
   cards.forEach((card, index) => {
     card.style.setProperty('--card-delay', `${Math.min(index * 60, 360)}ms`);
     cardObserver.observe(card);
@@ -134,7 +130,6 @@ function render() {
     const searchableText = [item.week, item.title, item.summary, ...item.keywords].join(' ').toLowerCase();
     return typeMatch && (!query || searchableText.includes(query));
   });
-
   weekGrid.innerHTML = filtered.map(cardTemplate).join('');
   empty.hidden = filtered.length > 0;
   setupPendingLectureLinks();
@@ -151,7 +146,6 @@ function setupGeneralMotion() {
       motionObserver.unobserve(entry.target);
     });
   }, { threshold: 0.12 });
-
   targets.forEach((target, index) => {
     target.style.setProperty('--motion-delay', `${index * 80}ms`);
     motionObserver.observe(target);
@@ -192,9 +186,7 @@ if (menuToggle && topNav) {
     menuToggle.setAttribute('aria-label', nextOpen ? '메뉴 닫기' : '메뉴 열기');
   });
   topNav.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMobileMenu));
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 860) closeMobileMenu();
-  });
+  window.addEventListener('resize', () => { if (window.innerWidth > 860) closeMobileMenu(); });
 }
 
 if (topButton) {
