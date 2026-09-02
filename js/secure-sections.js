@@ -28,17 +28,6 @@
       .secure-section-cta{display:inline-flex;align-items:center;justify-content:center;margin-left:10px;padding:4px 9px;border:1px solid #ff8a3d;border-radius:7px;background:#fff3eb;color:#b95516;font:700 12px/1.2 "IBM Plex Sans KR",sans-serif;vertical-align:middle;cursor:pointer}
       .secure-section-cta:hover{background:#ffe2cf;border-color:#e96f20}
       .secure-section-cta:focus-visible{outline:2px solid #ff8a3d;outline-offset:2px}
-      .week5-gate{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;padding:20px;background:#f4f6f9}
-      .week5-gate form{box-sizing:border-box;width:min(100%,430px);padding:34px;border:1px solid #dde3eb;border-radius:22px;background:#fff;box-shadow:0 24px 70px rgba(15,23,42,.13)}
-      .week5-gate-mark{display:grid;place-items:center;width:62px;height:62px;margin:0 0 20px;border-radius:18px;background:#111827;color:#ff8a3d;font-size:22px;font-weight:800}
-      .week5-gate h2{margin:0 0 9px;color:#111827;font-size:26px;letter-spacing:-.03em}
-      .week5-gate p{margin:0 0 20px;color:#667085;font-size:15px;line-height:1.65}
-      .week5-gate input{box-sizing:border-box;width:100%;height:48px;padding:0 14px;border:1px solid #cfd5df;border-radius:10px;font-size:16px;outline:none}
-      .week5-gate input:focus{border-color:#ff8a3d;box-shadow:0 0 0 3px rgba(255,138,61,.14)}
-      .week5-gate [data-error]{display:none;margin:9px 0 0;color:#dc2626;font-size:14px}
-      .week5-gate-actions{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
-      .week5-gate a,.week5-gate button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:10px;font-weight:700;text-decoration:none;cursor:pointer}
-      .week5-gate a{border:1px solid #d0d5dd;background:#fff;color:#475467}.week5-gate button{border:0;background:#172033;color:#fff}
       .week5-code-block{margin:20px 0 26px;border:1px solid #202733;border-radius:12px;overflow:hidden;background:#0a0d12;box-shadow:0 8px 24px rgba(15,23,42,.12)}
       .week5-code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px;border-bottom:1px solid #252d39;background:#0a0d12}
       .week5-code-lang{color:#aeb8c6;font:700 11px/1.2 "IBM Plex Sans KR",sans-serif;letter-spacing:.08em;text-transform:uppercase}
@@ -117,19 +106,6 @@
 
   async function renderWeek5Source(){if(week!==5)return;const content=document.querySelector('#lecture-content');if(!content||!window.renderNotionMarkdown)return;const response=await fetch('../data/lectures/week05.md?v=20260902-7',{cache:'no-store'});if(!response.ok)throw new Error('5주차 교안 원문을 불러오지 못했습니다.');content.innerHTML=window.renderNotionMarkdown(await response.text());restoreWeek5Header();enhanceWeek5Content(content);rebuildToc();}
 
-  function hasWeek5Access(){try{return sessionStorage.getItem(WEEK5_GATE_KEY)==='true';}catch{return false;}}
-  function saveWeek5Access(){try{sessionStorage.setItem(WEEK5_GATE_KEY,'true');}catch{}}
-
-  function showWeek5Gate(){
-    if(hasWeek5Access())return Promise.resolve();
-    return new Promise(resolve=>{
-      const overlay=document.createElement('div');overlay.className='week5-gate';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');
-      overlay.innerHTML=`<form><div class="week5-gate-mark" aria-hidden="true">05</div><h2>5주차 강의교안</h2><p>강의교안은 비밀번호 입력 후 열람할 수 있습니다.</p><input type="password" autocomplete="current-password" aria-label="강의교안 비밀번호" placeholder="비밀번호 입력"><p data-error role="alert">비밀번호가 올바르지 않습니다.</p><div class="week5-gate-actions"><a href="../index.html#weeks">돌아가기</a><button type="submit">강의교안 열기</button></div></form>`;
-      document.body.appendChild(overlay);const input=overlay.querySelector('input');const error=overlay.querySelector('[data-error]');
-      overlay.querySelector('form').addEventListener('submit',async event=>{event.preventDefault();error.style.display='none';if(await sha256Hex(input.value)!==WEEK5_PASSWORD_HASH){error.style.display='block';input.select();return;}saveWeek5Access();overlay.remove();resolve();});input.focus();
-    });
-  }
-
   async function readProtectedMarkdown(password,section){const r=await fetch('../data/secure/'+section.file+'?v=20260902-7',{cache:'no-store'});if(!r.ok)throw new Error('load');return (await decrypt(password,await r.json())).replace(/\\+([\[\]~*`|])/g,'$1');}
 
   function showSectionDialog(heading,section){
@@ -142,7 +118,7 @@
 
   function attachSections(sections){sections.forEach(section=>{const ph=document.querySelector('[data-secure-section="'+section.id+'"]');if(!ph||ph.dataset.bound==='1')return;ph.dataset.bound='1';const heading=findHeadingForPlaceholder(ph);if(!heading)return;const btn=document.createElement('button');btn.type='button';btn.className='secure-section-cta';btn.textContent='[클릭]';btn.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();showSectionDialog(heading,section);});heading.appendChild(btn);heading.style.cursor='pointer';heading.addEventListener('click',()=>showSectionDialog(heading,section));});}
 
-  async function init(){ensureStyles();enableWeek5Navigation();const manifest=await loadManifest();const sections=(manifest.sections&&manifest.sections[week])||[];if(week===5){await showWeek5Gate();await renderWeek5Source();attachSections(sections);return;}attachSections(sections);const content=document.querySelector('#lecture-content');if(content)new MutationObserver(()=>attachSections(sections)).observe(content,{childList:true,subtree:true});}
+  async function init(){ensureStyles();enableWeek5Navigation();const manifest=await loadManifest();const sections=(manifest.sections&&manifest.sections[week])||[];if(week===5){await renderWeek5Source();attachSections(sections);return;}attachSections(sections);const content=document.querySelector('#lecture-content');if(content)new MutationObserver(()=>attachSections(sections)).observe(content,{childList:true,subtree:true});}
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>init().catch(console.error),{once:true});else init().catch(console.error);
 })();
