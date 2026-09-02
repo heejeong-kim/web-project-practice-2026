@@ -1,0 +1,25 @@
+name: One-time secure section migration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/secure-section-migration.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run protected section migration
+        run: node tools/secure-section-migration.js
+      - name: Commit migration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Secure password-protected lecture sections"
+          git push
