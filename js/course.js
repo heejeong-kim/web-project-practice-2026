@@ -62,18 +62,6 @@ function injectThumbnailStyles() {
     .week-card.is-pending:hover .week-keywords span{background:#eef1f5!important;transform:none}
     .week-actions{display:block}
     .week-actions .notion-link{display:block;width:100%}
-    .week5-entry-gate{position:fixed;inset:0;z-index:30000;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.6);backdrop-filter:blur(5px)}
-    .week5-entry-gate form{box-sizing:border-box;width:min(100%,420px);padding:32px;border-radius:20px;background:#fff;box-shadow:0 28px 80px rgba(15,23,42,.32)}
-    .week5-entry-mark{display:grid;place-items:center;width:60px;height:60px;margin-bottom:18px;border-radius:17px;background:#111827;color:#ff8a3d;font-size:22px;font-weight:800}
-    .week5-entry-gate h2{margin:0 0 8px;color:#111827;font-size:25px;letter-spacing:-.03em}
-    .week5-entry-gate p{margin:0 0 18px;color:#667085;font-size:14px;line-height:1.6}
-    .week5-entry-gate input{box-sizing:border-box;width:100%;height:48px;padding:0 13px;border:1px solid #cfd5df;border-radius:10px;font-size:16px;outline:none}
-    .week5-entry-gate input:focus{border-color:#ff8a3d;box-shadow:0 0 0 3px rgba(255,138,61,.14)}
-    .week5-entry-gate [data-error]{display:none;margin:8px 0 0;color:#dc2626;font-size:13px}
-    .week5-entry-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
-    .week5-entry-actions button{min-height:42px;padding:0 15px;border-radius:9px;font-weight:700;cursor:pointer}
-    .week5-entry-actions [data-cancel]{border:1px solid #d0d5dd;background:#fff;color:#475467}
-    .week5-entry-actions button[type="submit"]{border:0;background:#172033;color:#fff}
     @media(max-width:620px){.week-thumbnail{margin-bottom:16px}}
   `;
   document.head.appendChild(style);
@@ -90,12 +78,11 @@ function cardTemplate(item) {
   const itemLabel = isOt ? 'OT' : `${item.week}주차`;
   const thumbnail = isOt ? './asset/ot.png' : `./asset/${item.week}.png`;
   const target = pageFor(item);
-  const gateAttr = item.week === 5 ? ' data-week5-lecture="true"' : '';
   const linkAttrs = isReady
-    ? `href="${target}"${gateAttr}`
+    ? `href="${target}"`
     : `href="#" data-pending-lecture="true" aria-label="${itemLabel} 강의교안 준비중"`;
   const lectureLink = isReady
-    ? `<a class="notion-link" href="${target}"${gateAttr}>강의교안</a>`
+    ? `<a class="notion-link" href="${target}">강의교안</a>`
     : `<a class="notion-link is-pending" href="#" data-pending-lecture="true" aria-label="${itemLabel} 강의교안 준비중">강의교안</a>`;
   return `
     <article class="week-card ${item.type === 'exam' ? 'is-exam' : ''} ${isReady ? 'is-ready' : 'is-pending'}">
@@ -111,58 +98,6 @@ function cardTemplate(item) {
       <div class="week-keywords">${item.keywords.map(keyword => `<span>${keyword}</span>`).join('')}</div>
       <div class="week-actions">${lectureLink}</div>
     </article>`;
-}
-
-async function sha256Hex(value) {
-  const bytes = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)));
-  return [...bytes].map(byte => byte.toString(16).padStart(2, '0')).join('');
-}
-
-function hasWeek5Access() {
-  try { return sessionStorage.getItem(WEEK5_GATE_KEY) === 'true'; } catch { return false; }
-}
-
-function saveWeek5Access() {
-  try { sessionStorage.setItem(WEEK5_GATE_KEY, 'true'); } catch {}
-}
-
-function showWeek5EntryGate(target) {
-  if (hasWeek5Access()) {
-    window.location.href = target;
-    return;
-  }
-  if (document.querySelector('.week5-entry-gate')) return;
-  const overlay = document.createElement('div');
-  overlay.className = 'week5-entry-gate';
-  overlay.setAttribute('role', 'dialog');
-  overlay.setAttribute('aria-modal', 'true');
-  overlay.innerHTML = `<form><div class="week5-entry-mark" aria-hidden="true">05</div><h2>5주차 강의교안</h2><p>비밀번호를 입력해야 5주차 강의교안을 열 수 있습니다.</p><input type="password" autocomplete="current-password" aria-label="5주차 강의교안 비밀번호" placeholder="비밀번호 입력"><p data-error role="alert">비밀번호가 올바르지 않습니다.</p><div class="week5-entry-actions"><button type="button" data-cancel>취소</button><button type="submit">강의교안 열기</button></div></form>`;
-  document.body.appendChild(overlay);
-  const input = overlay.querySelector('input');
-  const error = overlay.querySelector('[data-error]');
-  overlay.querySelector('[data-cancel]').addEventListener('click', () => overlay.remove());
-  overlay.addEventListener('click', event => { if (event.target === overlay) overlay.remove(); });
-  overlay.querySelector('form').addEventListener('submit', async event => {
-    event.preventDefault();
-    error.style.display = 'none';
-    if (await sha256Hex(input.value) !== WEEK5_PASSWORD_HASH) {
-      error.style.display = 'block';
-      input.select();
-      return;
-    }
-    saveWeek5Access();
-    window.location.href = target;
-  });
-  input.focus();
-}
-
-function setupWeek5LectureLinks() {
-  weekGrid.querySelectorAll('[data-week5-lecture="true"]').forEach(link => {
-    link.addEventListener('click', event => {
-      event.preventDefault();
-      showWeek5EntryGate(link.getAttribute('href') || './lecture/?week=05');
-    });
-  });
 }
 
 function setupPendingLectureLinks() {
@@ -200,7 +135,6 @@ function render() {
   weekGrid.innerHTML = filtered.map(cardTemplate).join('');
   empty.hidden = filtered.length > 0;
   setupPendingLectureLinks();
-  setupWeek5LectureLinks();
   setupWeekCardMotion();
 }
 
