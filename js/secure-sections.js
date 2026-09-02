@@ -6,7 +6,7 @@
   const dec = new TextDecoder();
   const WEEK5_PASSWORD_HASH = 'b564d46d60731e7b8a22e912c01957f6c62caf92143683efbf48d5ec2ca89176';
   const WEEK5_GATE_KEY = 'web-project-week5-lecture-access';
-  const b64 = s => { const bin = atob(s); const out = new Uint8Array(bin.length); for (let i=0;i<bin.length;i+=1) out[i]=bin.charCodeAt(i); return out; };
+  const b64 = s => { const bin = atob(s); const out = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i += 1) out[i] = bin.charCodeAt(i); return out; };
 
   async function decrypt(password, payload) {
     const material = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
@@ -16,7 +16,7 @@
 
   async function sha256Hex(value) {
     const bytes = new Uint8Array(await crypto.subtle.digest('SHA-256', enc.encode(value)));
-    return [...bytes].map(byte => byte.toString(16).padStart(2,'0')).join('');
+    return [...bytes].map(byte => byte.toString(16).padStart(2, '0')).join('');
   }
 
   function ensureStyles() {
@@ -52,6 +52,9 @@
       .week5-folder-tree code{background:transparent!important;color:#243247!important;font-size:13.5px!important;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important}
       .lecture-content details summary.week5-blue-summary,.lecture-content details summary.week5-blue-summary *{color:#2563eb!important;font-weight:800!important}
       .week5-practice-sample{min-height:620px!important}
+      .lecture-content .week5-chapter-image{display:block;margin:18px 0 34px;border-radius:18px;overflow:hidden;background:#eef1f5}
+      .lecture-content .week5-chapter-image img{display:block;width:100%;height:auto}
+      @media(max-width:680px){.lecture-content .week5-chapter-image{margin:14px 0 28px;border-radius:14px}}
     `;
     document.head.appendChild(s);
   }
@@ -67,6 +70,25 @@
   function restoreWeek5Header(){if(week!==5)return;const data=window.WEEK_DATA?.find(item=>item.week===5);if(!data)return;document.title=`5주차 · ${data.title} | 웹프로젝트 실습`;const summary=document.querySelector('#lecture-summary');const keywords=document.querySelector('#lecture-keywords');if(summary)summary.textContent=data.summary;if(keywords)keywords.innerHTML=data.keywords.map(keyword=>`<span>${keyword}</span>`).join('');}
 
   function rebuildToc(){const content=document.querySelector('#lecture-content');const toc=document.querySelector('#toc-list');if(!content||!toc)return;const headings=[...content.querySelectorAll('h1,h2')].filter(heading=>!heading.closest('details'));headings.forEach((heading,index)=>{heading.id=`section-${index+1}`;});toc.innerHTML=headings.map(heading=>`<a href="#${heading.id}"${heading.tagName==='H2'?' class="toc-depth-2"':''}>${heading.textContent}</a>`).join('');}
+
+  function insertWeek5ChapterImages(root=document.querySelector('#lecture-content')) {
+    if (week !== 5 || !root) return;
+    const images = [
+      {prefix:'1.',src:'../asset/5_1.png?v=20260902-1',alt:'1장 와이어프레임을 HTML로 옮기기'},
+      {prefix:'2.',src:'../asset/5_2.png?v=20260902-1',alt:'2장 JavaScript와 DOM 연결'},
+      {prefix:'3.',src:'../asset/5_3.png?v=20260902-1',alt:'3장 이벤트와 함수'},
+      {prefix:'4.',src:'../asset/5_4.png?v=20260902-1',alt:'4장 팀 프로젝트 적용'}
+    ];
+    const headings = [...root.querySelectorAll('h1')];
+    images.forEach(item => {
+      const heading = headings.find(h1 => h1.textContent.trim().startsWith(item.prefix));
+      if (!heading || heading.nextElementSibling?.classList.contains('week5-chapter-image')) return;
+      const figure = document.createElement('figure');
+      figure.className = 'week5-chapter-image';
+      figure.innerHTML = `<img src="${item.src}" alt="${item.alt}" loading="eager">`;
+      heading.insertAdjacentElement('afterend', figure);
+    });
+  }
 
   function enhanceWeek5Content(root=document.querySelector('#lecture-content')){
     if(!root)return;
@@ -90,6 +112,7 @@
       pre.replaceWith(wrap);
     });
     root.querySelectorAll('details summary').forEach(summary=>{const text=summary.textContent.trim();if(text.startsWith('[참고]')||text.startsWith('[예시]'))summary.classList.add('week5-blue-summary');});
+    insertWeek5ChapterImages(document.querySelector('#lecture-content'));
   }
 
   async function renderWeek5Source(){if(week!==5)return;const content=document.querySelector('#lecture-content');if(!content||!window.renderNotionMarkdown)return;const response=await fetch('../data/lectures/week05.md?v=20260902-7',{cache:'no-store'});if(!response.ok)throw new Error('5주차 교안 원문을 불러오지 못했습니다.');content.innerHTML=window.renderNotionMarkdown(await response.text());restoreWeek5Header();enhanceWeek5Content(content);rebuildToc();}
