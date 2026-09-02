@@ -7,7 +7,7 @@ const menuToggle = document.querySelector('.menu-toggle');
 const topNav = document.querySelector('#top-nav');
 const hero = document.querySelector('.hero');
 
-const READY_WEEKS = new Set([0, 1, 2, 3, 4]);
+const READY_WEEKS = new Set([0, 1, 2, 3, 4, 5]);
 
 let activeFilter = 'all';
 let cardObserver;
