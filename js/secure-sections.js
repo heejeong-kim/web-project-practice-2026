@@ -3,12 +3,18 @@
   const week = Number(new URLSearchParams(window.location.search).get('week'));
   const enc = new TextEncoder();
   const dec = new TextDecoder();
+  const WEEK5_PASSWORD_HASH = 'b564d46d60731e7b8a22e912c01957f6c62caf92143683efbf48d5ec2ca89176';
   const b64 = s => { const bin = atob(s); const out = new Uint8Array(bin.length); for (let i=0;i<bin.length;i++) out[i]=bin.charCodeAt(i); return out; };
 
   async function decrypt(password, payload) {
     const material = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
     const key = await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(payload.salt),iterations:payload.iterations,hash:'SHA-256'}, material, {name:'AES-GCM',length:256}, false, ['decrypt']);
     return dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(payload.iv)}, key, b64(payload.data)));
+  }
+
+  async function sha256Hex(value) {
+    const bytes = new Uint8Array(await crypto.subtle.digest('SHA-256', enc.encode(value)));
+    return [...bytes].map(byte => byte.toString(16).padStart(2,'0')).join('');
   }
 
   const accessKey = id => 'web-project-secure-section-' + id;
@@ -18,7 +24,7 @@
     if(document.querySelector('#secure-section-styles')) return;
     const s=document.createElement('style');
     s.id='secure-section-styles';
-    s.textContent='.secure-section-placeholder{display:none}.secure-section-cta{display:inline-flex;align-items:center;justify-content:center;margin-left:10px;padding:4px 9px;border:1px solid #ff8a3d;border-radius:7px;background:#fff3eb;color:#b95516;font:700 12px/1.2 "IBM Plex Sans KR",sans-serif;vertical-align:middle;cursor:pointer}.secure-section-cta:hover{background:#ffe2cf;border-color:#e96f20}.secure-section-cta:focus-visible{outline:2px solid #ff8a3d;outline-offset:2px}.week05-access-note{margin:20px 0;padding:18px 20px;border:1px solid #ffd3b6;border-radius:14px;background:#fff8f3;color:#7a3d18}';
+    s.textContent='.secure-section-placeholder{display:none}.secure-section-cta{display:inline-flex;align-items:center;justify-content:center;margin-left:10px;padding:4px 9px;border:1px solid #ff8a3d;border-radius:7px;background:#fff3eb;color:#b95516;font:700 12px/1.2 "IBM Plex Sans KR",sans-serif;vertical-align:middle;cursor:pointer}.secure-section-cta:hover{background:#ffe2cf;border-color:#e96f20}.secure-section-cta:focus-visible{outline:2px solid #ff8a3d;outline-offset:2px}';
     document.head.appendChild(s);
   }
 
@@ -54,20 +60,42 @@
     }
   }
 
+  function restoreWeek5Header(){
+    if(week!==5) return;
+    const data=window.WEEK_DATA?.find(item=>item.week===5);
+    if(!data) return;
+    document.title=`5주차 · ${data.title} | 웹프로젝트 실습`;
+    const summary=document.querySelector('#lecture-summary');
+    const keywords=document.querySelector('#lecture-keywords');
+    if(summary) summary.textContent=data.summary;
+    if(keywords) keywords.innerHTML=data.keywords.map(keyword=>`<span>${keyword}</span>`).join('');
+  }
+
   async function renderWeek5Source(){
     if(week!==5) return;
     const content=document.querySelector('#lecture-content');
     if(!content || !window.renderNotionMarkdown) return;
-    const response=await fetch('../data/lectures/week05.md?v=20260902-2',{cache:'no-store'});
+    const response=await fetch('../data/lectures/week05.md?v=20260902-5',{cache:'no-store'});
     if(!response.ok) throw new Error('5주차 교안 원문을 불러오지 못했습니다.');
     const source=await response.text();
     content.innerHTML=window.renderNotionMarkdown(source);
     const toc=document.querySelector('#toc-list');
     if(toc){
-      const headings=[...content.querySelectorAll('h1,h2')];
+      const headings=[...content.querySelectorAll('h1,h2')].filter(heading=>!heading.closest('details'));
       headings.forEach((heading,index)=>{ heading.id=`section-${index+1}`; });
       toc.innerHTML=headings.map(heading=>`<a href="#${heading.id}"${heading.tagName==='H2'?' class="toc-depth-2"':''}>${heading.textContent}</a>`).join('');
     }
+    restoreWeek5Header();
+  }
+
+  async function readProtectedMarkdown(password, section){
+    const r=await fetch('../data/secure/'+section.file,{cache:'no-store'});
+    if(!r.ok) throw new Error('load');
+    if(section.file.endsWith('.md')){
+      if(await sha256Hex(password)!==WEEK5_PASSWORD_HASH) throw new Error('password');
+      return (await r.text()).replace(/\\+([\[\]~*`|])/g,'$1');
+    }
+    return (await decrypt(password,await r.json())).replace(/\\+([\[\]~*`|])/g,'$1');
   }
 
   function showDialog(heading, section){
@@ -76,7 +104,7 @@
     overlay.dataset.secureDialog='1';
     overlay.style.cssText='position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.58);backdrop-filter:blur(4px)';
     const label=heading.textContent.replace('[클릭]','').trim();
-    overlay.innerHTML='<form style="box-sizing:border-box;width:min(100%,380px);padding:28px;border-radius:18px;background:#fff;box-shadow:0 24px 70px rgba(15,23,42,.3)"><h2 style="margin:0 0 8px;font-size:22px">'+week+'주차 · '+label+'</h2><p style="margin:0 0 18px;color:#667085">비밀번호를 입력하면 숨겨진 강의교안 링크가 표시됩니다.</p><input type="password" autocomplete="off" aria-label="비밀번호" style="box-sizing:border-box;width:100%;height:46px;padding:0 13px;border:1px solid #cfd5df;border-radius:10px;font-size:16px"><p data-error role="alert" style="display:none;margin:8px 0 0;color:#dc2626;font-size:14px">비밀번호가 올바르지 않습니다.</p><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px"><button type="button" data-cancel style="min-height:42px;padding:0 15px;border:1px solid #d0d5dd;border-radius:9px;background:#fff">취소</button><button type="submit" style="min-height:42px;padding:0 17px;border:0;border-radius:9px;background:#172033;color:#fff;font-weight:700">확인</button></div></form>';
+    overlay.innerHTML='<form style="box-sizing:border-box;width:min(100%,380px);padding:28px;border-radius:18px;background:#fff;box-shadow:0 24px 70px rgba(15,23,42,.3)"><h2 style="margin:0 0 8px;font-size:22px">'+week+'주차 · '+label+'</h2><p style="margin:0 0 18px;color:#667085">비밀번호를 입력하면 이 항목의 숨겨진 내용이 같은 페이지에 표시됩니다.</p><input type="password" autocomplete="off" aria-label="비밀번호" style="box-sizing:border-box;width:100%;height:46px;padding:0 13px;border:1px solid #cfd5df;border-radius:10px;font-size:16px"><p data-error role="alert" style="display:none;margin:8px 0 0;color:#dc2626;font-size:14px">비밀번호가 올바르지 않습니다.</p><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px"><button type="button" data-cancel style="min-height:42px;padding:0 15px;border:1px solid #d0d5dd;border-radius:9px;background:#fff">취소</button><button type="submit" style="min-height:42px;padding:0 17px;border:0;border-radius:9px;background:#172033;color:#fff;font-weight:700">확인</button></div></form>';
     document.body.appendChild(overlay);
     const input=overlay.querySelector('input');
     const err=overlay.querySelector('[data-error]');
@@ -86,11 +114,10 @@
     overlay.querySelector('form').addEventListener('submit',async e=>{
       e.preventDefault(); err.style.display='none';
       try{
-        const r=await fetch('../data/secure/'+section.file,{cache:'no-store'});
-        if(!r.ok) throw new Error('load');
-        const markdown=(await decrypt(input.value,await r.json())).replace(/\\+([\[\]~*`|])/g,'$1');
+        const markdown=await readProtectedMarkdown(input.value,section);
         const html=window.renderNotionMarkdown(markdown);
         const holder=document.querySelector('[data-secure-section="'+section.id+'"]');
+        if(!holder) throw new Error('holder');
         holder.insertAdjacentHTML('afterend','<div class="secure-section-content" data-secure-content="'+section.id+'">'+html+'</div>');
         try{sessionStorage.setItem(accessKey(section.id),'true')}catch{}
         heading.querySelector('.secure-section-cta')?.remove();
