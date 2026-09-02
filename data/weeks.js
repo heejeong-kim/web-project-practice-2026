@@ -21,7 +21,7 @@ window.WEEK_DATA = [
   if (!/\/lecture\/?$/.test(window.location.pathname)) return;
 
   const week = Number(new URLSearchParams(window.location.search).get('week'));
-  const locks = {
+  const locks = {}; const legacyLocks = {
     2: { hash: 'aaa635313e40478b612d05958cfc10a9f44932746c2acb5a92031baee1dba2e4', titles: ['1.4', '2.5', '3.5', '4.5', '활동내역 및 산출물'] },
     3: { hash: 'f7f7b664724bce5c7c5ec139634d8f5557fa1693090c19b400236d4e6cb6779c', titles: ['1.2', '2.3', '3.5'] },
     4: { hash: 'df9d46565657e21f36797f3c60a06e557113b1117e56f093a869f1387fbfba66', titles: ['1.4', '2.5', '3.5', '활동내역 및 산출물'] }

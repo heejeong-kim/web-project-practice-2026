@@ -312,6 +312,8 @@ function renderNotionMarkdown(source = '') {
   return out.join('\n');
 }
 
+window.renderNotionMarkdown = renderNotionMarkdown;
+
 async function loadLectureSource() {
   const number = String(week).padStart(2, '0');
   const response = await fetch(`../data/lectures/week${number}.md?v=${ASSET_VERSION}`, { cache: 'no-store' });
