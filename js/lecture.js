@@ -320,15 +320,6 @@ async function loadLectureSource() {
   if (!response.ok) throw new Error(`${itemLabel(weekData)} 원문 파일을 불러오지 못했습니다.`);
 
   let source = await response.text();
-  if (week === 2) {
-    const syncResponse = await fetch(`../data/lectures/week02-2_5.md?v=${ASSET_VERSION}`, { cache: 'no-store' });
-    if (!syncResponse.ok) throw new Error('2주차 2.5 동기화 원문을 불러오지 못했습니다.');
-    const syncedSection = await syncResponse.text();
-    const sectionMarker = '<summary><span color="blue">**\\[참고\\] 시장 분석 및 트랜드 보고서 (개인별 산출물에 포함)**</span></summary>\n</details>';
-    if (!source.includes(sectionMarker)) throw new Error('2주차 2.5 삽입 위치를 찾지 못했습니다.');
-    source = source.replace(sectionMarker, `<summary><span color="blue">**\\[참고\\] 시장 분석 및 트랜드 보고서 (개인별 산출물에 포함)**</span></summary>\n${syncedSection}\n</details>`);
-  }
-
   return normalizeLecturePaths(source);
 }
 
