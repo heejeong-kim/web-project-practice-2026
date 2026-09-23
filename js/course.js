@@ -68,7 +68,7 @@ function injectThumbnailStyles() {
 }
 
 function pageFor(item) {
-  if (item.week === 5) return './lecture/?week=05';
+  if (item.week === 5) return './lecture/index.html?week=05';
   return item.page;
 }
 

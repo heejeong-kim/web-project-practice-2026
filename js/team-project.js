@@ -20,6 +20,25 @@
   let editingNumber = null;
   let jsonpSequence = 0;
   let ideaSuggestions = null;
+  // 팀 목록 잠금 관련 요소 (비밀번호는 소스에 두지 않고 서버(Apps Script)에서만 검증함)
+  const lockPanel = document.querySelector('#team-lock-panel');
+  const lockForm = document.querySelector('#team-lock-form');
+  const lockInput = document.querySelector('#team-lock-input');
+  const lockButton = document.querySelector('#team-lock-button');
+  const lockMessage = document.querySelector('#team-lock-message');
+  const listContent = document.querySelector('#team-list-content');
+  const filterBar = document.querySelector('#team-filters');
+  const relockButton = document.querySelector('#team-relock-button');
+  // 비밀번호는 저장하지 않고 메모리에만 보관 → 새로고침·재방문 시 항상 다시 입력해야 함
+  let listKey = '';
+  function clearKey() { listKey = ''; }
+  function setLockMessage(text = '') { if (lockMessage) lockMessage.textContent = text; }
+  function setLocked(locked) {
+    if (lockPanel) lockPanel.hidden = !locked;
+    if (listContent) listContent.hidden = locked;
+    if (filterBar) filterBar.hidden = locked;
+    if (relockButton) relockButton.hidden = locked;
+  }
 
   function escapeHtml(value = '') {
     return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
@@ -54,20 +73,31 @@
       const query = new URLSearchParams({ ...params, callback: callbackName, _: Date.now() });
       const timeout = window.setTimeout(() => { cleanup(); reject(new Error('Google Sheet 응답 시간이 초과되었습니다.')); }, 12000);
       function cleanup() { window.clearTimeout(timeout); script.remove(); try { delete window[callbackName]; } catch (_) { window[callbackName] = undefined; } }
-      window[callbackName] = result => { cleanup(); if (!result?.success) return reject(new Error(result?.message || '요청을 처리하지 못했습니다.')); resolve(result); };
+      window[callbackName] = result => { cleanup(); if (!result?.success) return reject(Object.assign(new Error(result?.message || '요청을 처리하지 못했습니다.'), { code: result?.code || '' })); resolve(result); };
       script.onerror = () => { cleanup(); reject(new Error('Google Apps Script에 연결하지 못했습니다.')); };
       script.src = `${GOOGLE_SCRIPT_URL}?${query.toString()}`;
       document.head.appendChild(script);
     });
   }
+  // 비밀번호가 있을 때만 서버에 목록을 요청함 (성공 여부 반환)
   async function loadTeams() {
+    if (!listKey) { teams = []; setLocked(true); renderTeams(); return false; }
     try {
-      const result = await jsonp({ action: 'list' });
+      const result = await jsonp({ action: 'list', password: listKey });
       teams = Array.isArray(result.teams) ? result.teams : [];
-      renderTeams(); renderIdeaSuggestions();
+      setLocked(false); setLockMessage(''); renderTeams(); renderIdeaSuggestions();
+      return true;
     } catch (error) {
-      teams = []; renderTeams(); hideIdeaSuggestions(); setMessage(error.message || 'Google Sheet에서 팀 목록을 불러오지 못했습니다.', 'error');
+      teams = []; hideIdeaSuggestions();
+      if (error.code === 'AUTH') { clearKey(); setLocked(true); renderTeams(); setLockMessage(error.message); }
+      else { renderTeams(); setMessage(error.message || 'Google Sheet에서 팀 목록을 불러오지 못했습니다.', 'error'); }
+      return false;
     }
+  }
+  function lockList() {
+    clearKey(); teams = [];
+    if (editingNumber) form?.reset();
+    hideIdeaSuggestions(); renderTeams(); setLocked(true); setLockMessage('');
   }
   function validateTeamForm(formData) {
     const classGroup = String(formData.get('classGroup') || '').trim();
@@ -97,10 +127,10 @@
     const { classGroup, teamName, idea, track, notionUrl, projectUrl, members } = validation;
     try {
       setSubmitting(true);
-      const result = await jsonp({ action: editingNumber ? 'updateTeam' : 'register', number: editingNumber ? String(editingNumber) : '', classGroup, teamName, idea, track, notionUrl, projectUrl, studentId1: members[0].studentId, studentName1: members[0].name, studentId2: members[1].studentId, studentName2: members[1].name, studentId3: members[2].studentId, studentName3: members[2].name });
-      const successText = editingNumber ? `${classGroup}반 ${teamName} 팀 정보가 수정되었습니다.` : `${classGroup}반 ${teamName} 팀이 등록되었습니다.`;
-      form.reset(); setEditingMode(null); setMessage(successText, 'success'); teams = Array.isArray(result.teams) ? result.teams : teams; currentFilter = classGroup; syncTabs(); renderTeams(); hideIdeaSuggestions(); if (!Array.isArray(result.teams)) await loadTeams();
-    } catch (error) { setMessage(error.message || (editingNumber ? '팀 수정에 실패했습니다.' : '팀 등록에 실패했습니다.'), 'error'); }
+      const result = await jsonp({ action: editingNumber ? 'updateTeam' : 'register', password: listKey || '', number: editingNumber ? String(editingNumber) : '', classGroup, teamName, idea, track, notionUrl, projectUrl, studentId1: members[0].studentId, studentName1: members[0].name, studentId2: members[1].studentId, studentName2: members[1].name, studentId3: members[2].studentId, studentName3: members[2].name });
+      const successText = editingNumber ? `${classGroup}반 ${teamName} 팀 정보가 수정되었습니다.` : `${classGroup}반 ${teamName} 팀이 등록되었습니다.${listKey ? '' : ' 등록된 목록은 비밀번호 입력 후 확인할 수 있습니다.'}`;
+      form.reset(); setEditingMode(null); setMessage(successText, 'success'); teams = Array.isArray(result.teams) ? result.teams : teams; currentFilter = classGroup; syncTabs(); renderTeams(); hideIdeaSuggestions(); if (!Array.isArray(result.teams) && listKey) await loadTeams();
+    } catch (error) { if (error.code === 'AUTH') lockList(); setMessage(error.message || (editingNumber ? '팀 수정에 실패했습니다.' : '팀 등록에 실패했습니다.'), 'error'); }
     finally { setSubmitting(false); }
   }
   function renderMember(member) {
@@ -120,7 +150,8 @@
     return `<span class="project-url-text">${escapeHtml(raw)}</span>`;
   }
   function renderTeams() {
-    const filtered = teams.filter(team => team.classGroup === currentFilter);
+    // 분반별로 등록 순서(내부 번호)대로 정렬 후 1부터 다시 번호를 매김
+    const filtered = teams.filter(team => team.classGroup === currentFilter).sort((a, b) => Number(a.number) - Number(b.number));
     if (emptyState) {
       emptyState.hidden = filtered.length > 0;
       const title = emptyState.querySelector('strong'); const copy = emptyState.querySelector('p');
@@ -128,7 +159,7 @@
       if (copy) copy.textContent = '상단에서 팀을 등록하면 이곳에 목록이 표시됩니다.';
     }
     if (!tableBody) return;
-    tableBody.innerHTML = filtered.map(team => `<tr><td>${Number(team.number)}</td><td><span class="class-badge">${escapeHtml(team.classGroup)}</span></td><td class="team-name-cell"><button type="button" class="team-edit-button" data-edit-team="${Number(team.number)}">${escapeHtml(team.teamName)}</button></td><td class="idea-cell">${escapeHtml(team.idea || '-')}</td><td><span class="track-badge ${team.track === '심화' ? 'is-advanced' : ''}">${escapeHtml(team.track || '-')}</span></td><td class="notion-url-cell">${renderNotionLink(team.notionUrl || '', team.teamName || '')}</td><td class="project-url-cell">${renderProjectLink(team.projectUrl || '', team.teamName || '')}</td><td class="member-cell">${renderMember(team.members?.[0])}</td><td class="member-cell">${renderMember(team.members?.[1])}</td><td class="member-cell">${renderMember(team.members?.[2])}</td></tr>`).join('');
+    tableBody.innerHTML = filtered.map((team, index) => `<tr><td>${index + 1}</td><td><span class="class-badge">${escapeHtml(team.classGroup)}</span></td><td class="team-name-cell"><button type="button" class="team-edit-button" data-edit-team="${Number(team.number)}">${escapeHtml(team.teamName)}</button></td><td class="idea-cell">${escapeHtml(team.idea || '-')}</td><td><span class="track-badge ${team.track === '심화' ? 'is-advanced' : ''}">${escapeHtml(team.track || '-')}</span></td><td class="notion-url-cell">${renderNotionLink(team.notionUrl || '', team.teamName || '')}</td><td class="project-url-cell">${renderProjectLink(team.projectUrl || '', team.teamName || '')}</td><td class="member-cell">${renderMember(team.members?.[0])}</td><td class="member-cell">${renderMember(team.members?.[1])}</td><td class="member-cell">${renderMember(team.members?.[2])}</td></tr>`).join('');
   }
   function ensureIdeaSuggestions() {
     if (!ideaInput || ideaSuggestions) return ideaSuggestions;
@@ -162,5 +193,20 @@
   tableBody?.addEventListener('click',event=>{ const button=event.target.closest('[data-edit-team]'); if(!button)return; const team=teams.find(item=>Number(item.number)===Number(button.dataset.editTeam)); if(team)fillFormForEdit(team); });
   ensureIdeaSuggestions(); ideaInput?.addEventListener('input',renderIdeaSuggestions); ideaInput?.addEventListener('focus',renderIdeaSuggestions); ideaInput?.addEventListener('keydown',event=>{if(event.key==='Escape')hideIdeaSuggestions();}); ideaInput?.addEventListener('blur',()=>window.setTimeout(hideIdeaSuggestions,120));
   if(topButton){ const sync=()=>topButton.classList.toggle('is-visible',window.scrollY>500); window.addEventListener('scroll',sync,{passive:true}); topButton.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'})); sync(); }
+  // 비밀번호 확인 → 서버 검증 성공 시에만 목록 표시
+  lockForm?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const value = String(lockInput?.value || '').trim();
+    if (!value) { setLockMessage('비밀번호를 입력해 주세요.'); lockInput?.focus(); return; }
+    setLockMessage(''); listKey = value;
+    if (lockButton) { lockButton.disabled = true; lockButton.textContent = '확인 중...'; }
+    const ok = await loadTeams();
+    if (lockButton) { lockButton.disabled = false; lockButton.textContent = '확인'; }
+    if (ok) { if (lockInput) lockInput.value = ''; }
+    else { if (!lockMessage?.textContent) setLockMessage('목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'); if (listKey && !teams.length) { /* 네트워크 오류 시 키는 유지하지 않음 */ clearKey(); setLocked(true); } lockInput?.select(); }
+  });
+  relockButton?.addEventListener('click', lockList);
+  // 뒤로가기 캐시(bfcache)로 복원될 때도 다시 잠금
+  window.addEventListener('pageshow', event => { if (event.persisted) lockList(); });
   syncTabs(); loadTeams();
 })();
