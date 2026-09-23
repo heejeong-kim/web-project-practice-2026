@@ -55,7 +55,7 @@ body{
 .top-nav a::after{content:"";position:absolute;left:0;right:100%;bottom:-7px;height:2px;background:var(--accent);transition:right .28s var(--ease)}
 .top-nav a:hover{color:#fff;transform:translateY(-1px)}
 .top-nav a:hover::after{right:0}
-.top-nav .team-url-link{padding:9px 13px;border-radius:10px;border:1px solid rgba(255,138,61,.45);color:#ffd7bd;background:rgba(255,138,61,.08)}
+.top-nav .team-url-link{padding:9px 13px;border-radius:10px;border:1px solid rgba(255,138,61,.45);color:#fff;background:rgba(255,138,61,.08)}
 .top-nav .team-url-link::after{display:none}
 .top-nav .team-url-link:hover{background:var(--accent);color:#1d1208;border-color:var(--accent)}
 

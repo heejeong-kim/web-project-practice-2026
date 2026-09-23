@@ -1,6 +1,6 @@
 html,body,button,input,a{font-family:"IBM Plex Sans KR",sans-serif}
 .shell{width:min(1520px,calc(100% - 64px));margin-left:auto;margin-right:auto}
-.team-url-link.is-current{font-weight:700;color:#111827}
+.top-nav .team-url-link.is-current{font-weight:700;color:#fff}
 
 .team-status-hero{height:auto!important;min-height:0!important;display:block;overflow:hidden;padding:84px 0 72px!important}
 .team-status-hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.3fr .7fr;align-items:center;gap:56px;padding:0}
@@ -136,4 +136,25 @@ html,body,button,input,a{font-family:"IBM Plex Sans KR",sans-serif}
   .form-actions .button{width:100%;justify-content:center}
   .idea-suggestions-head{align-items:flex-start;flex-direction:column;gap:3px}
   .idea-suggestion{flex-direction:column;gap:4px}
+}
+
+/* 팀 목록 비밀번호 잠금 */
+.team-list-section [hidden]{display:none!important}
+.team-list-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.team-relock-button{color:#475467}
+.team-lock-panel{margin-top:28px;padding:32px 24px;border:1px dashed #cfd7e3;border-radius:18px;background:rgba(255,255,255,.8)}
+.team-lock-form{display:grid;grid-template-columns:auto 1fr auto;gap:16px 20px;align-items:center;max-width:880px;margin:0 auto}
+.team-lock-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:#eef2f7;color:#344054}
+.team-lock-copy strong{font-size:17px;color:#1d2939}
+.team-lock-copy p{margin:6px 0 0;color:#7b8494;font-size:14px}
+.team-lock-controls{display:flex;gap:8px}
+.team-lock-controls input{width:200px;height:46px;padding:0 14px;border:1px solid #cfd5df;border-radius:10px;font-size:16px;font-family:inherit}
+.team-lock-controls input:focus{outline:2px solid #172033;outline-offset:1px}
+.team-lock-message{grid-column:1/-1;min-height:18px;margin:0;color:#b42318;font-size:13px;font-weight:600;text-align:right}
+@media (max-width:760px){
+  .team-lock-form{grid-template-columns:1fr;text-align:center}
+  .team-lock-icon{margin:0 auto}
+  .team-lock-controls{justify-content:center}
+  .team-lock-controls input{flex:1;min-width:0;width:auto}
+  .team-lock-message{text-align:center}
 }
