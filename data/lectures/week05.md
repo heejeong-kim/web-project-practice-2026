@@ -252,7 +252,7 @@ project/
 ├─ js/
 │  └─ app.js
 ├─ data/
-└─ images/
+└─ asset/
 ```
 <table fit-page-width="true" header-row="true">
 <tr>
@@ -282,7 +282,7 @@ project/
 </tr>
 <tr>
 <td>이미지</td>
-<td>images 폴더</td>
+<td>asset 폴더</td>
 <td>카드·상세에 사용할 이미지</td>
 </tr>
 </table>
@@ -290,7 +290,7 @@ project/
 - CSS는 head에서 link로 연결
 - JavaScript는 body 끝에서 script로 연결하거나 defer를 사용해 요소가 만들어진 뒤에 실행되도록 함
 - 경로는 ./css/style.css처럼 상대경로로 작성
-- data와 images 폴더는 이번 주차에 비어 있더라도 미리 만들어 자리를 확보
+- data와 asset 폴더는 이번 주차에 비어 있더라도 미리 만들어 자리를 확보
 - js 폴더는 11주차 이후 저장·기능별 파일이 늘어날 자리이므로 처음부터 분리
 - 파일명과 폴더명은 영문 소문자로 작성(준비물의 GitHub 안내 참고)
 <callout icon="📌" color="blue_bg">

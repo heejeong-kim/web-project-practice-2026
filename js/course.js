@@ -8,7 +8,6 @@ const topNav = document.querySelector('#top-nav');
 const hero = document.querySelector('.hero');
 
 const READY_WEEKS = new Set([0, 1, 2, 3, 4, 5]);
-const WEEK5_PASSWORD_HASH = 'b564d46d60731e7b8a22e912c01957f6c62caf92143683efbf48d5ec2ca89176';
 const WEEK5_GATE_KEY = 'web-project-week5-lecture-access';
 
 let activeFilter = 'all';

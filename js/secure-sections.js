@@ -4,7 +4,6 @@
   const week = Number(new URLSearchParams(window.location.search).get('week'));
   const enc = new TextEncoder();
   const dec = new TextDecoder();
-  const WEEK5_PASSWORD_HASH = 'b564d46d60731e7b8a22e912c01957f6c62caf92143683efbf48d5ec2ca89176';
   const WEEK5_GATE_KEY = 'web-project-week5-lecture-access';
   const b64 = s => { const bin = atob(s); const out = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i += 1) out[i] = bin.charCodeAt(i); return out; };
 
