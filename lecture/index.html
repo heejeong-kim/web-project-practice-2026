@@ -23,6 +23,7 @@
     .lecture-side-toggle:hover{background:#fff3eb;border-color:#ffbe94}
     .lecture-side-toggle:focus-visible{outline:2px solid #ff8a3d;outline-offset:2px}
     .lecture-header{position:sticky!important;top:0!important;z-index:100!important}
+    .lecture-nav a[href$="team-project.html"]{color:#fff}
     .toc-card{top:94px!important;max-height:calc(100vh - 118px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
     .week-select-wrap{margin:0 0 18px;padding:0 0 18px;border-bottom:1px solid #e3e7ee}
     .week-select-wrap label,.mobile-week-select-wrap label{display:block;margin:0 0 7px;color:#98a2b3;font-size:11px;font-weight:800;letter-spacing:.1em}
@@ -148,7 +149,10 @@
 
   <button class="top-button" id="top-button" type="button" aria-label="페이지 맨 위로 이동"><span>↑</span><small>TOP</small></button>
 
-  <script src="../data/weeks.js?v=20260902-5"></script>
+  <!-- 로컬(file://)에서도 교안이 보이도록 번들 + fetch 보조 스크립트를 먼저 로드 -->
+  <script src="../data/local-bundle.js"></script>
+  <script src="../js/local-data.js"></script>
+  <script src="../data/weeks.js?v=20260923-1"></script>
   <script src="../js/lecture.js?v=20260902-5"></script>
   <script src="../js/secure-sections.js?v=20260902-9"></script>
   <script>
