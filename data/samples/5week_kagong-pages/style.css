@@ -18,38 +18,3 @@
 
 /* 펼침 상태와 관계없이 필터 버튼 크기 유지 */
 #filters{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.5fr) 76px}#filters .more-filters{width:76px;height:36px;padding:0;display:flex;align-items:center;justify-content:center}
-.more-sentinel{margin:16px 0 8px;text-align:center;font-size:12px}
-.related{margin-top:28px}
-/* TOP 버튼: 스크롤을 내리면 하단 탭바 위 오른쪽에 표시 */
-.top-button{position:fixed;bottom:calc(84px + env(safe-area-inset-bottom));right:max(16px,calc(50% - 240px + 16px));z-index:15;width:46px;height:46px;border:1px solid var(--ink);border-radius:50%;background:var(--ink);color:#fff;font-family:inherit;font-size:10px;font-weight:700;line-height:1;letter-spacing:.04em;cursor:pointer;display:grid;place-items:center;opacity:0;visibility:hidden;transform:translateY(8px);transition:.2s}
-.top-button.is-visible{opacity:1;visibility:visible;transform:none}
-.top-button span{display:block;font-size:15px;line-height:1;margin-bottom:1px}
-body[data-page="detail"] .top-button{bottom:calc(150px + env(safe-area-inset-bottom))}
-/* 상세 화면 헤더: 왼쪽 뒤로가기 아이콘 + 가운데 화면 제목 */
-.detail-header{display:grid;grid-template-columns:44px 1fr 44px;gap:0}
-.header-back{display:grid;place-items:center;width:44px;height:44px;margin-left:-10px;font-size:34px;line-height:1;font-weight:300}
-.header-title{margin:0;text-align:center;font-size:16px;font-weight:700}
-.detail-header>a:last-child{justify-self:end}
-/* 목록 상단: 리셋 버튼(조건 더보기 옆)·총 개수와 정렬 한 줄 */
-.reset-button{width:36px;height:36px;padding:0!important;display:flex;align-items:center;justify-content:center;font-size:17px!important;line-height:1}
-.sort-row{justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:12px}
-.sort-row #count{margin:0;margin-right:auto;font-size:12px}
-.sort-row .sort-label{margin-left:auto}
-.top-button:hover,.top-button:focus-visible{background:#555!important;border-color:#555!important;color:#fff!important}
-/* 필터 줄: 콘센트·조용함·시간제한 없음·조건 더보기·리셋을 한 줄 5칸으로 배치 */
-#filters{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr) 36px 36px}
-#filters .more-filters{width:36px;font-size:18px;font-weight:500;line-height:1}
-/* 필터 칩: 위·아래 줄 모두 같은 여백(내용 너비), 선택한 칩은 윗줄 앞으로 이동 */
-#filters{display:flex;flex-wrap:wrap;gap:7px}
-#filters button{padding:8px 11px;font-size:12px;white-space:nowrap}
-#filters .more-filters,#filters .reset-button{width:36px;height:36px;padding:0!important;display:flex;align-items:center;justify-content:center}
-/* 상세 위치 지도 */
-.map{position:relative;height:200px;border:1px solid var(--line);border-radius:5px;overflow:hidden;margin-top:12px;background:var(--fill)}
-.map iframe{width:100%;height:100%;border:0;display:block}
-.map-links{display:flex;gap:8px;margin-top:8px}
-.map-links a{flex:1;text-align:center;border:1px solid #b8b8b3;border-radius:5px;padding:8px;font-size:12px}
-.map-links a:hover{background:var(--fill)}
-/* 조건 칩 목록은 줄바꿈되고, 더보기(+)·리셋(↺)은 항상 오른쪽 위에 함께 고정 */
-#filters{flex-wrap:nowrap;align-items:flex-start;justify-content:space-between}
-#filters .chip-list{display:flex;flex-wrap:wrap;gap:7px;flex:1;min-width:0}
-#filters .chip-tools{display:flex;gap:7px;flex:none}

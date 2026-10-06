@@ -1,0 +1,40 @@
+[
+  {
+    "id": 1,
+    "name": "카페 라온",
+    "area": "신촌",
+    "hasOutlet": true,
+    "noiseLevel": "quiet",
+    "hasTimeLimit": false,
+    "closeTime": "23:00",
+    "image": "./asset/raon.jpg",
+    "description": "창가 1인석이 많은 카페"
+  },
+  {
+    "id": 2,
+    "name": null,
+    "area": "신촌",
+    "hasOutlet": true,
+    "noiseLevel": "normal",
+    "hasTimeLimit": true,
+    "closeTime": "22:00",
+    "image": null,
+    "description": "필수 필드 name이 비어 있는 데이터"
+  },
+  {
+    "id": 3,
+    "name": "북살롱",
+    "area": "홍대",
+    "hasOutlet": false,
+    "noiseLevel": "silent",
+    "hasTimeLimit": false,
+    "closeTime": "21:00",
+    "image": null,
+    "description": "noiseLevel이 허용값(quiet·normal·talkable) 밖인 데이터"
+  },
+  {
+    "id": 4,
+    "name": "모노랩 커피",
+    "area": "신촌"
+  }
+]

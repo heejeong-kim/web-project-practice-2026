@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7주차 제공 코드｜카공 공간 목록</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <!-- 실습용 전환 바: 코드를 고치지 않고 주소(?data=값)만 바꿔 상황별 화면을 확인함 -->
+  <nav class="practice-bar" aria-label="실습용 데이터 전환">
+    <strong>실습 전환</strong>
+    <a href="?data=sample">① 기본 8건</a>
+    <a href="?data=sample&amp;delay=1500">② 로딩 보기</a>
+    <a href="?data=empty">③ 0건</a>
+    <a href="?data=wrong">④ 경로 오류</a>
+    <a href="?data=check">⑤ 누락·오류 데이터</a>
+    <a href="?data=candidates">⑥ 후보 381건</a>
+  </nav>
+
+  <!-- 5주차 화면 구조: 상단 → 결과 건수 → 카드 목록 → 상태 영역 -->
+  <header class="top">
+    <p class="eyebrow">서대문구 · 신촌 · 홍대</p>
+    <h1 class="page-title">카공 공간 탐색</h1>
+  </header>
+
+  <main class="shell">
+    <div class="toolbar">
+      <p id="result-count" class="count">총 0건</p>
+      <p id="data-source" class="source"></p>
+    </div>
+
+    <!-- 반복 렌더링으로 카드가 채워질 목록 영역(HTML에는 카드를 직접 쓰지 않음) -->
+    <section id="item-list" class="grid" aria-live="polite"></section>
+
+    <!-- 5주차에 숨김 상태로 만들어 둔 상태 영역 3종 -->
+    <div id="loading-state" class="state" hidden>
+      <span class="spinner" aria-hidden="true"></span>
+      <b>공간 정보를 불러오는 중입니다</b>
+    </div>
+
+    <div id="empty-state" class="state" hidden>
+      <b>표시할 공간이 없습니다</b>
+      <span>데이터가 준비되면 이곳에 목록이 표시됩니다</span>
+      <a class="state-action" href="?data=sample">기본 데이터로 보기</a>
+    </div>
+
+    <div id="error-state" class="state is-error" hidden>
+      <b>공간 정보를 불러오지 못했습니다</b>
+      <span id="error-detail">잠시 후 다시 시도해 주세요</span>
+      <button id="retry-button" class="state-action" type="button">다시 불러오기</button>
+    </div>
+  </main>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>
