@@ -7,7 +7,7 @@ const menuToggle = document.querySelector('.menu-toggle');
 const topNav = document.querySelector('#top-nav');
 const hero = document.querySelector('.hero');
 
-const READY_WEEKS = new Set([0, 1, 2, 3, 4, 5]);
+const READY_WEEKS = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 const WEEK5_GATE_KEY = 'web-project-week5-lecture-access';
 
 let activeFilter = 'all';

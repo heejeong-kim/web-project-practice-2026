@@ -40,6 +40,11 @@
       .week5-folder-tree code{background:transparent!important;color:#243247!important;font-size:13.5px!important;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important}
       .lecture-content details summary.week5-blue-summary,.lecture-content details summary.week5-blue-summary *{color:#2563eb!important;font-weight:800!important}
       .week5-practice-sample{min-height:620px!important}
+      .lecture-content .week5-wireframe-wrap{margin:22px 0 26px}
+      .lecture-content .week5-wireframe-frame{display:block;width:100%;height:min(86vh,900px);min-height:680px;border:1px solid #dfe4eb;border-radius:14px;background:#f4f4f2}
+      .lecture-content .week5-wireframe-actions{display:flex;justify-content:flex-end;margin-top:10px}
+      .lecture-content .week5-wireframe-open{display:inline-flex;align-items:center;min-height:40px;padding:0 13px;border:1px solid #ffb27f;border-radius:9px;background:#fff;color:#b95516!important;text-decoration:none!important;font-size:13px;font-weight:800}
+      .lecture-content .week5-wireframe-open:hover{background:#fff3eb;border-color:#ff8a3d}
       .lecture-content .week5-chapter-image{display:block;margin:18px 0 34px;border-radius:18px;overflow:hidden;background:#eef1f5}
       .lecture-content .week5-chapter-image img{display:block;width:100%;height:auto}
       @media(max-width:680px){.lecture-content .week5-chapter-image{margin:14px 0 28px;border-radius:14px}}
@@ -52,6 +57,7 @@
 
   function enableWeek5Navigation(){
     ['#week-select','#mobile-week-select'].forEach(selector=>{const option=document.querySelector(selector)?.querySelector('option[value="05"]');if(option)option.disabled=false;});
+    if(week===6){const prev=document.querySelector('#prev-week');if(prev){prev.href='?week=05';prev.classList.remove('is-disabled');prev.removeAttribute('aria-disabled');prev.removeAttribute('tabindex');}}
     if(week===4){const next=document.querySelector('#next-week');if(next){next.href='?week=05';next.classList.remove('is-disabled');next.removeAttribute('aria-disabled');next.removeAttribute('tabindex');const strong=next.querySelector('strong');if(strong)strong.textContent='5주차 · JavaScript 프로젝트 기초';}}
   }
 
@@ -78,6 +84,51 @@
     });
   }
 
+  // 5주차 1.4 실습(w05-0)의 실습 예시를 인터랙티브 와이어프레임으로 교체
+  // - 잠금 해제된 원문 안의 예시 iframe·첨부 블록·링크(예전 5w 샘플 등)를 새 파일로 바꿈
+  // - 교체할 예시가 없으면 1.4 내용 맨 아래에 새로 삽입
+  function insertWeek5InteractiveWireframe(root){
+    if(week!==5||!root)return;
+    const target=root.matches?.('[data-secure-content="w05-0"]')?root:root.querySelector?.('[data-secure-content="w05-0"]');
+    if(!target)return;
+    const src='../data/samples/5week_kagong-pages/index.html?v=20261006-1';
+    const title='카공 공간 조건 탐색 서비스 인터랙티브 와이어프레임';
+    const makeActions=()=>{const div=document.createElement('div');div.className='week5-wireframe-actions';div.innerHTML=`<a class="week5-wireframe-open" href="${src}" target="_blank" rel="noopener noreferrer">새 창에서 크게 보기</a>`;return div;};
+    const makeWrap=()=>{const wrap=document.createElement('div');wrap.className='week5-wireframe-wrap';wrap.innerHTML=`<iframe class="week5-wireframe-frame" src="${src}" title="${title}" loading="lazy"></iframe>`;wrap.appendChild(makeActions());return wrap;};
+    // 예시 설명 문구: 예전 5w 샘플 설명을 '4주차 와이어프레임을 HTML로 전환한 결과'로 교체
+    target.querySelectorAll('p,li').forEach(node=>{
+      const text=node.textContent||'';
+      if(!text.includes('5w/index.html')||!text.includes('실행한 결과'))return;
+      node.innerHTML='아래 화면은 4주차 로우파이(Lo-fi) 와이어프레임을 실제 HTML·CSS·JavaScript 화면으로 전환한 5주차 실습 샘플(<code class="inline-code">data/samples/5week_kagong-pages/index.html</code>)을 실행한 결과임 — 홈·탐색·상세·마이 화면을 페이지로 나누어 구성했으며 화면 안의 메뉴로 이동하며 확인';
+    });
+    let replaced=false;
+    // 1) 원문에 들어 있던 예시 iframe
+    target.querySelectorAll('iframe').forEach(frame=>{
+      if(frame.closest('.week5-wireframe-wrap'))return;
+      frame.replaceWith(makeWrap());replaced=true;
+    });
+    // 2) Notion 첨부 블록으로 표시된 예시 파일
+    target.querySelectorAll('.notion-embed').forEach(node=>{node.replaceWith(makeWrap());replaced=true;});
+    // 3) 예전 샘플(5w 폴더, 와이어프레임 파일)로 연결된 링크
+    target.querySelectorAll('a[href]').forEach(link=>{
+      const href=link.getAttribute('href')||'';
+      if(link.classList.contains('week5-wireframe-open'))return;
+      if(/(^|\/)5w\/|wireframe\.html/.test(href)){link.setAttribute('href',src);link.target='_blank';link.rel='noopener noreferrer';replaced=true;}
+    });
+    if(!replaced&&!target.querySelector('.week5-wireframe-wrap')){
+      // 1.4 마지막 콜아웃 아래에 예시 설명과 실행 화면을 함께 삽입
+      const caption=document.createElement('p');caption.className='lecture-example';
+      caption.innerHTML='<span class="notion-gray">예시) 4주차 로우파이(Lo-fi) 와이어프레임을 HTML·CSS·JavaScript 화면으로 전환한 5주차 실습 샘플</span>';
+      // 폴더 구조를 따로 요청하지 않으면 모든 파일이 root에 저장된다는 안내와 실제 샘플 파일 구성
+      const note=document.createElement('p');
+      note.textContent='별도 디렉토리 구조를 요청하지 않으면(AI 도구에 폴더 구조를 명시하지 않은 경우 포함) 아래 샘플처럼 모든 파일이 폴더 구분 없이 root(최상위)에 저장됨. 2.1.2의 css·js·data·asset 폴더로 나누려면 요청 단계에서 폴더 구조를 함께 명시';
+      const tree=document.createElement('div');tree.className='week5-folder-tree';
+      tree.innerHTML='<div class="week5-folder-toolbar">📁 FOLDER STRUCTURE</div><pre><code></code></pre>';
+      tree.querySelector('code').textContent=['5week_kagong-pages/','├─ style.css','├─ detail.html','├─ empty.html','├─ index.html','├─ list.html','├─ my.html','└─ app.js'].join('\n');
+      target.appendChild(caption);target.appendChild(note);target.appendChild(tree);target.appendChild(makeWrap());
+    }
+  }
+
   function enhanceWeek5Content(root=document.querySelector('#lecture-content')){
     if(!root)return;
     root.querySelectorAll('pre[data-lang]').forEach(pre=>{
@@ -101,21 +152,41 @@
     });
     root.querySelectorAll('details summary').forEach(summary=>{const text=summary.textContent.trim();if(text.startsWith('[참고]')||text.startsWith('[예시]'))summary.classList.add('week5-blue-summary');});
     insertWeek5ChapterImages(document.querySelector('#lecture-content'));
+    insertWeek5InteractiveWireframe(root);
   }
 
   async function renderWeek5Source(){if(week!==5)return;const content=document.querySelector('#lecture-content');if(!content||!window.renderNotionMarkdown)return;const response=await fetch('../data/lectures/week05.md?v=20260902-7',{cache:'no-store'});if(!response.ok)throw new Error('5주차 교안 원문을 불러오지 못했습니다.');content.innerHTML=window.renderNotionMarkdown(await response.text());restoreWeek5Header();enhanceWeek5Content(content);rebuildToc();}
 
   async function readProtectedMarkdown(password,section){const r=await fetch('../data/secure/'+section.file+'?v=20260902-7',{cache:'no-store'});if(!r.ok)throw new Error('load');return (await decrypt(password,await r.json())).replace(/\\+([\[\]~*`|])/g,'$1');}
 
+  // 현재 주차의 잠금 항목 목록(비밀번호 1회 입력으로 모두 해제할 때 사용)
+  let ALL_SECTIONS=[];
+
+  // 잠금 항목 1개를 복호화해 자리표시 위치에 삽입(이미 해제된 항목은 건너뜀)
+  async function revealSection(password,section){
+    const holder=document.querySelector('[data-secure-section="'+section.id+'"]');
+    if(!holder)return;
+    const heading=findHeadingForPlaceholder(holder);
+    const markdown=await readProtectedMarkdown(password,section);
+    const html=window.renderNotionMarkdown(markdown);
+    holder.insertAdjacentHTML('afterend','<div class="secure-section-content" data-secure-content="'+section.id+'">'+html+'</div>');
+    heading?.querySelector('.secure-section-cta')?.remove();
+    holder.remove();
+    enhanceWeek5Content(document.querySelector('[data-secure-content="'+section.id+'"]'));
+  }
+
   function showSectionDialog(heading,section){
     if(document.querySelector('[data-secure-dialog]'))return;
     const overlay=document.createElement('div');overlay.dataset.secureDialog='1';overlay.style.cssText='position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.58);backdrop-filter:blur(4px)';const label=heading.textContent.replace('[클릭]','').trim();
     overlay.innerHTML='<form style="box-sizing:border-box;width:min(100%,380px);padding:28px;border-radius:18px;background:#fff;box-shadow:0 24px 70px rgba(15,23,42,.3)"><h2 style="margin:0 0 8px;font-size:22px">'+week+'주차 · '+label+'</h2><p style="margin:0 0 18px;color:#667085">실습 비밀번호를 입력하면 이 항목의 숨겨진 내용이 표시됩니다.</p><input type="password" autocomplete="off" aria-label="비밀번호" style="box-sizing:border-box;width:100%;height:46px;padding:0 13px;border:1px solid #cfd5df;border-radius:10px;font-size:16px"><p data-error role="alert" style="display:none;margin:8px 0 0;color:#dc2626;font-size:14px">비밀번호가 올바르지 않습니다.</p><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px"><button type="button" data-cancel style="min-height:42px;padding:0 15px;border:1px solid #d0d5dd;border-radius:9px;background:#fff">취소</button><button type="submit" style="min-height:42px;padding:0 17px;border:0;border-radius:9px;background:#172033;color:#fff;font-weight:700">확인</button></div></form>';
     document.body.appendChild(overlay);const input=overlay.querySelector('input');const err=overlay.querySelector('[data-error]');const close=()=>overlay.remove();overlay.querySelector('[data-cancel]').addEventListener('click',close);overlay.addEventListener('click',event=>{if(event.target===overlay)close();});
-    overlay.querySelector('form').addEventListener('submit',async event=>{event.preventDefault();err.style.display='none';try{const markdown=await readProtectedMarkdown(input.value,section);const html=window.renderNotionMarkdown(markdown);const holder=document.querySelector('[data-secure-section="'+section.id+'"]');if(!holder)throw new Error('holder');holder.insertAdjacentHTML('afterend','<div class="secure-section-content" data-secure-content="'+section.id+'">'+html+'</div>');heading.querySelector('.secure-section-cta')?.remove();holder.remove();overlay.remove();enhanceWeek5Content(document.querySelector('[data-secure-content="'+section.id+'"]'));rebuildToc();}catch(_){err.style.display='block';input.select();}});input.focus();
+    overlay.querySelector('form').addEventListener('submit',async event=>{event.preventDefault();err.style.display='none';const password=input.value;try{await revealSection(password,section);overlay.remove();
+      // 같은 비밀번호로 이 주차의 나머지 잠금 항목도 한 번에 해제
+      for(const other of ALL_SECTIONS){if(other.id===section.id)continue;try{await revealSection(password,other);}catch(_){}}
+      rebuildToc();}catch(_){err.style.display='block';input.select();}});input.focus();
   }
 
-  function attachSections(sections){sections.forEach(section=>{const ph=document.querySelector('[data-secure-section="'+section.id+'"]');if(!ph||ph.dataset.bound==='1')return;ph.dataset.bound='1';const heading=findHeadingForPlaceholder(ph);if(!heading)return;const btn=document.createElement('button');btn.type='button';btn.className='secure-section-cta';btn.textContent='[클릭]';btn.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();showSectionDialog(heading,section);});heading.appendChild(btn);heading.style.cursor='pointer';heading.addEventListener('click',()=>showSectionDialog(heading,section));});}
+  function attachSections(sections){ALL_SECTIONS=sections;sections.forEach(section=>{const ph=document.querySelector('[data-secure-section="'+section.id+'"]');if(!ph||ph.dataset.bound==='1')return;ph.dataset.bound='1';const heading=findHeadingForPlaceholder(ph);if(!heading)return;const btn=document.createElement('button');btn.type='button';btn.className='secure-section-cta';btn.textContent='[클릭]';btn.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();showSectionDialog(heading,section);});heading.appendChild(btn);heading.style.cursor='pointer';heading.addEventListener('click',()=>showSectionDialog(heading,section));});}
 
   async function init(){ensureStyles();enableWeek5Navigation();const manifest=await loadManifest();const sections=(manifest.sections&&manifest.sections[week])||[];if(week===5){await renderWeek5Source();attachSections(sections);return;}attachSections(sections);const content=document.querySelector('#lecture-content');if(content)new MutationObserver(()=>attachSections(sections)).observe(content,{childList:true,subtree:true});}
 

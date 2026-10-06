@@ -4,7 +4,7 @@ const parsedWeek = weekParam === null ? 1 : Number(weekParam);
 const requestedWeek = Number.isFinite(parsedWeek) ? parsedWeek : 1;
 const week = Math.min(15, Math.max(0, requestedWeek));
 const weekData = window.WEEK_DATA.find(item => item.week === week);
-const READY_WEEKS = new Set([0, 1, 2, 3, 4]);
+const READY_WEEKS = new Set([0, 1, 2, 3, 4, 6, 7, 8]);
 const ASSET_VERSION = '20260815-1200';
 
 const titleEl = document.querySelector('#lecture-title');
@@ -72,6 +72,12 @@ function injectLectureImageStyles() {
     .lecture-content .notion-red{color:#dc2626!important}
     .lecture-content .notion-gray{color:#667085!important}
     .lecture-content .lecture-example::first-letter{font-weight:inherit!important}
+    .lecture-content .lecture-example-block>p,.lecture-content .lecture-example-block li{color:#5f412e!important}
+    .lecture-content .lecture-example-block>p.lecture-example-title{margin-top:0!important}
+    .lecture-content .lecture-example-block>:last-child{margin-bottom:0!important}
+    .lecture-content .lecture-example-block table{font-size:14px}
+    .lecture-content .lecture-example-block td{overflow-wrap:break-word!important}
+    .lecture-content .lecture-example-block .code-block{font-size:13px}
     .callout.is-production-note{background:#f4f5f7!important;border-left-color:#98a2b3!important;color:#667085!important;font-size:13.5px!important}
     .callout.is-production-note .callout-body,.callout.is-production-note .callout-body p,.callout.is-production-note .callout-body li,.callout.is-production-note .callout-body span,.callout.is-production-note .callout-body strong{color:#667085!important;font-size:13.5px!important;line-height:1.65}
     @media(max-width:680px){
@@ -95,13 +101,29 @@ function setupTocThumbnail() {
   title.insertAdjacentElement('afterend', figure);
 }
 
-function insertChapterImages() {
-  if (week !== 1) return;
-  const chapterImages = [
+// 주차별 H1(장) 이미지: asset/{주차}_{장}.png를 해당 장 제목 바로 아래에 표시
+// (4주차는 data/weeks.js, 5주차는 js/secure-sections.js에서 같은 규칙으로 처리)
+const CHAPTER_IMAGES = {
+  1: [
     { prefix: '1.', src: `/web-project-practice-2026/asset/1_1.png?v=${ASSET_VERSION}`, alt: '1장 웹프로젝트 실습의 이해' },
     { prefix: '2.', src: `/web-project-practice-2026/asset/1_2.png?v=${ASSET_VERSION}`, alt: '2장 데이터 기반 웹서비스의 구조' },
     { prefix: '3.', src: `/web-project-practice-2026/asset/1_3.png?v=${ASSET_VERSION}`, alt: '3장 웹서비스 사례 분석과 프로젝트 탐색' }
-  ];
+  ],
+  6: [
+    { prefix: '1.', src: '../asset/6_1.png?v=20261006-1', alt: '1장 JSON과 구조화 데이터' },
+    { prefix: '2.', src: '../asset/6_2.png?v=20261006-1', alt: '2장 데이터 명세와 필드 설계' },
+    { prefix: '3.', src: '../asset/6_3.png?v=20261006-1', alt: '3장 팀 프로젝트 데이터셋 제작' }
+  ],
+  7: [
+    { prefix: '1.', src: '../asset/7_1.png?v=20261006-1', alt: '1장 JSON 데이터 불러오기' },
+    { prefix: '2.', src: '../asset/7_2.png?v=20261006-1', alt: '2장 반복 렌더링과 카드 UI' },
+    { prefix: '3.', src: '../asset/7_3.png?v=20261006-1', alt: '3장 팀 프로젝트 적용' }
+  ]
+};
+
+function insertChapterImages() {
+  const chapterImages = CHAPTER_IMAGES[week];
+  if (!chapterImages) return;
 
   const h1List = [...contentEl.querySelectorAll('h1')];
   chapterImages.forEach(item => {
@@ -138,6 +160,10 @@ function inlineMarkdown(value = '') {
     .replace(/!\[([^\]]*)\]\((https?:\/\/[^)]+)\)/g, '<img class="lecture-image" src="$2" alt="$1" loading="lazy">')
     .replace(/!\[([^\]]*)\]\((\.\.?\/[^)]+)\)/g, '<img class="lecture-image" src="$2" alt="$1" loading="lazy">')
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+    // 저장소 내부 파일 상대 경로 링크(../data/samples/…): csv·json·zip은 내려받기, 그 외는 새 창으로 열기
+    .replace(/\[([^\]]+)\]\((\.\.?\/[^)\s]+)\)/g, (_, text, href) => /\.(csv|json|zip)(\?.*)?$/i.test(href)
+      ? `<a href="${href}" download>${text}</a>`
+      : `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`)
     .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/(^|[\s>])\*\*(?=\s|[📌📦🖇️⚠️✅🚀💡])/g, '$1')
@@ -153,10 +179,11 @@ function calloutClass(color = '') {
   return 'gray';
 }
 
+// 교안 원문의 링크·이미지 경로(./data/, ./asset/)만 lecture/ 기준(../)으로 보정
+// - 코드 예시 속 './data/items.json' 같은 학생 프로젝트 경로는 바꾸지 않음
+// - 이미 ../로 시작하는 경로는 그대로 둠
 function normalizeLecturePaths(source = '') {
-  return source
-    .replaceAll('./data/', '../data/')
-    .replaceAll('./asset/', '../asset/');
+  return source.replace(/(\]\(|(?:src|href)=["'])\.\/(data|asset)\//g, '$1../$2/');
 }
 
 function renderNotionMarkdown(source = '') {
@@ -166,6 +193,9 @@ function renderNotionMarkdown(source = '') {
   let fenceLang = '';
   let fenceLines = [];
   let listType = null;
+  // 인용(예시) 블록 안에 탭 들여쓰기 자식 블록이 있을 때 사용하는 상태값
+  let inQuoteBlock = false;
+  let quoteTableOpen = false;
 
   const closeList = () => {
     if (listType) out.push(`</${listType}>`);
@@ -185,6 +215,23 @@ function renderNotionMarkdown(source = '') {
       } else {
         fenceLines.push(original.replace(/^\t+/, ''));
       }
+      continue;
+    }
+
+    // 인용 블록 종료: 탭 들여쓰기가 없는 줄이 나오면 닫음(인용 안 표의 행은 들여쓰기가 없으므로 제외)
+    if (inQuoteBlock && !quoteTableOpen && !original.startsWith('\t') && line.trim() !== '') {
+      closeList();
+      out.push('</div>');
+      inQuoteBlock = false;
+    }
+    if (inQuoteBlock && /^\t+<table/.test(original)) quoteTableOpen = true;
+    if (inQuoteBlock && /^\t+<\/table>/.test(original)) quoteTableOpen = false;
+
+    // 인용 블록 시작: '> ' 줄 다음 줄이 탭으로 들여쓰기되어 있으면 자식 블록을 포함한 예시 상자로 렌더링
+    if (!original.startsWith('\t') && line.startsWith('> ') && /^\t/.test(lines[i + 1] || '')) {
+      closeList();
+      out.push(`<div class="lecture-example lecture-example-block"><p class="lecture-example-title">${inlineMarkdown(line.slice(2))}</p>`);
+      inQuoteBlock = true;
       continue;
     }
 
@@ -306,6 +353,7 @@ function renderNotionMarkdown(source = '') {
   }
 
   closeList();
+  if (inQuoteBlock) out.push('</div>');
   if (inFence) {
     out.push(`<pre data-lang="${escapeHtml(fenceLang || 'code')}">${escapeHtml(fenceLines.join('\n'))}</pre>`);
   }
