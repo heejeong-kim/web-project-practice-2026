@@ -5,9 +5,9 @@ window.WEEK_DATA = [
   {week:3,title:'사용자 분석 및 프로젝트 문제 정의',type:'class',keywords:['Persona','Problem Statement','Value Proposition'],summary:'개인 아이디어를 팀에서 비교해 후보를 선택하고 핵심 사용자·문제·가치 제안을 정의해 프로젝트 주제와 트랙을 확정한다',page:'./lecture/index.html?week=03'},
   {week:4,title:'서비스 구조 및 UX 설계',type:'class',keywords:['MVP','IA','User Flow'],summary:'핵심 기능, 정보구조, 사용자 흐름, 와이어프레임을 설계한다',page:'./lecture/index.html?week=04'},
   {week:5,title:'JavaScript 프로젝트 기초',type:'class',keywords:['DOM','Event','Function'],summary:'정적 HTML·CSS에 JavaScript 상호작용을 연결하고 입력→처리→출력 구조를 익힌다',page:''},
-  {week:6,title:'JSON 데이터셋 설계',type:'class',keywords:['Dataset','Field','ID'],summary:'검색·필터·정렬·상세보기에 필요한 JSON 데이터 구조와 명세를 설계한다',page:''},
-  {week:7,title:'JSON 기반 화면 구현',type:'class',keywords:['fetch','Rendering','Empty State'],summary:'JSON을 불러와 반복 렌더링하고 결과 건수·빈 상태·오류 상태를 처리한다',page:''},
-  {week:8,title:'중간평가',type:'exam',keywords:['필기시험','중간 자료 점검','Feedback'],summary:'1~7주차 필기평가와 중간 자료 점검을 통해 후반기 개발 우선순위를 조정한다',page:''},
+  {week:6,title:'JSON 데이터셋 설계',type:'class',keywords:['Dataset','Field','ID'],summary:'검색·필터·정렬·상세보기에 필요한 JSON 데이터 구조와 명세를 설계한다',page:'./lecture/index.html?week=06'},
+  {week:7,title:'JSON 기반 화면 구현',type:'class',keywords:['fetch','Rendering','Data Check'],summary:'JSON 데이터를 fetch로 연결해 점검·수정하고 추가한 필드를 화면에 보여주도록 인터페이스를 변경한다',page:'./lecture/index.html?week=07'},
+  {week:8,title:'중간평가',type:'exam',keywords:['1~6주차','주관식·객관식','3시간 필기시험'],summary:'1~6주차의 서비스 문제 정의·구조 설계·JavaScript·JSON 연결 흐름을 주관식과 객관식 필기시험으로 평가한다',page:'./lecture/index.html?week=08'},
   {week:9,title:'검색·필터·정렬 기능',type:'class',keywords:['Search','Filter','Sort'],summary:'검색과 복수 필터, 정렬을 하나의 상태와 결과 배열로 연결한다',page:''},
   {week:10,title:'상세보기 및 인터랙션 설계',type:'class',keywords:['Detail View','Modal','Interaction'],summary:'ID 기반 상세보기와 목록 복귀, 다음 행동까지 이어지는 인터랙션을 구현한다',page:''},
   {week:11,title:'LocalStorage 기초',type:'class',keywords:['Client Storage','Serialization','Favorite'],summary:'브라우저 개인 상태를 저장하고 JSON 기본 데이터와 사용자 상태를 구분한다',page:''},
@@ -127,7 +127,7 @@ window.WEEK_DATA = [
       if (placeholder) {
         const wrap = document.createElement('div');
         wrap.className = 'week4-wireframe-wrap';
-        wrap.innerHTML = `<iframe class="week4-wireframe-frame" src="../data/samples/kagong-wireframe.html?v=20260831-1145" title="카공 공간 조건 탐색 서비스 로우파이 와이어프레임" loading="lazy"></iframe><div class="week4-wireframe-actions"><a class="week4-wireframe-open" href="../data/samples/kagong-wireframe.html?v=20260831-1145" target="_blank" rel="noopener noreferrer">새창으로 열기 ↗</a></div>`;
+        wrap.innerHTML = `<iframe class="week4-wireframe-frame" src="../data/samples/4week_kagong-wireframe.html?v=20260923-2" title="카공 공간 조건 탐색 서비스 로우파이 와이어프레임" loading="lazy"></iframe><div class="week4-wireframe-actions"><a class="week4-wireframe-open" href="../data/samples/4week_kagong-wireframe.html?v=20260923-2" target="_blank" rel="noopener noreferrer">새창으로 열기 ↗</a></div>`;
         placeholder.replaceWith(wrap);
       }
     }
@@ -154,4 +154,198 @@ window.WEEK_DATA = [
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(renderPreview, 0), { once: true });
   else setTimeout(renderPreview, 0);
+})();
+// 4주차 로우파이 와이어프레임 도면 삽입
+// - 도면 자리표시([도면 삽입 위치])는 비밀번호 잠금 영역 안에 있으므로, 잠금 해제 후 내용이 추가될 때도 교체해야 함
+// - /lecture/, /lecture/index.html, 로컬(file://) 경로 모두에서 동작
+(() => {
+  const week = Number(new URLSearchParams(window.location.search).get('week'));
+  if (week !== 4 || !/\/lecture\/(index\.html)?$/.test(window.location.pathname)) return;
+
+  const WIREFRAME_SRC = '../data/samples/4week_kagong-wireframe.html?v=20260923-3';
+
+  // 도면 영역 스타일 (한 번만 추가)
+  const ensureStyles = () => {
+    if (document.querySelector('#week4-wireframe-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'week4-wireframe-styles';
+    style.textContent = `
+      .lecture-content .week4-wireframe-wrap{margin:18px 0 24px}
+      .lecture-content .week4-wireframe-frame{display:block;width:100%;height:min(78vh,900px);min-height:620px;border:1px solid #dfe4eb;border-radius:14px;background:#fff}
+      .lecture-content .week4-wireframe-actions{display:flex;justify-content:flex-end;margin-top:10px}
+      .lecture-content .week4-wireframe-open{display:inline-flex;align-items:center;min-height:40px;padding:0 13px;border:1px solid #ffb27f;border-radius:9px;background:#fff;color:#b95516!important;text-decoration:none!important;font-size:13px;font-weight:800}
+      .lecture-content .week4-wireframe-open:hover{background:#fff3eb;border-color:#ff8a3d}
+      @media(max-width:680px){.lecture-content .week4-wireframe-frame{min-height:560px;height:72vh}}
+    `;
+    document.head.appendChild(style);
+  };
+
+  // [도면 삽입 위치] 콜아웃을 iframe과 새 창 보기 버튼으로 교체
+  const insertWireframe = () => {
+    const content = document.querySelector('#lecture-content');
+    if (!content) return;
+    content.querySelectorAll('.callout').forEach(node => {
+      if (!node.textContent.includes('[도면 삽입 위치]')) return;
+      ensureStyles();
+      const wrap = document.createElement('div');
+      wrap.className = 'week4-wireframe-wrap';
+      wrap.innerHTML = `<iframe class="week4-wireframe-frame" src="${WIREFRAME_SRC}" title="카공 공간 조건 탐색 서비스 로우파이 와이어프레임" loading="lazy"></iframe><div class="week4-wireframe-actions"><a class="week4-wireframe-open" href="${WIREFRAME_SRC}" target="_blank" rel="noopener noreferrer">새 창에서 크게 보기</a></div>`;
+      node.replaceWith(wrap);
+    });
+    // 잠금 영역(암호화된 원문)에 예전 파일명(kagong-wireframe.html)으로 들어 있는 도면·링크를 새 파일로 교체
+    content.querySelectorAll('iframe[src*="kagong-wireframe"], a[href*="kagong-wireframe"]').forEach(node => {
+      const attr = node.tagName === 'IFRAME' ? 'src' : 'href';
+      const value = node.getAttribute(attr) || '';
+      if (value.includes('4week_kagong-wireframe.html')) return;
+      ensureStyles();
+      node.setAttribute(attr, WIREFRAME_SRC);
+    });
+  };
+
+  const start = () => {
+    const content = document.querySelector('#lecture-content');
+    if (!content) return;
+    insertWireframe();
+    // 교안 렌더링·잠금 해제로 내용이 바뀔 때마다 다시 확인
+    new MutationObserver(insertWireframe).observe(content, { childList: true, subtree: true });
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
+})();
+// 7주차 카공 project 실행 화면 삽입
+// - 교안의 [실행 화면 삽입 위치] 콜아웃을 data/samples/project 실행 화면(iframe)으로 교체
+// - 실행 화면에서 탐색·상세·결과 없음·오류 화면을 이동하며 데이터 표시를 확인
+(() => {
+  const week = Number(new URLSearchParams(window.location.search).get('week'));
+  if (week !== 7 || !/\/lecture\/(index\.html)?$/.test(window.location.pathname)) return;
+
+  const SAMPLE_SRC = '../data/samples/project/index.html';
+
+  // 실행 화면 영역 스타일 (한 번만 추가)
+  const ensureStyles = () => {
+    if (document.querySelector('#week7-sample-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'week7-sample-styles';
+    style.textContent = `
+      .lecture-content .week7-sample-wrap{margin:18px 0 24px}
+      .lecture-content .week7-sample-frame{display:block;width:100%;height:min(80vh,820px);min-height:600px;border:1px solid #dfe4eb;border-radius:14px;background:#f5f6f8}
+      .lecture-content .week7-sample-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px}
+      .lecture-content .week7-sample-note{font-size:13px;color:#8b95a5}
+      .lecture-content .week7-sample-open{display:inline-flex;align-items:center;flex:0 0 auto;min-height:40px;padding:0 13px;border:1px solid #ffb27f;border-radius:9px;background:#fff;color:#b95516!important;text-decoration:none!important;font-size:13px;font-weight:800}
+      .lecture-content .week7-sample-open:hover{background:#fff3eb;border-color:#ff8a3d}
+      @media(max-width:680px){.lecture-content .week7-sample-frame{min-height:560px;height:72vh}.lecture-content .week7-sample-actions{flex-direction:column;align-items:flex-start}}
+    `;
+    document.head.appendChild(style);
+  };
+
+  // [실행 화면 삽입 위치] 콜아웃을 iframe과 새 창 보기 버튼으로 교체
+  const insertSample = () => {
+    const content = document.querySelector('#lecture-content');
+    if (!content) return;
+    content.querySelectorAll('.callout').forEach(node => {
+      if (!node.textContent.includes('[실행 화면 삽입 위치]')) return;
+      ensureStyles();
+      // 더블클릭(file://)으로 연 경우 fetch가 차단되므로 안내 문구를 바꿔 표시
+      const note = '하단 탭바와 카드로 화면을 이동하며 데이터 표시를 확인하고, 개발자 도구 Console에서 [데이터 점검] 결과를 확인';
+      const wrap = document.createElement('div');
+      wrap.className = 'week7-sample-wrap';
+      wrap.innerHTML = `<iframe class="week7-sample-frame" src="${SAMPLE_SRC}" title="7주차 참고 샘플 카공 project 실행 화면" loading="lazy"></iframe><div class="week7-sample-actions"><span class="week7-sample-note">${note}</span><a class="week7-sample-open" href="${SAMPLE_SRC}" target="_blank" rel="noopener noreferrer">새 창에서 크게 보기</a></div>`;
+      node.replaceWith(wrap);
+    });
+  };
+
+  const start = () => {
+    const content = document.querySelector('#lecture-content');
+    if (!content) return;
+    insertSample();
+    // 교안 렌더링으로 내용이 바뀔 때마다 다시 확인
+    new MutationObserver(insertSample).observe(content, { childList: true, subtree: true });
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
+})();
+// 6주차 3.1.1 필드 묶음 표 비율 조정
+// - '필드 묶음'·'단계' 열은 항목명과 데이터가 한 줄로 보이도록 줄바꿈 없이 내용 너비만 차지
+// - 남는 너비는 '카공 필드'·'확보 방법' 열이 사용
+(() => {
+  const week = Number(new URLSearchParams(window.location.search).get('week'));
+  if (week !== 6 || !/\/lecture\/(index\.html)?$/.test(window.location.pathname)) return;
+
+  const ensureStyles = () => {
+    if (document.querySelector('#week6-field-group-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'week6-field-group-styles';
+    style.textContent = `
+      .lecture-content table.week6-field-group td:first-child,
+      .lecture-content table.week6-field-group td:last-child{white-space:nowrap;width:1%}
+      .lecture-content table.week6-field-group td:last-child{text-align:center}
+      @media(max-width:680px){.lecture-content table.week6-field-group td:nth-child(2){min-width:170px}.lecture-content table.week6-field-group td:nth-child(3){min-width:190px}}
+    `;
+    document.head.appendChild(style);
+  };
+
+  // 첫 행이 '필드 묶음 … 단계'인 표에 클래스 부여
+  const markTable = () => {
+    const content = document.querySelector('#lecture-content');
+    if (!content) return;
+    content.querySelectorAll('table:not(.week6-field-group)').forEach(table => {
+      const cells = [...(table.querySelector('tr')?.children || [])].map(cell => cell.textContent.trim());
+      if (cells[0] !== '필드 묶음' || cells[cells.length - 1] !== '단계') return;
+      ensureStyles();
+      table.classList.add('week6-field-group');
+    });
+  };
+
+  const start = () => {
+    const content = document.querySelector('#lecture-content');
+    if (!content) return;
+    markTable();
+    new MutationObserver(markTable).observe(content, { childList: true, subtree: true });
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
+})();
+// 7주차 실습 표 비율 조정
+// - 첫 열이 '확인할 상황'·'단계'인 표와 2.5.2 필드 누락 표는 첫 열(① 정상 목록 등)이 한 줄로 보이도록 줄바꿈 없이 내용 너비만 차지
+// - 남는 너비는 나머지 열이 나눠 사용
+(() => {
+  const week = Number(new URLSearchParams(window.location.search).get('week'));
+  if (week !== 7 || !/\/lecture\/(index\.html)?$/.test(window.location.pathname)) return;
+
+  const ensureStyles = () => {
+    if (document.querySelector('#week7-check-table-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'week7-check-table-styles';
+    style.textContent = `
+      .lecture-content table.week7-check-table td:first-child{white-space:nowrap;width:1%}
+      @media(max-width:680px){.lecture-content table.week7-check-table td:not(:first-child){min-width:180px}}
+    `;
+    document.head.appendChild(style);
+  };
+
+  const markTable = () => {
+    const content = document.querySelector('#lecture-content');
+    if (!content) return;
+    content.querySelectorAll('table:not(.week7-check-table)').forEach(table => {
+      const head = [...(table.querySelector('tr')?.children || [])].map(cell => cell.textContent.trim());
+      // 1.1.1·1.1.3·1.4·2.6 표, 2.5.2 필드 누락 표(구분·예시·화면 처리·데이터 처리)
+      const target = head[0] === '확인할 상황' || head[0] === '단계' || (head[0] === '구분' && head[1] === '예시');
+      if (!target) return;
+      ensureStyles();
+      table.classList.add('week7-check-table');
+    });
+  };
+
+  const start = () => {
+    const content = document.querySelector('#lecture-content');
+    if (!content) return;
+    markTable();
+    new MutationObserver(markTable).observe(content, { childList: true, subtree: true });
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
 })();
