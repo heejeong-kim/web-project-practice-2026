@@ -1,0 +1,24 @@
+/* 상세 정보와 구분한 하단 둘러보기 영역 */
+#detail>.detail-discovery{display:block;margin:36px -10px 8px;padding:20px 16px;background:#edf3ef;border-radius:22px;border-top:3px solid #cfddd3}
+.detail-discovery>.discovery-label{margin:0 0 18px;font-size:11px;font-weight:700;letter-spacing:1px;color:#698272}
+#detail .detail-discovery>.related{margin:0;padding:0;border:0;border-radius:0;background:none}
+#detail .detail-discovery>.related+.related{margin-top:24px;padding-top:22px;border-top:1px solid #d5e0d8}
+.detail-discovery .section-heading h2{font-size:16px;letter-spacing:-.3px}
+.detail-discovery .recent-grid{display:flex;align-items:stretch;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;padding:2px 1px 10px;margin-top:12px;cursor:grab}
+.detail-discovery .recent-grid::-webkit-scrollbar{display:none}
+.detail-discovery .recent-grid>a{display:block;flex:0 0 calc((100% - 24px)/3);min-width:0;padding:8px;background:white;border:1px solid #dce5de;border-radius:16px;overflow:hidden;scroll-snap-align:start;user-select:none;-webkit-user-drag:none}
+.detail-discovery .recent-grid .thumb{width:100%;height:66px;border-radius:11px}
+.detail-discovery .recent-grid h3{margin:8px 0 4px;font-size:11px;font-weight:650;line-height:1.5;overflow-wrap:anywhere}
+.detail-discovery .recent-grid .recent-area{margin:0 0 4px;font-size:10px}
+.detail-discovery .recent-grid img{-webkit-user-drag:none}
+.detail-discovery .recent-grid.is-dragging{scroll-snap-type:none;cursor:grabbing}
+.related-swipe-controls{display:flex;justify-content:center;gap:6px;margin-top:4px}
+.related-swipe-controls button{display:grid;place-items:center;width:19px;height:19px;min-width:19px;min-height:19px;padding:0;border-radius:50%;font-size:11px;line-height:1;background:white}
+.related-swipe-controls button:disabled{opacity:.3;cursor:default}
+.detail-discovery .recent-grid:focus-visible{outline:2px solid #487562;outline-offset:3px}
+
+/* 상세 마지막 추천 영역과 하단 메뉴 사이의 과한 여백 축소 */
+body[data-page="detail"] main{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+#detail>.detail-discovery{margin-bottom:0;padding-bottom:12px}
+.detail-discovery .recent-grid{padding-bottom:6px}
+.related-swipe-controls{margin-top:2px}

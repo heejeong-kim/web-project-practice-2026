@@ -1,0 +1,14 @@
+.cafe-version-panel{margin:0 0 18px;padding:0;border:1px solid #dfe5df;border-radius:10px;background:#fff;color:#68766f;font-size:12px;line-height:1.6}
+.cafe-version-panel>summary{margin:0;padding:10px 12px;font-size:12px;color:#68766f;cursor:pointer;list-style-position:inside}
+.cafe-version-panel[open]>summary{border-bottom:1px solid #e8ece8}
+.cafe-version-content{padding:12px}
+.cafe-version-content>p{margin:0 0 10px}
+.cafe-version-highlight{padding:6px 12px;font-size:12px;line-height:1.4;min-height:32px;border:1px solid #b9c8bf;background:transparent;color:#32634c;border-radius:8px}
+.cafe-version-highlight[aria-pressed=true]{border-color:var(--wk,#32634c);color:var(--wk,#32634c)}
+.cafe-version-content .cafe-version-help{margin:8px 0 0;font-size:11px;color:#7a857e}
+.cafe-version-notes:not(:empty){margin-top:12px;padding-top:12px;border-top:1px solid #e8ece8}
+.cafe-version-notes>p,.cafe-version-notes .image-source-note{margin:0 0 8px;padding:0;background:none;font-size:11px;color:#7a857e}
+body.wk-off .wk-new{outline:none!important}
+body.wk-off option.wk-new{color:inherit;font-weight:inherit}
+
+body:not(.wk-off) .wk-new:not(.wk-future){outline:2px dashed var(--wk,#487562)!important;outline-offset:3px;border-radius:6px}
