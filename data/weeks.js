@@ -8,13 +8,13 @@ window.WEEK_DATA = [
   {week:6,title:'JSON 데이터셋 설계',type:'class',keywords:['Dataset','Field','ID'],summary:'검색·필터·정렬·상세보기에 필요한 JSON 데이터 구조와 명세를 설계한다',page:'./lecture/index.html?week=06'},
   {week:7,title:'JSON 기반 화면 구현',type:'class',keywords:['fetch','Rendering','Data Check'],summary:'JSON 데이터를 fetch로 연결해 점검·수정하고 추가한 필드를 화면에 보여주도록 인터페이스를 변경한다',page:'./lecture/index.html?week=07'},
   {week:8,title:'중간평가',type:'exam',keywords:['1~6주차','주관식·객관식','3시간 필기시험'],summary:'1~6주차의 서비스 문제 정의·구조 설계·JavaScript·JSON 연결 흐름을 주관식과 객관식 필기시험으로 평가한다',page:'./lecture/index.html?week=08'},
-  {week:9,title:'검색·필터·정렬 기능',type:'class',keywords:['Search','Filter','Sort'],summary:'검색과 복수 필터, 정렬을 하나의 상태와 결과 배열로 연결한다',page:''},
-  {week:10,title:'상세보기 및 인터랙션 설계',type:'class',keywords:['Detail View','Modal','Interaction'],summary:'ID 기반 상세보기와 목록 복귀, 다음 행동까지 이어지는 인터랙션을 구현한다',page:''},
-  {week:11,title:'LocalStorage 기초',type:'class',keywords:['Client Storage','Serialization','Favorite'],summary:'브라우저 개인 상태를 저장하고 JSON 기본 데이터와 사용자 상태를 구분한다',page:''},
-  {week:12,title:'LocalStorage 활용 기능 구현',type:'class',keywords:['Personalization','API','Cloud DB'],summary:'개인화 기능을 통합하고 필요 팀은 외부 API 또는 클라우드 DB 심화를 시작한다',page:''},
-  {week:13,title:'프로젝트 통합 및 사용자 테스트',type:'class',keywords:['Integration','Test Case','QA'],summary:'기능을 하나의 사용자 흐름으로 통합하고 교차 사용자 테스트와 오류 수정을 진행한다',page:''},
-  {week:14,title:'프로젝트 개선 및 최종 완성',type:'class',keywords:['Deployment','Production','Demo'],summary:'최종 QA, 반응형 검수, 실제 배포와 발표 시연을 준비한다',page:''},
-  {week:15,title:'기말평가',type:'exam',keywords:['필기시험','Final Demo','최종 자료 제출'],summary:'9~14주차 필기평가와 Final Demo, 최종 자료 제출을 진행한다',page:''}
+  {week:9,title:'검색·필터·정렬 기능',type:'class',keywords:['Search','Filter','Sort'],summary:'7주차 JSON 위에 검색·복수 필터·정렬을 하나의 상태와 결과 배열로 연결한다',page:'./lecture/index.html?week=09'},
+  {week:10,title:'프로토타이핑 전환 및 상세보기 기능 구현',type:'class',keywords:['Prototyping','Detail View','Interaction'],summary:'와이어프레임을 작동하는 프로토타입으로 전환하고 ID 기반 상세보기·목록 복귀·예외 처리를 핵심 사용자 흐름으로 구현한다',page:'./lecture/index.html?week=10'},
+  {week:11,title:'LocalStorage 기초',type:'class',keywords:['Client Storage','Serialization','Favorite'],summary:'즐겨찾기·최근 본 공간·비교와 비교 메뉴를 구현하고 프로토타입 좋아요를 실제 공용 집계와 구분한다',page:'./lecture/index.html?week=11'},
+  {week:12,title:'개인화 통합·테스트·개선',type:'class',keywords:['Integration','User Test','Regression'],summary:'개인화 기능을 통합하고 사용자 테스트·주요 수정·회귀 테스트 후 최종 IA를 정리한다. 외부 연동은 선택 심화로 적용한다',page:'./lecture/index.html?week=12'},
+  {week:13,title:'프로젝트 발표 준비',type:'class',keywords:['발표 구성','리허설','최종 QA'],summary:'8개 발표 흐름에 근거 자료를 연결하고 발표자료·시연·리허설·최종 IA 대조·QA와 발표 버전 고정을 완료한다',page:'./lecture/index.html?week=13'},
+  {week:14,title:'프로젝트 발표',type:'class',keywords:['발표','시연','질의응답'],summary:'13주차에 준비한 자료와 고정한 배포 버전으로 팀별 발표·시연·질의응답·상호 피드백을 진행한다',page:'./lecture/index.html?week=14'},
+  {week:15,title:'기말평가',type:'exam',keywords:['9~14주차','주관식·객관식','3시간 필기시험'],summary:'9~14주차의 탐색·상세·개인화·테스트·배포 흐름을 주관식과 객관식 필기시험으로 평가한다',page:'./lecture/index.html?week=15'}
 ];
 
 (() => {
@@ -127,7 +127,7 @@ window.WEEK_DATA = [
       if (placeholder) {
         const wrap = document.createElement('div');
         wrap.className = 'week4-wireframe-wrap';
-        wrap.innerHTML = `<iframe class="week4-wireframe-frame" src="../data/samples/4week_kagong-wireframe.html?v=20260923-2" title="카공 공간 조건 탐색 서비스 로우파이 와이어프레임" loading="lazy"></iframe><div class="week4-wireframe-actions"><a class="week4-wireframe-open" href="../data/samples/4week_kagong-wireframe.html?v=20260923-2" target="_blank" rel="noopener noreferrer">새창으로 열기 ↗</a></div>`;
+        wrap.innerHTML = `<iframe class="week4-wireframe-frame" src="../data/samples/4week_kagong-wireframe.html?v=20261021-restore46" title="카공 공간 조건 탐색 서비스 로우파이 와이어프레임" loading="lazy"></iframe><div class="week4-wireframe-actions"><a class="week4-wireframe-open" href="../data/samples/4week_kagong-wireframe.html?v=20261021-restore46" target="_blank" rel="noopener noreferrer">새창으로 열기 ↗</a></div>`;
         placeholder.replaceWith(wrap);
       }
     }
@@ -162,7 +162,7 @@ window.WEEK_DATA = [
   const week = Number(new URLSearchParams(window.location.search).get('week'));
   if (week !== 4 || !/\/lecture\/(index\.html)?$/.test(window.location.pathname)) return;
 
-  const WIREFRAME_SRC = '../data/samples/4week_kagong-wireframe.html?v=20260923-3';
+  const WIREFRAME_SRC = '../data/samples/4week_kagong-wireframe.html?v=20261021-restore46';
 
   // 도면 영역 스타일 (한 번만 추가)
   const ensureStyles = () => {
@@ -213,14 +213,26 @@ window.WEEK_DATA = [
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 })();
-// 7주차 카공 project 실행 화면 삽입
-// - 교안의 [실행 화면 삽입 위치] 콜아웃을 data/samples/project 실행 화면(iframe)으로 교체
-// - 실행 화면에서 탐색·상세·결과 없음·오류 화면을 이동하며 데이터 표시를 확인
+// 7·9~14주차 카공 project 실행 화면 삽입
+// - 교안의 [실행 화면 삽입 위치] 콜아웃을 카공 실행 화면(iframe)으로 교체 — 7주차 data/samples/7week_kagong, 9~13주차 data/samples/Nweek_kagong(14주차는 13주차 버전)
+// - 주차마다 해당 기능을 확인할 화면에서 시작(9 탐색, 10 상세, 11·12 마이, 13·14 홈)
 (() => {
   const week = Number(new URLSearchParams(window.location.search).get('week'));
-  if (week !== 7 || !/\/lecture\/(index\.html)?$/.test(window.location.pathname)) return;
+  const SAMPLES = {
+    7: ['index.html', '7주차 전용 와이어프레임: JSON 카드·추천/인기/신규 구조·수동 가로 넘김·출처와 실제/더미를 점검. 검색·저장·API 요청은 이후 주차에 연결'],
+    9: ['pages/list.html', '버전 내용을 열고 강조 켜기를 선택하면 9주차 업데이트를 표시: 검색어·지역·조건·정렬을 바꾸며 결과 건수가 함께 바뀌는지, ‘영업 중’ 조건과 ‘가까운 순(내 위치)’ 정렬(거리 km)·위치 거부 시 기본 정렬 복귀를 확인'],
+    10: ['pages/list.html', '버전 내용을 열고 강조 켜기를 선택하면 10주차 업데이트를 표시: 검색·필터 → 카드 선택 → 상세(위치 지도·추천·공유하기) → ‹ 목록 복귀 순서로 실행하고 탐색 조건이 유지되는지 확인'],
+    11: ['pages/list.html', '버전 내용을 열고 강조 켜기를 선택하면 11주차 업데이트를 표시: 별(☆) 저장·최근 본 공간·마이 탭, 상세의 ‘비교 담기’와 공간 비교 페이지를 확인하고 Application 탭에서 kagong-pages- 키 확인'],
+    12: ['pages/my.html', '12주차 통합·테스트 대상: 개인 상태·초기화·화면 간 동기화·예외를 검증하고 테스트 기록지 작성 후 마지막에 최종 IA를 정리. 외부 API·구글 시트는 선택 심화이며 미연결 임시 저장을 실제 공용 저장과 구분'],
+    13: ['index.html', '발표 준비용 프로토타입: 대표 과업 시연을 리허설하고 최종 QA·배포 점검·발표 버전 고정을 완료'],
+    14: ['index.html', '발표 시연 참고: 13주차에 준비한 버전으로 홈 → 탐색 → 상세 → 저장 → 마이 흐름을 설명']
+  };
+  if (!SAMPLES[week] || !/\/lecture\/(index\.html)?$/.test(window.location.pathname)) return;
 
-  const SAMPLE_SRC = '../data/samples/project/index.html';
+  // 7주차는 전용 7week_kagong, 9주차부터는 주차별 폴더(9week_kagong/9week_kagong.html …), 14주차는 13주차에 고정한 발표 버전 사용
+  const SAMPLE_DIR = week === 7 ? '7week_kagong' : `${Math.min(week, 13)}week_kagong`;
+  const sampleUrl = SAMPLES[week][0].replace(/^index\.html/, `${SAMPLE_DIR}.html`);
+  const SAMPLE_SRC = `../data/samples/${SAMPLE_DIR}/` + sampleUrl + (week >= 10 ? (sampleUrl.includes('?') ? '&' : '?') + 'prototype=1' : '');
 
   // 실행 화면 영역 스타일 (한 번만 추가)
   const ensureStyles = () => {
@@ -247,10 +259,10 @@ window.WEEK_DATA = [
       if (!node.textContent.includes('[실행 화면 삽입 위치]')) return;
       ensureStyles();
       // 더블클릭(file://)으로 연 경우 fetch가 차단되므로 안내 문구를 바꿔 표시
-      const note = '하단 탭바와 카드로 화면을 이동하며 데이터 표시를 확인하고, 개발자 도구 Console에서 [데이터 점검] 결과를 확인';
+      const note = SAMPLES[week][1];
       const wrap = document.createElement('div');
       wrap.className = 'week7-sample-wrap';
-      wrap.innerHTML = `<iframe class="week7-sample-frame" src="${SAMPLE_SRC}" title="7주차 참고 샘플 카공 project 실행 화면" loading="lazy"></iframe><div class="week7-sample-actions"><span class="week7-sample-note">${note}</span><a class="week7-sample-open" href="${SAMPLE_SRC}" target="_blank" rel="noopener noreferrer">새 창에서 크게 보기</a></div>`;
+      wrap.innerHTML = `<iframe class="week7-sample-frame" src="${SAMPLE_SRC}" title="${week}주차 참고 샘플 카공 project 실행 화면" loading="lazy"></iframe><div class="week7-sample-actions"><span class="week7-sample-note">${note}</span><a class="week7-sample-open" href="${SAMPLE_SRC}" target="_blank" rel="noopener noreferrer">새 창에서 크게 보기</a></div>`;
       node.replaceWith(wrap);
     });
   };
