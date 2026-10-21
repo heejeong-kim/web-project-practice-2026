@@ -439,8 +439,8 @@ Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')
 </tr>
 <tr>
 <td>Failed to fetch</td>
-<td>파일을 더블클릭해 직접 열었음</td>
-<td>GitHub Pages 배포 주소에서 열었는지(이후 주차)</td>
+<td>대표 원인 예시: 로컬 HTML 파일 직접 열기, 네트워크 연결 실패, CORS 제한, 요청 주소 문제</td>
+<td>HTTP 실행 환경(GitHub Pages 또는 로컬 서버), 요청 URL, Network·Console의 상세 오류를 확인. HTTP 404는 fetch 자체의 거부와 구분하며 response.ok 또는 status로 확인</td>
 </tr>
 </table>
 <callout icon="📌" color="blue_bg">

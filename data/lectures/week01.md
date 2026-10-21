@@ -360,6 +360,7 @@ LocalStorage는 브라우저와 기기별로 독립적이므로 팀원 간 공�
 ## 2.4 JSON과 LocalStorage가 만나는 흐름
 JSON과 LocalStorage는 모두 데이터를 다루지만 서로 다른 역할을 담당함. JSON은 서비스가 제공하는 **공통 원본 데이터**, LocalStorage는 사용자가 그 데이터에 대해 만든 **개인 상태**임
 두 데이터는 보통 `id`를 기준으로 연결됨. 먼저 JSON에서 기본 목록을 읽고, LocalStorage에서 즐겨찾기 id를 읽은 뒤 JavaScript가 두 값을 결합해 화면을 그림
+아래 코드는 데이터 연결을 설명하는 예시임. 최상위 `await`를 사용하므로 실행할 때는 `type="module"`로 연결한 스크립트에서 사용하거나, 코드를 `async` 함수 안에 넣고 그 함수를 호출해야 함. JSON 요청은 HTTP 환경에서 실행하고 실제 구현에서는 응답 상태와 오류 처리도 함께 확인
 ```javascript
 const programs = await fetch('./data/programs.json')
   .then(response => response.json());

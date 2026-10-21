@@ -240,17 +240,17 @@ JSON 오류는 단순한 문법 오류와 **팀 내부 데이터 규칙이 맞�
 <tr>
 <td>문법 오류</td>
 <td>키와 문자열 값에 큰따옴표가 빠진 경우</td>
-<td>파일 저장 직후 VS Code 밑줄, 이후 주차 fetch 실패</td>
+<td>파일 저장 직후 VS Code 문법 검사, 이후 주차 response.json() 등 JSON 해석 단계에서 오류</td>
 </tr>
 <tr>
 <td>문법 오류</td>
 <td>마지막 항목 뒤에 불필요한 쉼표가 있는 경우</td>
-<td>파일 저장 직후 VS Code 밑줄, 이후 주차 fetch 실패</td>
+<td>파일 저장 직후 VS Code 문법 검사, 이후 주차 response.json() 등 JSON 해석 단계에서 오류</td>
 </tr>
 <tr>
 <td>문법 오류</td>
 <td>중괄호와 대괄호가 닫히지 않은 경우</td>
-<td>파일 저장 직후 VS Code 밑줄, 이후 주차 fetch 실패</td>
+<td>파일 저장 직후 VS Code 문법 검사, 이후 주차 response.json() 등 JSON 해석 단계에서 오류</td>
 </tr>
 <tr>
 <td>구조 오류</td>
@@ -268,7 +268,7 @@ JSON 오류는 단순한 문법 오류와 **팀 내부 데이터 규칙이 맞�
 <td>이후 주차 필터 결과 누락</td>
 </tr>
 </table>
-- 문법 오류는 파일이 아예 열리지 않으므로 바로 발견되지만, 구조 오류는 파일이 정상적으로 열리기 때문에 이후 주차에야 드러날 수 있음 → 즉, 이번 주차 검수의 대상은 주로 구조 오류임
+- 문법 오류가 있어도 파일은 편집기나 브라우저에서 텍스트로 열릴 수 있음. 문법 검사는 VS Code의 JSON 검사 또는 JSON.parse() 등 실제 JSON 해석으로 확인하고, 문법 검사를 통과한 뒤에도 필드명·자료형·값 형식의 구조 오류를 별도로 검수
 ---
 ### <span color="blue">1.3.2 🖇️ 실습｜오류 JSON 수정</span>
 #### 실습 절차
@@ -332,10 +332,10 @@ JSON 오류는 단순한 문법 오류와 **팀 내부 데이터 규칙이 맞�
 <tr>
 <td>최종 확인</td>
 <td>—</td>
-<td>3건이 같은 필드 구조와 자료형을 사용하며, 파일을 브라우저에서 열었을 때 그대로 표시됨</td>
+<td>VS Code의 JSON 문법 검사 또는 JSON.parse()를 통과하고, 3건 모두 명세서의 필드 구조·자료형·값 형식을 준수함</td>
 </tr>
 </table>
-> <span color="gray">예시) 오류가 있는 </span><span color="gray">`.json`</span><span color="gray"> 파일을 브라우저에서 직접 열면 오류 메시지가 표시되고, 정상 파일은 내용이 그대로 표시되므로 문법 오류 여부를 가장 빠르게 확인할 수 있음</span>
+> <span color="gray">예시) 브라우저에서 파일 내용이 보이는 것만으로 JSON 문법이 올바르다고 판단할 수 없음. VS Code의 JSON 문법 검사나 JSON.parse()로 문법을 확인하고, 데이터 명세서로 필드·자료형·값 형식을 별도로 검수</span>
 <details>
 <summary>\[정답\] errors.json 수정본</summary>
 	수정을 마친 뒤 열어 보며, 아래는 id를 숫자로 통일한 경우임. 팀이 문자열로 통일했다면 3건 모두 `"1"`, `"2"`, `"3"`이면 정답으로 봄
@@ -520,7 +520,7 @@ JSON 오류는 단순한 문법 오류와 **팀 내부 데이터 규칙이 맞�
 <tr>
 <td>1.2.2 값의 형태(자료형)</td>
 <td>3.4 명세서 작성, 3.1.1 ⑤ CSV 자료형 복원</td>
-<td>필드마다 한 가지로 확정한 자료형</td>
+<td>필드별 기본 자료형과 null 허용 여부</td>
 </tr>
 <tr>
 <td>1.2.3 배열을 JSON 파일로 옮기는 규칙</td>
@@ -832,7 +832,7 @@ JSON 오류는 단순한 문법 오류와 **팀 내부 데이터 규칙이 맞�
 <tr>
 <td>중복</td>
 <td>없음</td>
-<td>같은 관리번호가 두 번 들어간 행 323개</td>
+<td>관리번호 중복 그룹 323개·제거 대상 추가 행 323개</td>
 </tr>
 <tr>
 <td>열 이름 차이</td>
@@ -842,7 +842,7 @@ JSON 오류는 단순한 문법 오류와 **팀 내부 데이터 규칙이 맞�
 <tr>
 <td>판단</td>
 <td>그대로 사용</td>
-<td>관리번호 기준으로 중복을 지우면 파일 A와 같은 결과</td>
+<td>관리번호 중복 323건을 제거하면 147,292행이 남음. 파일 A의 147,291행과 1행 차이가 있으므로 전체가 동일하다고 단정하지 않고 관리번호별 차이를 확인</td>
 </tr>
 	</table>
 	**후보 추출 단계(파일 A 기준)**
@@ -1142,7 +1142,7 @@ id,name,hasOutlet,noiseLevel,seatType,hasTimeLimit,hasWifi,openTime,closeTime,�
 	```json
 [
   { "id": 1, "description": "콘센트가 있는 1인석 위주의 조용한 카페" },
-  { "id": 2, "description": "4인 테이블 위주, 이용 시간 제한이 있는 공간" }
+  { "id": 2, "description": "단체석 위주, 이용 시간 제한이 있는 공간" }
 ]
 	```
 	- 결과를 조사 기록표의 description 열에 id 기준으로 붙여 넣고, 조사 결과와 다른 표현이 있으면 직접 수정
@@ -1280,7 +1280,7 @@ id,name,hasOutlet,noiseLevel,seatType,hasTimeLimit,hasWifi,openTime,closeTime,�
 - 5주차 4.4.2 인계 정리표 6항목을 명세서의 열에 그대로 옮김(필드명·자료형·식별자·필터 허용값·검색 대상 필드·데이터 2\~3건)
 - 4주차 매핑 표에서 빠진 필드가 있는지 대조해 추가
 - 각 필드에 2.1.1의 7개 항목(필드명·의미·자료형·필수 여부·예시값·사용 화면·검색·필터·정렬 사용 여부)을 모두 기입(2.1)
-- 자료형은 문자열·숫자·불리언·배열·null 중 하나로 정하고, 같은 필드에 서로 다른 자료형을 섞지 않음(1.2.2)
+- 필드별 기본 자료형(문자열·숫자·불리언·배열 등)을 정하고 일관되게 사용함. 미확인·누락 값을 null로 허용하는 필드는 명세서에 null 허용 여부와 의미를 별도로 기록하며, 이는 임의의 자료형 혼합과 구분(1.2.2)
 - ID 규칙(자료형·시작 값·`data-id`와의 대응)을 한 줄로 확정(2.2)
 - 날짜·시간·불리언·빈 값·이미지 경로의 표기 규칙을 확정(2.4)
 - 필터 필드마다 허용값 목록을 확정하고 5주차 필터 버튼 값과 대조(2.3.2)
@@ -1304,7 +1304,7 @@ id,name,hasOutlet,noiseLevel,seatType,hasTimeLimit,hasWifi,openTime,closeTime,�
 </tr>
 <tr>
 <td>4주차 매핑 표의 자료형과 명세서의 자료형이 같은가</td>
-<td>필드마다 자료형이 한 가지로 확정됨</td>
+<td>필드마다 기본 자료형과 null 허용 여부·의미가 확정됨</td>
 <td>1.2.2</td>
 </tr>
 <tr>
@@ -1342,7 +1342,7 @@ id,name,hasOutlet,noiseLevel,seatType,hasTimeLimit,hasWifi,openTime,closeTime,�
 - 필드 구조가 확정된 뒤 데이터 수를 늘림
 #### 실습 절차
 - `data/` 폴더에 팀 JSON 파일을 만들고 5주차 배열 2\~3건을 먼저 옮김
-- VS Code 밑줄과 브라우저 직접 열기로 문법 오류가 없는지 확인(1.3.1 문법 오류)
+- VS Code의 JSON 문법 검사 또는 JSON.parse()로 문법 오류가 없는지 확인. 브라우저의 텍스트 표시만으로 문법 검사를 대체하지 않음(1.3.1 문법 오류)
 - 밑줄이 없어도 필드명·자료형·표기가 건마다 다른 구조 오류가 없는지 3.5.2 검수로 확인(1.3.1 구조 오류)
 - 명세서 기준으로 5\~10건까지 늘리되 필터 값·정렬 값의 분포를 다르게 작성(2.3)
 - 조건을 겹쳤을 때 결과가 0건이 되는 조합을 하나 이상 만들어 기록(2.3)
@@ -1380,7 +1380,7 @@ id,name,hasOutlet,noiseLevel,seatType,hasTimeLimit,hasWifi,openTime,closeTime,�
     "hasWifi": true,
     "image": "./asset/on.jpg",
     "address": "서울 서대문구 …",
-    "description": "4인 테이블 위주"
+    "description": "단체석 위주"
   },
   {
     "id": 3,
@@ -1410,8 +1410,8 @@ id,name,hasOutlet,noiseLevel,seatType,hasTimeLimit,hasWifi,openTime,closeTime,�
 <td>근거 이론</td>
 </tr>
 <tr>
-<td>VS Code 밑줄 없이 파일이 열리는가</td>
-<td>브라우저에서 직접 열었을 때 내용이 그대로 표시됨</td>
+<td>JSON 문법 검사를 통과하는가</td>
+<td>VS Code의 JSON 문법 검사 또는 JSON.parse()를 통과함</td>
 <td>1.3 문법 오류</td>
 </tr>
 <tr>
