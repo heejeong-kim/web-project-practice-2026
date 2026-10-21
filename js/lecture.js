@@ -4,7 +4,7 @@ const parsedWeek = weekParam === null ? 1 : Number(weekParam);
 const requestedWeek = Number.isFinite(parsedWeek) ? parsedWeek : 1;
 const week = Math.min(15, Math.max(0, requestedWeek));
 const weekData = window.WEEK_DATA.find(item => item.week === week);
-const READY_WEEKS = new Set([0, 1, 2, 3, 4, 6, 7, 8]);
+const READY_WEEKS = new Set([0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
 const ASSET_VERSION = '20260815-1200';
 
 const titleEl = document.querySelector('#lecture-title');
@@ -363,6 +363,10 @@ function renderNotionMarkdown(source = '') {
 window.renderNotionMarkdown = renderNotionMarkdown;
 
 async function loadLectureSource() {
+  if (week >= 9 && week <= 15) {
+    if (!window.unlockProtectedLecture) throw new Error('교안 잠금 모듈을 불러오지 못했습니다.');
+    return normalizeLecturePaths(await window.unlockProtectedLecture(week));
+  }
   const number = String(week).padStart(2, '0');
   const response = await fetch(`../data/lectures/week${number}.md?v=${ASSET_VERSION}`, { cache: 'no-store' });
   if (!response.ok) throw new Error(`${itemLabel(weekData)} 원문 파일을 불러오지 못했습니다.`);

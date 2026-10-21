@@ -91,7 +91,7 @@
     if(week!==5||!root)return;
     const target=root.matches?.('[data-secure-content="w05-0"]')?root:root.querySelector?.('[data-secure-content="w05-0"]');
     if(!target)return;
-    const src='../data/samples/5week_kagong-pages/index.html?v=20261006-1';
+    const src='../data/samples/5week_kagong-pages/index.html?v=20261021-restore46';
     const title='카공 공간 조건 탐색 서비스 인터랙티브 와이어프레임';
     const makeActions=()=>{const div=document.createElement('div');div.className='week5-wireframe-actions';div.innerHTML=`<a class="week5-wireframe-open" href="${src}" target="_blank" rel="noopener noreferrer">새 창에서 크게 보기</a>`;return div;};
     const makeWrap=()=>{const wrap=document.createElement('div');wrap.className='week5-wireframe-wrap';wrap.innerHTML=`<iframe class="week5-wireframe-frame" src="${src}" title="${title}" loading="lazy"></iframe>`;wrap.appendChild(makeActions());return wrap;};
