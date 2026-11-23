@@ -361,3 +361,62 @@ window.WEEK_DATA = [
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 })();
+// 12주차 하단 기말고사 문제 준비 안내 (로컬 전용, 교안 원문·Notion에는 넣지 않음)
+// - 12주차 교안은 암호화되어 있어 원문(md)을 고치지 않고, 교안이 열린 뒤 맨 아래에 안내 블록을 덧붙임
+(() => {
+  const week = Number(new URLSearchParams(window.location.search).get('week'));
+  if (week !== 12 || !/\/lecture\/(index\.html)?$/.test(window.location.pathname)) return;
+  const NOTION_URL = 'https://app.notion.com/p/k52524/41aa50f0761580339301e35a81e7b10a';
+  const ensureStyles = () => {
+    if (document.querySelector('#final-quiz-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'final-quiz-styles';
+    style.textContent = `
+      .lecture-content .final-quiz{margin:40px 0 24px;padding:22px 22px 18px;border:1px solid #ffd2b0;border-radius:16px;background:#fff8f2}
+      .lecture-content .final-quiz h2{margin:0 0 6px;font-size:20px}
+      .lecture-content .final-quiz .fq-lead{margin:0 0 14px;color:#5b6472}
+      .lecture-content .final-quiz table{width:100%;border-collapse:collapse;margin:0 0 14px;background:#fff;border-radius:10px;overflow:hidden}
+      .lecture-content .final-quiz th,.lecture-content .final-quiz td{padding:10px 12px;border:1px solid #f1e2d6;text-align:left;vertical-align:top;font-size:14px}
+      .lecture-content .final-quiz th{background:#fff1e6;font-weight:700}
+      .lecture-content .final-quiz ul{margin:0 0 14px;padding-left:20px}
+      .lecture-content .final-quiz li{margin:4px 0}
+      .lecture-content .final-quiz .fq-link{display:inline-flex;align-items:center;gap:6px;min-height:42px;padding:0 16px;border-radius:10px;background:#ff8a3d;color:#fff!important;font-weight:800;text-decoration:none!important}
+      .lecture-content .final-quiz .fq-link:hover{background:#e8732a}
+    `;
+    document.head.appendChild(style);
+  };
+  const insertNotice = () => {
+    const content = document.querySelector('#lecture-content');
+    if (!content || content.querySelector('.final-quiz') || content.querySelector('.protected-lecture')) return;
+    if (!content.textContent.trim()) return;
+    ensureStyles();
+    const box = document.createElement('section');
+    box.className = 'final-quiz';
+    box.innerHTML = `
+      <h2>📝 기말고사 문제 준비 안내</h2>
+      <p class="fq-lead">기말고사(15주차, 9~14주차 범위) 문제를 학생이 직접 출제함. 1인당 3문항을 준비해 아래 출제 페이지의 소속 반 표에 작성하여 제출</p>
+      <table>
+        <thead><tr><th>유형</th><th>문항 수</th><th>작성 기준</th></tr></thead>
+        <tbody>
+          <tr><td>객관식(5지선다)</td><td>2문항</td><td>보기 5개 · 정답은 1개 이상 가능(복수 정답 허용) — 정답 칸에 해당 번호를 모두 기재</td></tr>
+          <tr><td>OX 퀴즈</td><td>1문항</td><td>O 또는 X로 판단할 수 있는 문장 1개 · 답변 칸에 O/X와 근거 한 줄</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li>출제 범위 : 9~14주차 교안(검색·필터·정렬, 상세보기, LocalStorage, 개인화 통합·심화, 발표 준비)</li>
+        <li>출제자 칸에 <b>학번/이름</b>을 적고, A반·B반 중 소속 반 표에 작성</li>
+        <li>교안 문장을 그대로 옮기기보다 개념을 이해했는지 확인할 수 있는 문제로 출제</li>
+        <li>객관식은 정답 개수를 문제에 쓰지 않아도 되며, 복수 정답일 때도 모든 정답 번호를 빠짐없이 기재</li>
+      </ul>
+      <a class="fq-link" href="${NOTION_URL}" target="_blank" rel="noopener noreferrer">기말고사 문제 출제 페이지 열기 ↗</a>`;
+    content.appendChild(box);
+  };
+  const start = () => {
+    const content = document.querySelector('#lecture-content');
+    if (!content) return;
+    insertNotice();
+    new MutationObserver(insertNotice).observe(content, { childList: true });
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
+})();
